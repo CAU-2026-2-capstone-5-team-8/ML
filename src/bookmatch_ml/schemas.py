@@ -621,6 +621,25 @@ class DifficultyEvaluationItem(StrictModel):
     components: dict[DifficultyComponentName, float | None]
     active_weights: dict[DifficultyComponentName, float]
 
+    @field_validator("components")
+    @classmethod
+    def components_must_be_complete_and_bounded(
+        cls, value: dict[DifficultyComponentName, float | None]
+    ) -> dict[DifficultyComponentName, float | None]:
+        expected = {
+            "lexical_difficulty",
+            "syntactic_complexity",
+            "concept_density",
+            "prerequisite_demand",
+        }
+        if set(value) != expected:
+            raise ValueError(f"difficulty components keys must be exactly: {sorted(expected)}")
+        if any(
+            component < 0 or component > 1 for component in value.values() if component is not None
+        ):
+            raise ValueError("difficulty component values must be in [0, 1]")
+        return value
+
     @field_validator("active_weights")
     @classmethod
     def active_weights_must_sum_to_one(
@@ -631,6 +650,13 @@ class DifficultyEvaluationItem(StrictModel):
         if abs(sum(value.values()) - 1.0) > 1e-9:
             raise ValueError("difficulty active weights must sum to 1.0")
         return value
+
+    @model_validator(mode="after")
+    def active_weights_must_match_available_components(self) -> "DifficultyEvaluationItem":
+        available = {name for name, component in self.components.items() if component is not None}
+        if set(self.active_weights) != available:
+            raise ValueError("difficulty active weights must match non-null component keys")
+        return self
 
 
 class DifficultyEvaluationReport(StrictModel):
@@ -647,6 +673,24 @@ class DifficultyEvaluationReport(StrictModel):
     system_tie_pair_count: int = Field(ge=0)
     items: list[DifficultyEvaluationItem]
     warnings: list[str]
+
+    @model_validator(mode="after")
+    def summary_must_match_items(self) -> "DifficultyEvaluationReport":
+        if len(self.items) != self.comparable_book_count:
+            raise ValueError("comparable_book_count must match difficulty items")
+        book_ids = [item.book_id for item in self.items]
+        if len(book_ids) != len(set(book_ids)):
+            raise ValueError("difficulty evaluation items contain duplicate book_id values")
+        if set(book_ids) & set(self.excluded_book_ids):
+            raise ValueError("comparable and excluded difficulty book IDs must be disjoint")
+        expected_pairs = len(self.items) * (len(self.items) - 1) // 2
+        if self.pair_count != expected_pairs:
+            raise ValueError("pair_count must match the number of difficulty item pairs")
+        if self.agreed_pair_count + self.system_tie_pair_count > self.pair_count:
+            raise ValueError("agreed and tied pair counts must not exceed pair_count")
+        if abs(self.pairwise_agreement - self.agreed_pair_count / self.pair_count) > 1e-9:
+            raise ValueError("pairwise_agreement must match agreed_pair_count / pair_count")
+        return self
 
 
 class RecommendationComparisonItem(StrictModel):
@@ -683,6 +727,16 @@ class AblationComparison(StrictModel):
     added_prerequisites: list[str]
     removed_prerequisites: list[str]
     newly_available_difficulty_components: list[DifficultyComponentName]
+
+    @model_validator(mode="after")
+    def evidence_modes_must_be_adjacent(self) -> "AblationComparison":
+        allowed = {
+            ("toc_only", "toc_description"),
+            ("toc_description", "all_available"),
+        }
+        if (self.from_mode, self.to_mode) not in allowed:
+            raise ValueError("ablation comparison must use adjacent evidence modes")
+        return self
 
 
 class EvaluationFailureCase(StrictModel):

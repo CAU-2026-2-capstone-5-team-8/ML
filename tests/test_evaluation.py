@@ -20,7 +20,7 @@ from bookmatch_ml.evaluation.difficulty import (
 )
 from bookmatch_ml.evaluation.recommendation import compare_recommendation_baselines
 from bookmatch_ml.ranking.loader import load_reader_profile
-from bookmatch_ml.schemas import BookProfile
+from bookmatch_ml.schemas import AblationComparison, BookProfile, DifficultyEvaluationItem
 
 ROOT = Path(__file__).parents[1]
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "canonical"
@@ -144,3 +144,47 @@ def test_ablation_summary_records_profile_changes() -> None:
         "concept_density",
         "prerequisite_demand",
     ]
+
+
+def test_difficulty_evaluation_item_rejects_inconsistent_components() -> None:
+    components = {
+        "lexical_difficulty": 0.2,
+        "syntactic_complexity": 0.3,
+        "concept_density": None,
+        "prerequisite_demand": None,
+    }
+    with pytest.raises(ValueError, match="match non-null component keys"):
+        DifficultyEvaluationItem(
+            book_id="book-a",
+            human_rank=1,
+            system_difficulty=0.25,
+            components=components,
+            active_weights={"lexical_difficulty": 1.0},
+        )
+
+    components["lexical_difficulty"] = 1.1
+    with pytest.raises(ValueError, match=r"component values must be in \[0, 1\]"):
+        DifficultyEvaluationItem(
+            book_id="book-a",
+            human_rank=1,
+            system_difficulty=0.25,
+            components=components,
+            active_weights={
+                "lexical_difficulty": 0.5,
+                "syntactic_complexity": 0.5,
+            },
+        )
+
+
+def test_ablation_comparison_rejects_non_adjacent_modes() -> None:
+    with pytest.raises(ValueError, match="adjacent evidence modes"):
+        AblationComparison(
+            from_mode="toc_only",
+            to_mode="all_available",
+            added_concepts=[],
+            removed_concepts=[],
+            changed_concept_weights=[],
+            added_prerequisites=[],
+            removed_prerequisites=[],
+            newly_available_difficulty_components=[],
+        )
