@@ -122,6 +122,16 @@ def test_duplicate_questions_and_topic_mismatch_fail_during_loading(tmp_path: Pa
         load_assessment(mismatch_path)
 
 
+def test_assessment_rejects_coerced_boolean_values(tmp_path: Path) -> None:
+    payload = json.loads(ASSESSMENT_PATH.read_text(encoding="utf-8"))
+    payload["responses"][0]["correct"] = "yes"
+    path = tmp_path / "coerced.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(AssessmentError, match="valid boolean"):
+        load_assessment(path)
+
+
 def test_empty_assessment_fails_clearly(tmp_path: Path) -> None:
     payload = {
         "assessment_id": "empty",

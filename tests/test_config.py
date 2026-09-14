@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -29,6 +30,28 @@ def test_invalid_weight_configuration_fails_visibly(tmp_path: Path) -> None:
 
     with pytest.raises(ConfigError, match="lexical_weights must sum to 1.0"):
         load_feature_config(path)
+
+
+@pytest.mark.parametrize(
+    ("filename", "loader"),
+    [
+        ("features.yaml", load_feature_config),
+        ("reader.yaml", load_reader_config),
+        ("ranking.yaml", load_ranking_config),
+    ],
+)
+def test_duplicate_yaml_keys_fail_before_model_validation(
+    tmp_path: Path,
+    filename: str,
+    loader: Callable[[Path], object],
+) -> None:
+    source = (ROOT / "configs" / filename).read_text(encoding="utf-8")
+    first_line = source.splitlines()[0]
+    path = tmp_path / filename
+    path.write_text(f"{first_line}\n{source}", encoding="utf-8")
+
+    with pytest.raises(ConfigError, match="duplicate mapping key 'config_version'"):
+        loader(path)
 
 
 def test_reader_config_is_versioned_and_strict() -> None:

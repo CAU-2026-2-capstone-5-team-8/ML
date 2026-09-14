@@ -108,3 +108,27 @@ def test_conflicting_canonical_book_identity_fails_visibly(tmp_path: Path) -> No
 
     with pytest.raises(CanonicalDataError, match="book_id must use the record's ISBN-13"):
         load_canonical_dataset(directory)
+
+
+@pytest.mark.parametrize(
+    ("book_id", "message"),
+    [
+        ("isbn13:9780130319999", "ISBN-13 book_id requires isbn_13"),
+        ("isbn10:0131103628", "ISBN-10 book_id requires isbn_10"),
+    ],
+)
+def test_isbn_book_id_requires_its_canonical_field(
+    tmp_path: Path,
+    book_id: str,
+    message: str,
+) -> None:
+    directory = _dataset_copy(tmp_path)
+    path = directory / "books.jsonl"
+    lines = path.read_text(encoding="utf-8").splitlines()
+    record = json.loads(lines[0])
+    record["book_id"] = book_id
+    lines[0] = json.dumps(record)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    with pytest.raises(CanonicalDataError, match=message):
+        load_canonical_dataset(directory)

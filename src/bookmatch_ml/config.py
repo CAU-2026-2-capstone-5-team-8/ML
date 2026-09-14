@@ -14,10 +14,46 @@ from pydantic import (
     field_validator,
     model_validator,
 )
+from yaml.constructor import ConstructorError
+from yaml.nodes import MappingNode
 
 
 class ConfigError(ValueError):
     """Feature configuration is missing or invalid."""
+
+
+class _UniqueKeySafeLoader(yaml.SafeLoader):
+    """Load safe YAML while rejecting duplicate mapping keys."""
+
+    def construct_mapping(self, node: MappingNode, deep: bool = False) -> dict[object, object]:
+        self.flatten_mapping(node)
+        mapping: dict[object, object] = {}
+        for key_node, value_node in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            try:
+                duplicate = key in mapping
+            except TypeError as exc:
+                raise ConstructorError(
+                    "while constructing a mapping",
+                    node.start_mark,
+                    "found unhashable key",
+                    key_node.start_mark,
+                ) from exc
+            if duplicate:
+                raise ConstructorError(
+                    "while constructing a mapping",
+                    node.start_mark,
+                    f"found duplicate mapping key {key!r}",
+                    key_node.start_mark,
+                )
+            mapping[key] = self.construct_object(value_node, deep=deep)
+        return mapping
+
+
+def _load_unique_key_yaml(content: bytes) -> object:
+    """Parse trusted configuration syntax without permitting silent key overwrites."""
+
+    return yaml.load(content, Loader=_UniqueKeySafeLoader)
 
 
 class ConfigModel(BaseModel):
@@ -255,7 +291,7 @@ def load_feature_config(path: Path) -> LoadedFeatureConfig:
     except OSError as exc:
         raise ConfigError(f"cannot read feature config: {path}: {exc}") from exc
     try:
-        payload = yaml.safe_load(content)
+        payload = _load_unique_key_yaml(content)
         config = FeatureConfig.model_validate(payload)
     except (yaml.YAMLError, ValidationError, ValueError) as exc:
         raise ConfigError(f"invalid feature config: {path}: {exc}") from exc
@@ -273,7 +309,7 @@ def load_reader_config(path: Path) -> LoadedReaderConfig:
     except OSError as exc:
         raise ConfigError(f"cannot read reader config: {path}: {exc}") from exc
     try:
-        payload = yaml.safe_load(content)
+        payload = _load_unique_key_yaml(content)
         config = ReaderConfig.model_validate(payload)
     except (yaml.YAMLError, ValidationError, ValueError) as exc:
         raise ConfigError(f"invalid reader config: {path}: {exc}") from exc
@@ -291,7 +327,7 @@ def load_ranking_config(path: Path) -> LoadedRankingConfig:
     except OSError as exc:
         raise ConfigError(f"cannot read ranking config: {path}: {exc}") from exc
     try:
-        payload = yaml.safe_load(content)
+        payload = _load_unique_key_yaml(content)
         config = RankingConfig.model_validate(payload)
     except (yaml.YAMLError, ValidationError, ValueError) as exc:
         raise ConfigError(f"invalid ranking config: {path}: {exc}") from exc

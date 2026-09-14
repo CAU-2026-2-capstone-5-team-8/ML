@@ -52,7 +52,7 @@ KnowledgeComponentName = Literal[
 class StrictModel(BaseModel):
     """Reject accidental schema drift at the canonical boundary."""
 
-    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False, strict=True)
 
 
 class Book(StrictModel):
@@ -110,6 +110,10 @@ class Book(StrictModel):
 
     @model_validator(mode="after")
     def isbn_identity_must_be_consistent(self) -> "Book":
+        if self.book_id.startswith("isbn13:") and self.isbn_13 is None:
+            raise ValueError("ISBN-13 book_id requires isbn_13")
+        if self.book_id.startswith("isbn10:") and self.isbn_10 is None:
+            raise ValueError("ISBN-10 book_id requires isbn_10")
         if self.isbn_13 is not None and self.book_id != f"isbn13:{self.isbn_13}":
             raise ValueError("book_id must use the record's ISBN-13")
         if (
