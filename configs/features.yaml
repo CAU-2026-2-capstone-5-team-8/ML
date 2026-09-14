@@ -1,0 +1,116 @@
+config_version: features-v1
+concept_profile_version: concept-v1
+difficulty_profile_version: difficulty-v1
+book_profile_version: book-v1
+
+concept:
+  evidence_weights:
+    toc: 1.0
+    description: 0.55
+    publisher_summary: 0.55
+    preface: 0.7
+    introduction: 0.85
+    preview: 0.8
+    sample_chapter: 0.85
+    index: 0.3
+    other: 0.7
+  weight_saturation: 4.0
+  minimum_weight: 0.12
+  topics:
+    operating-systems:
+      process: [process, processes, process management]
+      thread: [thread, threads, multithreading]
+      scheduling: [scheduling, scheduler, cpu scheduling]
+      synchronization: [synchronization, mutual exclusion, semaphore, semaphores, mutex]
+      deadlock: [deadlock, deadlocks]
+      memory management: [memory management, memory allocation]
+      virtual memory: [virtual memory, paging, page replacement]
+      file system: [file system, file systems, filesystem]
+      storage: [mass storage, disk scheduling, storage management]
+      input/output: [input output, i/o system, i/o systems, device management]
+      protection: [protection, access control]
+      security: [security, authentication]
+      virtualization: [virtualization, virtual machine, virtual machines]
+      distributed systems: [distributed system, distributed systems]
+      concurrency: [concurrency, concurrent programming]
+    linear-algebra:
+      linear system: [linear system, linear systems, system of linear equations]
+      matrix: [matrix, matrices, matrix operations]
+      vector: [vector, vectors]
+      vector space: [vector space, vector spaces]
+      linear independence: [linear independence, linearly independent]
+      basis: [basis, bases]
+      dimension: [dimension, dimensions]
+      rank: [matrix rank, rank]
+      determinant: [determinant, determinants]
+      eigenvalue: [eigenvalue, eigenvalues]
+      eigenvector: [eigenvector, eigenvectors]
+      orthogonality: [orthogonality, orthogonal]
+      inner product: [inner product, inner products]
+      linear transformation: [linear transformation, linear transformations, linear mapping]
+      diagonalization: [diagonalization, diagonalizing]
+      least squares: [least squares, least square]
+      singular value decomposition: [singular value decomposition, svd]
+      gaussian elimination: [gaussian elimination, gauss jordan elimination, row reduction]
+
+prerequisite:
+  cue_phrases:
+    - prerequisite
+    - prerequisites
+    - required background
+    - assumed knowledge
+    - familiarity with
+    - familiar with
+    - knowledge of
+    - should already
+    - expected to know
+  early_prose_characters: 5000
+  explicit_weight: 1.0
+  early_proxy_weight: 0.3
+  weight_saturation: 2.0
+  minimum_weight: 0.1
+  topics:
+    operating-systems:
+      computer architecture: [computer architecture, processor architecture, memory hierarchy]
+      programming: [computer program, systems programming, programming experience]
+      c programming: [c programming, programming in c, c language]
+      data structures: [data structure, data structures]
+      algorithms: [algorithm, algorithms]
+      assembly language: [assembly language, machine language]
+    linear-algebra:
+      high school algebra: [high school algebra, secondary school algebra]
+      systems of equations: [systems of equations, simultaneous equations]
+      functions: [mathematical functions, functions of one variable]
+      mathematical proofs: [mathematical proof, mathematical proofs, proof techniques]
+      analytic geometry: [analytic geometry, coordinate geometry]
+
+difficulty:
+  minimum_document_tokens: 50
+  long_word_characters: 9
+  long_sentence_tokens: 25
+  normalization:
+    mean_token_length: {minimum: 4.0, maximum: 8.0}
+    long_word_ratio: {minimum: 0.0, maximum: 0.4}
+    domain_term_ratio: {minimum: 0.0, maximum: 0.12}
+    mean_sentence_tokens: {minimum: 8.0, maximum: 35.0}
+    long_sentence_ratio: {minimum: 0.0, maximum: 0.6}
+    clause_markers_per_sentence: {minimum: 0.0, maximum: 4.0}
+    concept_mentions_per_1000_tokens: {minimum: 0.0, maximum: 100.0}
+    unique_concepts_per_1000_tokens: {minimum: 0.0, maximum: 20.0}
+    prerequisite_mentions_per_1000_tokens: {minimum: 0.0, maximum: 40.0}
+    prerequisite_cue_sentence_ratio: {minimum: 0.0, maximum: 0.2}
+  lexical_weights:
+    mean_token_length: 0.4
+    long_word_ratio: 0.35
+    domain_term_ratio: 0.25
+  syntactic_weights:
+    mean_sentence_tokens: 0.5
+    long_sentence_ratio: 0.3
+    clause_markers_per_sentence: 0.2
+  concept_density_weights:
+    concept_mentions_per_1000_tokens: 0.7
+    unique_concepts_per_1000_tokens: 0.3
+  prerequisite_demand_weights:
+    prerequisite_mentions_per_1000_tokens: 0.7
+    prerequisite_cue_sentence_ratio: 0.3
+  aggregation_rule: token_weighted_mean_v1

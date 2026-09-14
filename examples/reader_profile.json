@@ -1,0 +1,92 @@
+{
+  "assessment_id": "example-os-assessment-001",
+  "background_knowledge": 0.5454545454545454,
+  "comprehension": 0.8888888888888888,
+  "concept_readiness": [
+    {
+      "available_weight": 1.25,
+      "concept_id": "computer architecture",
+      "earned_weight": 0.0,
+      "response_count": 1,
+      "score": 0.0
+    },
+    {
+      "available_weight": 1.25,
+      "concept_id": "concurrency",
+      "earned_weight": 1.0,
+      "response_count": 1,
+      "score": 0.8
+    },
+    {
+      "available_weight": 1.5,
+      "concept_id": "data structures",
+      "earned_weight": 1.5,
+      "response_count": 1,
+      "score": 1.0
+    },
+    {
+      "available_weight": 1.5,
+      "concept_id": "memory management",
+      "earned_weight": 0.75,
+      "response_count": 1,
+      "score": 0.5
+    },
+    {
+      "available_weight": 1.0,
+      "concept_id": "process",
+      "earned_weight": 1.0,
+      "response_count": 1,
+      "score": 1.0
+    },
+    {
+      "available_weight": 1.0,
+      "concept_id": "scheduling",
+      "earned_weight": 1.0,
+      "response_count": 1,
+      "score": 1.0
+    },
+    {
+      "available_weight": 1.25,
+      "concept_id": "synchronization",
+      "earned_weight": 1.0,
+      "response_count": 1,
+      "score": 0.8
+    },
+    {
+      "available_weight": 1.5,
+      "concept_id": "virtual memory",
+      "earned_weight": 0.75,
+      "response_count": 1,
+      "score": 0.5
+    }
+  ],
+  "config_hash": "sha256:9bc1cfbc18eddb39582d7697626269cd11203bec74e2be676a5495b8f91fb73b",
+  "config_version": "reader-config-v1",
+  "dimension_details": [
+    {
+      "available_weight": 2.5,
+      "earned_weight": 1.75,
+      "question_type": "vocabulary",
+      "response_count": 2,
+      "score": 0.7
+    },
+    {
+      "available_weight": 2.75,
+      "earned_weight": 1.5,
+      "question_type": "background_knowledge",
+      "response_count": 2,
+      "score": 0.5454545454545454
+    },
+    {
+      "available_weight": 2.25,
+      "earned_weight": 2.0,
+      "question_type": "comprehension",
+      "response_count": 2,
+      "score": 0.8888888888888888
+    }
+  ],
+  "profile_version": "reader-v1",
+  "response_count": 6,
+  "topic_id": "operating-systems",
+  "vocabulary": 0.7
+}

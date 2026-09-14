@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Canonical and generated datasets stay local. Keep only minimized test fixtures.
+data/input/
+data/output/
+data/reports/
