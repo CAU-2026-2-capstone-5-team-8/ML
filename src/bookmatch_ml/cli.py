@@ -9,6 +9,7 @@ import typer
 from bookmatch_ml.book.profile import build_book_profiles
 from bookmatch_ml.config import (
     ConfigError,
+    load_evaluation_config,
     load_feature_config,
     load_ranking_config,
     load_reader_config,
@@ -16,6 +17,8 @@ from bookmatch_ml.config import (
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import CanonicalDataError, load_canonical_dataset
 from bookmatch_ml.evaluation.ablation import build_evidence_ablation_report
+from bookmatch_ml.evaluation.difficulty import EvaluationDataError, load_difficulty_judgments
+from bookmatch_ml.evaluation.report import build_evaluation_report
 from bookmatch_ml.io import write_json, write_jsonl
 from bookmatch_ml.ranking.loader import (
     RankingInputError,
@@ -30,6 +33,7 @@ app = typer.Typer(no_args_is_help=True, pretty_exceptions_show_locals=False)
 DEFAULT_FEATURE_CONFIG = Path("configs/features.yaml")
 DEFAULT_READER_CONFIG = Path("configs/reader.yaml")
 DEFAULT_RANKING_CONFIG = Path("configs/ranking.yaml")
+DEFAULT_EVALUATION_CONFIG = Path("configs/evaluation.yaml")
 
 
 @app.callback()
@@ -394,6 +398,151 @@ def rank(
                 sort_keys=True,
             )
         )
+
+
+@app.command("evaluate")
+def evaluate(
+    data_dir: Annotated[
+        Path,
+        typer.Option(
+            "--data-dir",
+            exists=False,
+            file_okay=False,
+            resolve_path=True,
+            help="Canonical data directory used for the evidence ablation.",
+        ),
+    ],
+    books: Annotated[
+        Path,
+        typer.Option(
+            "--books",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+            help="BookProfile JSONL path.",
+        ),
+    ],
+    reader: Annotated[
+        Path,
+        typer.Option(
+            "--reader",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+            help="ReaderProfile JSON path.",
+        ),
+    ],
+    difficulty_labels: Annotated[
+        Path,
+        typer.Option(
+            "--difficulty-labels",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+            help="Human relative-difficulty judgment JSON path.",
+        ),
+    ],
+    ablation_book_id: Annotated[
+        str,
+        typer.Option("--ablation-book-id", help="Rich-evidence canonical book identifier."),
+    ],
+    output: Annotated[
+        Path,
+        typer.Option(
+            "--output",
+            file_okay=True,
+            dir_okay=False,
+            resolve_path=True,
+            help="Destination evaluation report JSON path.",
+        ),
+    ],
+    config: Annotated[
+        Path,
+        typer.Option(
+            "--config",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+            help="Versioned evaluation configuration YAML.",
+        ),
+    ] = DEFAULT_EVALUATION_CONFIG,
+    feature_config: Annotated[
+        Path,
+        typer.Option(
+            "--feature-config",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+            help="Versioned feature configuration YAML.",
+        ),
+    ] = DEFAULT_FEATURE_CONFIG,
+    ranking_config: Annotated[
+        Path,
+        typer.Option(
+            "--ranking-config",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+            help="Versioned ranking configuration YAML.",
+        ),
+    ] = DEFAULT_RANKING_CONFIG,
+) -> None:
+    """Run difficulty, recommendation, and evidence-ablation baselines."""
+
+    try:
+        dataset = load_canonical_dataset(data_dir)
+        evidence = assemble_book_evidence(dataset)
+        selected = next((item for item in evidence if item.book_id == ablation_book_id), None)
+        if selected is None:
+            raise EvaluationDataError(f"book not found for ablation: {ablation_book_id}")
+        report = build_evaluation_report(
+            judgments=load_difficulty_judgments(difficulty_labels),
+            reader=load_reader_profile(reader),
+            books=load_book_profiles(books),
+            ablation_evidence=selected,
+            feature_config=load_feature_config(feature_config),
+            ranking_config=load_ranking_config(ranking_config),
+            evaluation_config=load_evaluation_config(config),
+        )
+        write_json(report, output)
+    except (
+        CanonicalDataError,
+        ConfigError,
+        EvaluationDataError,
+        RankingError,
+        RankingInputError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(
+        json.dumps(
+            {
+                "comparable_difficulty_books": report.difficulty.comparable_book_count,
+                "config_hash": report.config_hash,
+                "evaluation_version": report.evaluation_version,
+                "failure_case_count": len(report.failure_cases),
+                "output": str(output),
+                "recommendation_candidates": report.recommendation.candidate_count,
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+    )
 
 
 if __name__ == "__main__":

@@ -47,6 +47,12 @@ KnowledgeComponentName = Literal[
     "prerequisite_demand_fit",
     "prerequisite_concept_fit",
 ]
+DifficultyComponentName = Literal[
+    "lexical_difficulty",
+    "syntactic_complexity",
+    "concept_density",
+    "prerequisite_demand",
+]
 
 
 class StrictModel(BaseModel):
@@ -577,3 +583,120 @@ class RankingResponse(StrictModel):
     reader_profile_version: str
     reader_config_version: str
     reader_config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+
+class DifficultyJudgment(StrictModel):
+    book_id: str = Field(min_length=1)
+    human_rank: int = Field(ge=1)
+
+
+class DifficultyJudgments(StrictModel):
+    label_version: str = Field(min_length=1)
+    is_synthetic: bool
+    topic_id: str = Field(min_length=1)
+    items: list[DifficultyJudgment] = Field(min_length=2)
+
+    @model_validator(mode="after")
+    def items_must_define_one_complete_order(self) -> "DifficultyJudgments":
+        book_ids = [item.book_id for item in self.items]
+        if len(book_ids) != len(set(book_ids)):
+            raise ValueError("difficulty judgments contain duplicate book_id values")
+        ranks = [item.human_rank for item in self.items]
+        if len(ranks) != len(set(ranks)):
+            raise ValueError("difficulty judgments contain duplicate human_rank values")
+        if sorted(ranks) != list(range(1, len(ranks) + 1)):
+            raise ValueError("human_rank values must form a contiguous order starting at 1")
+        return self
+
+
+class LoadedDifficultyJudgments(StrictModel):
+    judgments: DifficultyJudgments
+    content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+
+class DifficultyEvaluationItem(StrictModel):
+    book_id: str
+    human_rank: int = Field(ge=1)
+    system_difficulty: float = Field(ge=0, le=1)
+    components: dict[DifficultyComponentName, float | None]
+    active_weights: dict[DifficultyComponentName, float]
+
+    @field_validator("active_weights")
+    @classmethod
+    def active_weights_must_sum_to_one(
+        cls, value: dict[DifficultyComponentName, float]
+    ) -> dict[DifficultyComponentName, float]:
+        if not value or any(weight < 0 or weight > 1 for weight in value.values()):
+            raise ValueError("difficulty active weights must be non-empty and in [0, 1]")
+        if abs(sum(value.values()) - 1.0) > 1e-9:
+            raise ValueError("difficulty active weights must sum to 1.0")
+        return value
+
+
+class DifficultyEvaluationReport(StrictModel):
+    topic_id: str
+    label_version: str
+    label_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    is_synthetic: bool
+    comparable_book_count: int = Field(ge=2)
+    excluded_book_ids: list[str]
+    spearman_correlation: float | None = Field(default=None, ge=-1, le=1)
+    pairwise_agreement: float = Field(ge=0, le=1)
+    pair_count: int = Field(ge=1)
+    agreed_pair_count: int = Field(ge=0)
+    system_tie_pair_count: int = Field(ge=0)
+    items: list[DifficultyEvaluationItem]
+    warnings: list[str]
+
+
+class RecommendationComparisonItem(StrictModel):
+    book_id: str
+    topic_only_rank: int = Field(ge=1)
+    topic_only_score: float = Field(ge=0, le=1)
+    readiness_rank: int = Field(ge=1)
+    readiness_score: float = Field(ge=0, le=1)
+    readiness_rank_change: int
+    component_weight_coverage: float = Field(ge=0, le=1)
+    unavailable_components: list[RankingComponentName]
+
+
+class RecommendationComparisonReport(StrictModel):
+    topic_id: str
+    candidate_count: int = Field(ge=1)
+    comparison_k: int = Field(ge=1)
+    top_k_overlap_count: int = Field(ge=0)
+    top_k_overlap_rate: float = Field(ge=0, le=1)
+    changed_position_count: int = Field(ge=0)
+    topic_only_version: str
+    readiness_model_version: str
+    ranking_config_version: str
+    ranking_config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    items: list[RecommendationComparisonItem]
+
+
+class AblationComparison(StrictModel):
+    from_mode: Literal["toc_only", "toc_description"]
+    to_mode: Literal["toc_description", "all_available"]
+    added_concepts: list[str]
+    removed_concepts: list[str]
+    changed_concept_weights: list[str]
+    added_prerequisites: list[str]
+    removed_prerequisites: list[str]
+    newly_available_difficulty_components: list[DifficultyComponentName]
+
+
+class EvaluationFailureCase(StrictModel):
+    category: Literal["difficulty_unavailable", "ranking_evidence_limited"]
+    book_id: str
+    detail: str
+
+
+class EvaluationReport(StrictModel):
+    evaluation_version: str
+    config_version: str
+    config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    difficulty: DifficultyEvaluationReport
+    recommendation: RecommendationComparisonReport
+    evidence_ablation: EvidenceAblationReport
+    ablation_comparisons: list[AblationComparison]
+    failure_cases: list[EvaluationFailureCase]

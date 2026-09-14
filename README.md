@@ -3,8 +3,8 @@
 Evidence-first ML and recommendation logic for the CAU Capstone Team 8 personalized
 technical-book recommendation project.
 
-The current implementation covers the canonical-handoff, book-profile, reader-profile, and
-matching/ranking baseline milestones:
+The current implementation covers the canonical-handoff, book-profile, reader-profile,
+matching/ranking, and evaluation baseline milestones:
 
 ```text
 books.jsonl + documents.jsonl + toc.jsonl + sources.jsonl
@@ -20,6 +20,8 @@ books.jsonl + documents.jsonl + toc.jsonl + sources.jsonl
               topic-specific reader profile
                             ↓
              explainable matching + ranking
+                            ↓
+      difficulty + recommendation + ablation evaluation
 ```
 
 It deliberately contains no scraping, source-provider adapters, database integration, remote
@@ -252,6 +254,44 @@ after renormalization. This is not hidden or treated as high-confidence readines
 dimensions are explicit. Evaluation should compare and calibrate this baseline before changing
 the missing-evidence policy.
 
+## Evaluate the baseline
+
+After generating the current ten-book profile artifact, run the combined evaluation report:
+
+```bash
+uv run bookmatch-ml evaluate \
+  --data-dir ../Data-Pipeline/data/processed \
+  --books data/output/book_profiles.jsonl \
+  --reader examples/reader_profile.json \
+  --difficulty-labels examples/difficulty_judgments.json \
+  --ablation-book-id isbn13:9781985086593 \
+  --output data/reports/evaluation.json
+```
+
+The command is configured by `configs/evaluation.yaml` and produces three linked evaluations:
+
+- human relative-difficulty order versus the weighted system difficulty, using Spearman rank
+  correlation and strict pairwise agreement;
+- deterministic topic-only ordering versus the full readiness-aware ranking, including Top-K
+  overlap and per-book rank movement;
+- TOC-only, TOC+description, and all-evidence ablation, including concepts, prerequisite
+  concepts, weights, and newly available prose-difficulty components.
+
+Difficulty labels use `human_rank: 1` for the easiest book and require one complete order with
+no duplicate books or ranks. Labeled books without a prose-based difficulty score are excluded,
+never scored as zero, and recorded as failure cases. Pairwise system-score ties are recorded and
+count as non-agreements. Spearman is `null` when an ordering is constant.
+
+The topic-only baseline sorts by topic fit and then stable `book_id`; it does not use reader or
+prose features. A positive `readiness_rank_change` means the book moved upward under the
+readiness-aware model. The report also identifies rankings calculated with incomplete component
+weight coverage.
+
+`examples/difficulty_judgments.json` is deliberately marked synthetic. The current public
+evidence leaves only a very small comparable subset, so its metrics demonstrate the evaluation
+contract and must not be presented as model quality or diagnostic validity. Replace it with a
+versioned human-labeled file before drawing conclusions.
+
 ## Development checks
 
 ```bash
@@ -267,8 +307,8 @@ database, external LLM, Spring service, or live Data-Pipeline collection.
 
 ```text
 src/bookmatch_ml/
-├── schemas.py          # canonical, evidence, and profile Pydantic models
-├── config.py           # strict versioned feature configuration
+├── schemas.py          # canonical, profile, ranking, and evaluation models
+├── config.py           # strict versioned feature/reader/ranking/evaluation config
 ├── io.py               # deterministic atomic artifact writers
 ├── cli.py              # batch command entry points
 ├── book/
@@ -282,7 +322,10 @@ src/bookmatch_ml/
 │   ├── matching.py     # decomposed scoring and weight renormalization
 │   └── explanation.py  # deterministic Korean reason templates
 ├── evaluation/
-│   └── ablation.py     # evidence-richness comparison
+│   ├── ablation.py     # evidence-richness comparison and change summary
+│   ├── difficulty.py   # Spearman and pairwise human-order evaluation
+│   ├── recommendation.py # topic-only versus readiness-aware comparison
+│   └── report.py       # combined versioned evaluation report
 └── data/
     ├── loader.py       # JSONL parsing and cross-record validation
     └── evidence.py     # deterministic BookEvidence and coverage assembly

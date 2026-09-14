@@ -1,11 +1,13 @@
 """Evidence-richness ablation for one book profile."""
 
+from itertools import pairwise
 from typing import Literal
 
 from bookmatch_ml.book.profile import build_book_profile
 from bookmatch_ml.config import LoadedFeatureConfig
 from bookmatch_ml.data.evidence import calculate_evidence_coverage
 from bookmatch_ml.schemas import (
+    AblationComparison,
     AblationConcept,
     AblationPrerequisite,
     AblationVariant,
@@ -79,3 +81,43 @@ def build_evidence_ablation_report(
         config_version=config.config_version,
         config_hash=loaded_config.content_hash,
     )
+
+
+def summarize_evidence_ablation(
+    report: EvidenceAblationReport,
+) -> list[AblationComparison]:
+    """Describe deterministic changes between adjacent evidence-richness variants."""
+
+    comparisons: list[AblationComparison] = []
+    for before, after in pairwise(report.variants):
+        before_concepts = {item.concept: item.weight for item in before.covered_concepts}
+        after_concepts = {item.concept: item.weight for item in after.covered_concepts}
+        before_prerequisites = {item.concept for item in before.prerequisite_concepts}
+        after_prerequisites = {item.concept for item in after.prerequisite_concepts}
+        difficulty_names = (
+            "lexical_difficulty",
+            "syntactic_complexity",
+            "concept_density",
+            "prerequisite_demand",
+        )
+        comparisons.append(
+            AblationComparison(
+                from_mode=before.evidence_mode,
+                to_mode=after.evidence_mode,
+                added_concepts=sorted(set(after_concepts) - set(before_concepts)),
+                removed_concepts=sorted(set(before_concepts) - set(after_concepts)),
+                changed_concept_weights=sorted(
+                    concept
+                    for concept in set(before_concepts) & set(after_concepts)
+                    if abs(before_concepts[concept] - after_concepts[concept]) > 1e-12
+                ),
+                added_prerequisites=sorted(after_prerequisites - before_prerequisites),
+                removed_prerequisites=sorted(before_prerequisites - after_prerequisites),
+                newly_available_difficulty_components=[
+                    name
+                    for name in difficulty_names
+                    if getattr(before, name) is None and getattr(after, name) is not None
+                ],
+            )
+        )
+    return comparisons

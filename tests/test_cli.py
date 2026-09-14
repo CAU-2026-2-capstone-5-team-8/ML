@@ -9,6 +9,7 @@ from bookmatch_ml.config import load_feature_config
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import load_canonical_dataset
 from bookmatch_ml.io import write_jsonl
+from bookmatch_ml.schemas import BookProfile
 
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "canonical"
 CONFIG = Path(__file__).parents[1] / "configs" / "features.yaml"
@@ -16,12 +17,32 @@ READER_CONFIG = Path(__file__).parents[1] / "configs" / "reader.yaml"
 ASSESSMENT = Path(__file__).parents[1] / "examples" / "assessment.json"
 READER_PROFILE = Path(__file__).parents[1] / "examples" / "reader_profile.json"
 RANKING_CONFIG = Path(__file__).parents[1] / "configs" / "ranking.yaml"
+EVALUATION_CONFIG = Path(__file__).parents[1] / "configs" / "evaluation.yaml"
 
 
 def _write_book_profiles(path: Path) -> None:
     evidence = assemble_book_evidence(load_canonical_dataset(FIXTURE_DIR))
     profiles = build_book_profiles(evidence, load_feature_config(CONFIG))
     write_jsonl(profiles, path)
+
+
+def _write_evaluation_profiles(path: Path) -> list[BookProfile]:
+    evidence = assemble_book_evidence(load_canonical_dataset(FIXTURE_DIR))
+    profiles = build_book_profiles(evidence, load_feature_config(CONFIG))
+    first, second = profiles
+    second_concept = second.concept_profile.model_copy(
+        update={"topic_distribution": {"operating-systems": 1.0}}
+    )
+    second_difficulty = first.difficulty_profile.model_copy(update={"book_id": second.book_id})
+    second = second.model_copy(
+        update={
+            "concept_profile": second_concept,
+            "difficulty_profile": second_difficulty,
+        }
+    )
+    evaluation_profiles = [first, second]
+    write_jsonl(evaluation_profiles, path)
+    return evaluation_profiles
 
 
 def test_inspect_data_prints_machine_readable_coverage_report() -> None:
@@ -203,3 +224,56 @@ def test_rank_command_writes_deterministic_output(tmp_path: Path) -> None:
     assert first_result.exit_code == 0, first_result.output
     assert second_result.exit_code == 0, second_result.output
     assert first.read_bytes() == second.read_bytes()
+
+
+def test_evaluate_command_writes_deterministic_combined_report(tmp_path: Path) -> None:
+    books = tmp_path / "books.jsonl"
+    labels = tmp_path / "labels.json"
+    first = tmp_path / "first-evaluation.json"
+    second = tmp_path / "second-evaluation.json"
+    profiles = _write_evaluation_profiles(books)
+    labels.write_text(
+        json.dumps(
+            {
+                "label_version": "synthetic-test-v1",
+                "is_synthetic": True,
+                "topic_id": "operating-systems",
+                "items": [
+                    {"book_id": profiles[0].book_id, "human_rank": 1},
+                    {"book_id": profiles[1].book_id, "human_rank": 2},
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    arguments = [
+        "evaluate",
+        "--data-dir",
+        str(FIXTURE_DIR),
+        "--books",
+        str(books),
+        "--reader",
+        str(READER_PROFILE),
+        "--difficulty-labels",
+        str(labels),
+        "--ablation-book-id",
+        profiles[0].book_id,
+        "--config",
+        str(EVALUATION_CONFIG),
+        "--feature-config",
+        str(CONFIG),
+        "--ranking-config",
+        str(RANKING_CONFIG),
+    ]
+
+    first_result = CliRunner().invoke(app, [*arguments, "--output", str(first)])
+    second_result = CliRunner().invoke(app, [*arguments, "--output", str(second)])
+
+    assert first_result.exit_code == 0, first_result.output
+    assert second_result.exit_code == 0, second_result.output
+    assert first.read_bytes() == second.read_bytes()
+    report = json.loads(first.read_text(encoding="utf-8"))
+    assert report["evaluation_version"] == "evaluation-v1"
+    assert report["difficulty"]["comparable_book_count"] == 2
+    assert report["recommendation"]["candidate_count"] == 2
+    assert len(report["ablation_comparisons"]) == 2

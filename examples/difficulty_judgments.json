@@ -1,0 +1,27 @@
+{
+  "label_version": "synthetic-os-difficulty-v1",
+  "is_synthetic": true,
+  "topic_id": "operating-systems",
+  "items": [
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "human_rank": 1
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "human_rank": 2
+    },
+    {
+      "book_id": "isbn13:9780471694663",
+      "human_rank": 3
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "human_rank": 4
+    },
+    {
+      "book_id": "isbn13:9780070575721",
+      "human_rank": 5
+    }
+  ]
+}
