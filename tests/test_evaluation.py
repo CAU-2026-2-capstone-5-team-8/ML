@@ -20,7 +20,12 @@ from bookmatch_ml.evaluation.difficulty import (
 )
 from bookmatch_ml.evaluation.recommendation import compare_recommendation_baselines
 from bookmatch_ml.ranking.loader import load_reader_profile
-from bookmatch_ml.schemas import AblationComparison, BookProfile, DifficultyEvaluationItem
+from bookmatch_ml.schemas import (
+    AblationComparison,
+    BookProfile,
+    DifficultyEvaluationItem,
+    DifficultyEvaluationReport,
+)
 
 ROOT = Path(__file__).parents[1]
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "canonical"
@@ -173,6 +178,84 @@ def test_difficulty_evaluation_item_rejects_inconsistent_components() -> None:
                 "lexical_difficulty": 0.5,
                 "syntactic_complexity": 0.5,
             },
+        )
+
+    components["lexical_difficulty"] = 0.2
+    with pytest.raises(ValueError, match="match weighted difficulty components"):
+        DifficultyEvaluationItem(
+            book_id="book-a",
+            human_rank=1,
+            system_difficulty=0.9,
+            components=components,
+            active_weights={
+                "lexical_difficulty": 0.5,
+                "syntactic_complexity": 0.5,
+            },
+        )
+
+
+def _difficulty_evaluation_item(
+    book_id: str,
+    human_rank: int,
+    score: float,
+) -> DifficultyEvaluationItem:
+    return DifficultyEvaluationItem(
+        book_id=book_id,
+        human_rank=human_rank,
+        system_difficulty=score,
+        components={
+            "lexical_difficulty": score,
+            "syntactic_complexity": score,
+            "concept_density": score,
+            "prerequisite_demand": score,
+        },
+        active_weights={
+            "lexical_difficulty": 0.25,
+            "syntactic_complexity": 0.25,
+            "concept_density": 0.25,
+            "prerequisite_demand": 0.25,
+        },
+    )
+
+
+def test_difficulty_report_derives_pair_summaries_from_items() -> None:
+    items = [
+        _difficulty_evaluation_item("book-a", 1, 0.5),
+        _difficulty_evaluation_item("book-b", 2, 0.5),
+    ]
+    with pytest.raises(ValueError, match="agreed_pair_count must match difficulty items"):
+        DifficultyEvaluationReport(
+            topic_id="operating-systems",
+            label_version="test-v1",
+            label_hash="sha256:" + "0" * 64,
+            is_synthetic=True,
+            comparable_book_count=2,
+            excluded_book_ids=[],
+            spearman_correlation=None,
+            pairwise_agreement=1.0,
+            pair_count=1,
+            agreed_pair_count=1,
+            system_tie_pair_count=0,
+            items=items,
+            warnings=[],
+        )
+
+    items[1] = _difficulty_evaluation_item("book-b", 1, 0.6)
+    with pytest.raises(ValueError, match="duplicate human_rank"):
+        DifficultyEvaluationReport(
+            topic_id="operating-systems",
+            label_version="test-v1",
+            label_hash="sha256:" + "0" * 64,
+            is_synthetic=True,
+            comparable_book_count=2,
+            excluded_book_ids=[],
+            spearman_correlation=None,
+            pairwise_agreement=1.0,
+            pair_count=1,
+            agreed_pair_count=1,
+            system_tie_pair_count=0,
+            items=items,
+            warnings=[],
         )
 
 

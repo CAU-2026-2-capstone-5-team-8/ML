@@ -656,6 +656,13 @@ class DifficultyEvaluationItem(StrictModel):
         available = {name for name, component in self.components.items() if component is not None}
         if set(self.active_weights) != available:
             raise ValueError("difficulty active weights must match non-null component keys")
+        expected_score = sum(
+            self.components[name] * weight
+            for name, weight in self.active_weights.items()
+            if self.components[name] is not None
+        )
+        if abs(self.system_difficulty - expected_score) > 1e-9:
+            raise ValueError("system_difficulty must match weighted difficulty components")
         return self
 
 
@@ -681,15 +688,34 @@ class DifficultyEvaluationReport(StrictModel):
         book_ids = [item.book_id for item in self.items]
         if len(book_ids) != len(set(book_ids)):
             raise ValueError("difficulty evaluation items contain duplicate book_id values")
+        human_ranks = [item.human_rank for item in self.items]
+        if len(human_ranks) != len(set(human_ranks)):
+            raise ValueError("difficulty evaluation items contain duplicate human_rank values")
         if set(book_ids) & set(self.excluded_book_ids):
             raise ValueError("comparable and excluded difficulty book IDs must be disjoint")
         expected_pairs = len(self.items) * (len(self.items) - 1) // 2
         if self.pair_count != expected_pairs:
             raise ValueError("pair_count must match the number of difficulty item pairs")
-        if self.agreed_pair_count + self.system_tie_pair_count > self.pair_count:
-            raise ValueError("agreed and tied pair counts must not exceed pair_count")
-        if abs(self.pairwise_agreement - self.agreed_pair_count / self.pair_count) > 1e-9:
-            raise ValueError("pairwise_agreement must match agreed_pair_count / pair_count")
+        expected_agreements = 0
+        expected_ties = 0
+        for left in range(len(self.items) - 1):
+            for right in range(left + 1, len(self.items)):
+                left_item = self.items[left]
+                right_item = self.items[right]
+                if left_item.system_difficulty == right_item.system_difficulty:
+                    expected_ties += 1
+                    continue
+                human_order = left_item.human_rank < right_item.human_rank
+                system_order = left_item.system_difficulty < right_item.system_difficulty
+                if human_order == system_order:
+                    expected_agreements += 1
+        if self.agreed_pair_count != expected_agreements:
+            raise ValueError("agreed_pair_count must match difficulty items")
+        if self.system_tie_pair_count != expected_ties:
+            raise ValueError("system_tie_pair_count must match difficulty items")
+        expected_agreement = expected_agreements / expected_pairs
+        if abs(self.pairwise_agreement - expected_agreement) > 1e-9:
+            raise ValueError("pairwise_agreement must match difficulty items")
         return self
 
 
