@@ -1,4 +1,4 @@
-"""Versioned feature configuration loading."""
+"""Versioned configuration models and strict YAML loading."""
 
 import hashlib
 from pathlib import Path
@@ -283,6 +283,51 @@ class LoadedRankingConfig(ConfigModel):
     content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
 
 
+class DifficultyEvaluationConfig(ConfigModel):
+    component_weights: dict[str, float]
+    minimum_comparable_books: int = Field(ge=2)
+    small_sample_warning_threshold: int = Field(ge=2)
+
+    @model_validator(mode="after")
+    def weights_must_be_complete_and_normalized(self) -> "DifficultyEvaluationConfig":
+        expected = {
+            "lexical_difficulty",
+            "syntactic_complexity",
+            "concept_density",
+            "prerequisite_demand",
+        }
+        if set(self.component_weights) != expected:
+            raise ValueError(
+                f"difficulty component_weights keys must be exactly: {sorted(expected)}"
+            )
+        if any(weight < 0 for weight in self.component_weights.values()):
+            raise ValueError("difficulty component_weights must contain non-negative weights")
+        if abs(sum(self.component_weights.values()) - 1.0) > 1e-9:
+            raise ValueError("difficulty component_weights must sum to 1.0")
+        if self.small_sample_warning_threshold < self.minimum_comparable_books:
+            raise ValueError(
+                "small_sample_warning_threshold must be at least minimum_comparable_books"
+            )
+        return self
+
+
+class RecommendationEvaluationConfig(ConfigModel):
+    top_k: int = Field(ge=1)
+    topic_only_version: str = Field(min_length=1)
+
+
+class EvaluationConfig(ConfigModel):
+    config_version: str = Field(min_length=1)
+    evaluation_version: str = Field(min_length=1)
+    difficulty: DifficultyEvaluationConfig
+    recommendation: RecommendationEvaluationConfig
+
+
+class LoadedEvaluationConfig(ConfigModel):
+    config: EvaluationConfig
+    content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+
 def load_feature_config(path: Path) -> LoadedFeatureConfig:
     """Load strict YAML and retain a hash so results identify exact configuration bytes."""
 
@@ -332,6 +377,24 @@ def load_ranking_config(path: Path) -> LoadedRankingConfig:
     except (yaml.YAMLError, ValidationError, ValueError) as exc:
         raise ConfigError(f"invalid ranking config: {path}: {exc}") from exc
     return LoadedRankingConfig(
+        config=config,
+        content_hash=f"sha256:{hashlib.sha256(content).hexdigest()}",
+    )
+
+
+def load_evaluation_config(path: Path) -> LoadedEvaluationConfig:
+    """Load strict evaluation YAML and retain its exact content hash."""
+
+    try:
+        content = path.read_bytes()
+    except OSError as exc:
+        raise ConfigError(f"cannot read evaluation config: {path}: {exc}") from exc
+    try:
+        payload = _load_unique_key_yaml(content)
+        config = EvaluationConfig.model_validate(payload)
+    except (yaml.YAMLError, ValidationError, ValueError) as exc:
+        raise ConfigError(f"invalid evaluation config: {path}: {exc}") from exc
+    return LoadedEvaluationConfig(
         config=config,
         content_hash=f"sha256:{hashlib.sha256(content).hexdigest()}",
     )

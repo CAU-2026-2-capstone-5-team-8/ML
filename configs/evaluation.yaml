@@ -1,0 +1,15 @@
+config_version: evaluation-config-v1
+evaluation_version: evaluation-v1
+
+difficulty:
+  component_weights:
+    lexical_difficulty: 0.25
+    syntactic_complexity: 0.25
+    concept_density: 0.25
+    prerequisite_demand: 0.25
+  minimum_comparable_books: 2
+  small_sample_warning_threshold: 5
+
+recommendation:
+  top_k: 3
+  topic_only_version: topic-only-v1

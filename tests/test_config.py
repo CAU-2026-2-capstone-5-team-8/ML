@@ -5,6 +5,7 @@ import pytest
 
 from bookmatch_ml.config import (
     ConfigError,
+    load_evaluation_config,
     load_feature_config,
     load_ranking_config,
     load_reader_config,
@@ -38,6 +39,7 @@ def test_invalid_weight_configuration_fails_visibly(tmp_path: Path) -> None:
         ("features.yaml", load_feature_config),
         ("reader.yaml", load_reader_config),
         ("ranking.yaml", load_ranking_config),
+        ("evaluation.yaml", load_evaluation_config),
     ],
 )
 def test_duplicate_yaml_keys_fail_before_model_validation(
@@ -70,6 +72,16 @@ def test_ranking_config_is_versioned_and_weights_are_normalized() -> None:
     assert loaded.config.model_version == "rank-v1"
     assert sum(loaded.config.component_weights.values()) == pytest.approx(1.0)
     assert sum(loaded.config.knowledge_weights.values()) == pytest.approx(1.0)
+    assert loaded.content_hash.startswith("sha256:")
+
+
+def test_evaluation_config_is_versioned_and_weights_are_normalized() -> None:
+    loaded = load_evaluation_config(ROOT / "configs" / "evaluation.yaml")
+
+    assert loaded.config.config_version == "evaluation-config-v1"
+    assert loaded.config.evaluation_version == "evaluation-v1"
+    assert sum(loaded.config.difficulty.component_weights.values()) == pytest.approx(1.0)
+    assert loaded.config.recommendation.topic_only_version == "topic-only-v1"
     assert loaded.content_hash.startswith("sha256:")
 
 
