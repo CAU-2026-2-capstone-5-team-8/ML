@@ -1,0 +1,60 @@
+{
+  "assessment_id": "example-os-assessment-001",
+  "topic_id": "operating-systems",
+  "responses": [
+    {
+      "question_id": "os-vocab-001",
+      "topic_id": "operating-systems",
+      "concept_id": "process",
+      "concept_tags": [],
+      "question_type": "vocabulary",
+      "difficulty": "easy",
+      "correct": true
+    },
+    {
+      "question_id": "os-vocab-002",
+      "topic_id": "operating-systems",
+      "concept_id": "virtual memory",
+      "concept_tags": ["memory management"],
+      "question_type": "vocabulary",
+      "difficulty": "hard",
+      "score": 0.5
+    },
+    {
+      "question_id": "os-background-001",
+      "topic_id": "operating-systems",
+      "concept_id": "computer architecture",
+      "concept_tags": [],
+      "question_type": "background_knowledge",
+      "difficulty": "medium",
+      "correct": false
+    },
+    {
+      "question_id": "os-background-002",
+      "topic_id": "operating-systems",
+      "concept_id": "data structures",
+      "concept_tags": [],
+      "question_type": "background_knowledge",
+      "difficulty": "hard",
+      "correct": true
+    },
+    {
+      "question_id": "os-comprehension-001",
+      "topic_id": "operating-systems",
+      "concept_id": "scheduling",
+      "concept_tags": [],
+      "question_type": "comprehension",
+      "difficulty": "easy",
+      "correct": true
+    },
+    {
+      "question_id": "os-comprehension-002",
+      "topic_id": "operating-systems",
+      "concept_id": "synchronization",
+      "concept_tags": ["concurrency"],
+      "question_type": "comprehension",
+      "difficulty": "medium",
+      "score": 0.8
+    }
+  ]
+}
