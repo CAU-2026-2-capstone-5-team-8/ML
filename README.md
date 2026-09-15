@@ -368,6 +368,10 @@ evidence leaves only a very small comparable subset, so its metrics demonstrate 
 contract and must not be presented as model quality or diagnostic validity. Replace it with a
 versioned human-labeled file before drawing conclusions.
 
+The first reproducible run against the current ten-book canonical output, including its evidence
+limitations and next decision gates, is recorded in
+[`docs/evaluation-baseline-v1.md`](docs/evaluation-baseline-v1.md).
+
 ## Development checks
 
 ```bash
