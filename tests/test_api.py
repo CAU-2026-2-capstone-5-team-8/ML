@@ -1,5 +1,6 @@
 import asyncio
 import json
+from importlib.resources import files
 from pathlib import Path
 
 import httpx
@@ -188,3 +189,29 @@ def test_openapi_contract_exposes_only_the_two_calculation_routes() -> None:
     assert "assessmentId" in reader_properties
     assert "assessment_id" not in reader_properties
     assert "candidateBooks" in rank_properties
+
+
+def test_app_factory_uses_packaged_configs_outside_repository_working_directory(
+    monkeypatch, tmp_path: Path
+) -> None:
+    monkeypatch.chdir(tmp_path)
+
+    application = create_app()
+
+    assert {route.path for route in application.routes if route.path.startswith("/ml/")} == {
+        "/ml/reader-profile",
+        "/ml/rank",
+    }
+
+
+def test_api_module_does_not_create_an_app_or_load_configs_at_import() -> None:
+    import bookmatch_ml.api as api_module
+
+    assert not hasattr(api_module, "app")
+
+
+def test_packaged_api_configs_match_versioned_project_defaults() -> None:
+    packaged = files("bookmatch_ml.default_configs")
+
+    for name in ("reader.yaml", "ranking.yaml"):
+        assert packaged.joinpath(name).read_bytes() == (ROOT / "configs" / name).read_bytes()

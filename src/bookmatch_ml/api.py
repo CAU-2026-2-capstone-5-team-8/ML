@@ -1,10 +1,17 @@
 """Thin HTTP adapter for Spring Boot orchestration."""
 
+import os
+from importlib.resources import as_file, files
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 
-from bookmatch_ml.config import load_ranking_config, load_reader_config
+from bookmatch_ml.config import (
+    LoadedRankingConfig,
+    LoadedReaderConfig,
+    load_ranking_config,
+    load_reader_config,
+)
 from bookmatch_ml.integration.schemas import (
     RankRequest,
     RankResponse,
@@ -15,7 +22,31 @@ from bookmatch_ml.integration.service import IntegrationService
 from bookmatch_ml.ranking.matching import RankingError
 from bookmatch_ml.reader.profile import AssessmentError
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+CONFIG_DIR_ENV = "BOOKMATCH_ML_CONFIG_DIR"
+
+
+def _load_reader_config(path: Path | None) -> LoadedReaderConfig:
+    """Load an explicit, environment-provided, or packaged reader config."""
+
+    if path is not None:
+        return load_reader_config(path)
+    if config_dir := os.environ.get(CONFIG_DIR_ENV):
+        return load_reader_config(Path(config_dir) / "reader.yaml")
+    resource = files("bookmatch_ml.default_configs").joinpath("reader.yaml")
+    with as_file(resource) as packaged_path:
+        return load_reader_config(packaged_path)
+
+
+def _load_ranking_config(path: Path | None) -> LoadedRankingConfig:
+    """Load an explicit, environment-provided, or packaged ranking config."""
+
+    if path is not None:
+        return load_ranking_config(path)
+    if config_dir := os.environ.get(CONFIG_DIR_ENV):
+        return load_ranking_config(Path(config_dir) / "ranking.yaml")
+    resource = files("bookmatch_ml.default_configs").joinpath("ranking.yaml")
+    with as_file(resource) as packaged_path:
+        return load_ranking_config(packaged_path)
 
 
 def create_app(
@@ -24,10 +55,8 @@ def create_app(
 ) -> FastAPI:
     """Create an offline calculation API with versioned local configuration."""
 
-    reader_config = load_reader_config(reader_config_path or PROJECT_ROOT / "configs/reader.yaml")
-    ranking_config = load_ranking_config(
-        ranking_config_path or PROJECT_ROOT / "configs/ranking.yaml"
-    )
+    reader_config = _load_reader_config(reader_config_path)
+    ranking_config = _load_ranking_config(ranking_config_path)
     service = IntegrationService(reader_config, ranking_config)
     application = FastAPI(
         title="BookMatch ML Integration API",
@@ -50,6 +79,3 @@ def create_app(
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return application
-
-
-app = create_app()

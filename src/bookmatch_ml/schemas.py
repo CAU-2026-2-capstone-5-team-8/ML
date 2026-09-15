@@ -336,12 +336,12 @@ class DifficultyProfile(StrictModel):
 
 
 class BookProfile(StrictModel):
-    book_id: str
+    book_id: str = Field(min_length=1)
     concept_profile: ConceptProfile
     difficulty_profile: DifficultyProfile
     evidence_coverage: EvidenceCoverage
-    feature_version: str
-    config_version: str
+    feature_version: str = Field(min_length=1)
+    config_version: str = Field(min_length=1)
     config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
 
     @model_validator(mode="after")
@@ -480,15 +480,15 @@ class ConceptReadiness(StrictModel):
 
 class ReaderProfile(StrictModel):
     assessment_id: str
-    topic_id: str
+    topic_id: str = Field(min_length=1)
     vocabulary: float = Field(ge=0, le=1)
     background_knowledge: float = Field(ge=0, le=1)
     comprehension: float = Field(ge=0, le=1)
     dimension_details: list[ReaderDimensionDetail]
     concept_readiness: list[ConceptReadiness]
     response_count: int = Field(ge=1)
-    profile_version: str
-    config_version: str
+    profile_version: str = Field(min_length=1)
+    config_version: str = Field(min_length=1)
     config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
 
     @model_validator(mode="after")

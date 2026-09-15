@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from bookmatch_ml.book.profile import build_book_profile, build_book_profiles
 from bookmatch_ml.config import (
@@ -20,6 +21,7 @@ from bookmatch_ml.ranking.matching import (
     to_matching_reader_profile,
 )
 from bookmatch_ml.reader.profile import build_reader_profile, load_assessment
+from bookmatch_ml.schemas import BookProfile, ReaderProfile
 
 ROOT = Path(__file__).parents[1]
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "canonical"
@@ -87,6 +89,24 @@ def test_explicit_matching_boundary_preserves_internal_results() -> None:
     assert rank_matching_books(matching_reader, matching_books, RANKING_CONFIG, 5) == rank_books(
         reader, profiles, RANKING_CONFIG, 5
     )
+
+
+@pytest.mark.parametrize("field", ["topic_id", "profile_version", "config_version"])
+def test_reader_profile_rejects_empty_matching_contract_fields(field: str) -> None:
+    payload = _reader().model_dump()
+    payload[field] = ""
+
+    with pytest.raises(ValidationError, match=field):
+        ReaderProfile.model_validate(payload)
+
+
+@pytest.mark.parametrize("field", ["book_id", "feature_version", "config_version"])
+def test_book_profile_rejects_empty_matching_contract_fields(field: str) -> None:
+    payload = _profiles()[0].model_dump()
+    payload[field] = ""
+
+    with pytest.raises(ValidationError, match=field):
+        BookProfile.model_validate(payload)
 
 
 def test_missing_components_are_renormalized_and_not_treated_as_zero() -> None:

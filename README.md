@@ -262,7 +262,7 @@ the missing-evidence policy.
 Start the stateless calculation adapter locally after the batch profiles have been generated:
 
 ```bash
-uv run uvicorn bookmatch_ml.api:app --host 127.0.0.1 --port 8000
+uv run uvicorn bookmatch_ml.api:create_app --factory --host 127.0.0.1 --port 8000
 ```
 
 It exposes exactly two application routes:
@@ -275,6 +275,10 @@ POST /ml/rank
 The JSON boundary uses camelCase for Spring DTOs while internal Python models remain snake_case.
 Interactive OpenAPI documentation is available at `http://127.0.0.1:8000/docs` while the process
 is running.
+
+The factory loads packaged defaults without reading repository-relative files at import time.
+Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml` and `ranking.yaml` to select
+an externally mounted, versioned configuration in deployment.
 
 `POST /ml/reader-profile` accepts the same assessment content as `examples/assessment.json`, with
 camelCase keys and an optional `userId` correlation value. It returns the three readiness
@@ -384,6 +388,7 @@ src/bookmatch_ml/
 ├── io.py               # deterministic atomic artifact writers
 ├── cli.py              # batch command entry points
 ├── api.py              # stateless Spring-facing FastAPI routes
+├── default_configs/    # reader/ranking defaults bundled in wheels
 ├── book/
 │   ├── concepts.py     # lexicon concept/prerequisite baseline
 │   ├── difficulty.py   # per-document prose features and aggregation
