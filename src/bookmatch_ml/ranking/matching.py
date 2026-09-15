@@ -5,7 +5,11 @@ from bookmatch_ml.ranking.explanation import build_reasons
 from bookmatch_ml.schemas import (
     BookProfile,
     KnowledgeFitComponents,
+    MatchingBookProfile,
+    MatchingConcept,
+    MatchingConceptReadiness,
     MatchingDiagnostics,
+    MatchingReaderProfile,
     RankedBook,
     RankingComponents,
     RankingResponse,
@@ -39,13 +43,13 @@ def _renormalized_weighted_mean(
 
 
 def _prerequisite_concept_fit(
-    reader: ReaderProfile,
-    book: BookProfile,
+    reader: MatchingReaderProfile,
+    book: MatchingBookProfile,
 ) -> tuple[float | None, int]:
     reader_concepts = {item.concept_id: item.score for item in reader.concept_readiness}
     matched = [
         prerequisite
-        for prerequisite in book.concept_profile.prerequisite_concepts
+        for prerequisite in book.prerequisite_concepts
         if prerequisite.concept in reader_concepts
     ]
     total_weight = sum(item.weight for item in matched)
@@ -55,36 +59,78 @@ def _prerequisite_concept_fit(
     return score, len(matched)
 
 
-def score_book_fit(
-    reader: ReaderProfile,
-    book: BookProfile,
+def to_matching_reader_profile(reader: ReaderProfile) -> MatchingReaderProfile:
+    """Project the full assessment result onto the stable matching input."""
+
+    return MatchingReaderProfile(
+        topic_id=reader.topic_id,
+        vocabulary=reader.vocabulary,
+        background_knowledge=reader.background_knowledge,
+        comprehension=reader.comprehension,
+        concept_readiness=[
+            MatchingConceptReadiness(concept_id=item.concept_id, score=item.score)
+            for item in reader.concept_readiness
+        ],
+        profile_version=reader.profile_version,
+        config_version=reader.config_version,
+        config_hash=reader.config_hash,
+    )
+
+
+def to_matching_book_profile(book: BookProfile) -> MatchingBookProfile:
+    """Project the batch book profile onto the stable matching input."""
+
+    difficulty = book.difficulty_profile
+    return MatchingBookProfile(
+        book_id=book.book_id,
+        topic_distribution=book.concept_profile.topic_distribution,
+        covered_concepts=[
+            MatchingConcept(concept=item.concept, weight=item.weight)
+            for item in book.concept_profile.covered_concepts
+        ],
+        prerequisite_concepts=[
+            MatchingConcept(concept=item.concept, weight=item.weight)
+            for item in book.concept_profile.prerequisite_concepts
+        ],
+        lexical_difficulty=difficulty.lexical_difficulty,
+        syntactic_complexity=difficulty.syntactic_complexity,
+        concept_density=difficulty.concept_density,
+        prerequisite_demand=difficulty.prerequisite_demand,
+        feature_version=book.feature_version,
+        config_version=book.config_version,
+        config_hash=book.config_hash,
+    )
+
+
+def score_matching_book_fit(
+    reader: MatchingReaderProfile,
+    book: MatchingBookProfile,
     loaded_config: LoadedRankingConfig,
 ) -> RankedBook:
-    """Calculate one explainable reader-book fit score."""
+    """Calculate one fit score from explicit integration-safe inputs."""
 
     config = loaded_config.config
-    topic_distribution = book.concept_profile.topic_distribution
+    topic_distribution = book.topic_distribution
     topic_fit = topic_distribution.get(reader.topic_id, 0.0) if topic_distribution else None
-    difficulty = book.difficulty_profile
     vocabulary_fit = (
-        _fit(reader.vocabulary, difficulty.lexical_difficulty)
-        if difficulty.lexical_difficulty is not None
+        _fit(reader.vocabulary, book.lexical_difficulty)
+        if book.lexical_difficulty is not None
         else None
     )
     comprehension_fit = (
-        _fit(reader.comprehension, difficulty.syntactic_complexity)
-        if difficulty.syntactic_complexity is not None
+        _fit(reader.comprehension, book.syntactic_complexity)
+        if book.syntactic_complexity is not None
         else None
     )
 
     concept_density_fit = (
-        _fit(reader.background_knowledge, difficulty.concept_density)
-        if difficulty.concept_density is not None
+        _fit(reader.background_knowledge, book.concept_density)
+        if book.concept_density is not None
         else None
     )
     prerequisite_demand_fit = (
-        _fit(reader.background_knowledge, difficulty.prerequisite_demand)
-        if difficulty.prerequisite_demand is not None
+        _fit(reader.background_knowledge, book.prerequisite_demand)
+        if book.prerequisite_demand is not None
         else None
     )
     prerequisite_concept_fit, assessed_count = _prerequisite_concept_fit(reader, book)
@@ -97,8 +143,8 @@ def score_book_fit(
         knowledge_values, config.knowledge_weights
     )
     knowledge_demands = {
-        "concept_density_fit": difficulty.concept_density,
-        "prerequisite_demand_fit": difficulty.prerequisite_demand,
+        "concept_density_fit": book.concept_density,
+        "prerequisite_demand_fit": book.prerequisite_demand,
         "prerequisite_concept_fit": None,
     }
     knowledge_demand, _ = _renormalized_weighted_mean(knowledge_demands, config.knowledge_weights)
@@ -116,11 +162,11 @@ def score_book_fit(
     components = RankingComponents(**component_values)
     knowledge_components = KnowledgeFitComponents(**knowledge_values)
     diagnostics = MatchingDiagnostics(
-        lexical_demand=difficulty.lexical_difficulty,
+        lexical_demand=book.lexical_difficulty,
         knowledge_demand=knowledge_demand,
-        syntactic_demand=difficulty.syntactic_complexity,
+        syntactic_demand=book.syntactic_complexity,
         assessed_prerequisite_count=assessed_count,
-        inferred_prerequisite_count=len(book.concept_profile.prerequisite_concepts),
+        inferred_prerequisite_count=len(book.prerequisite_concepts),
     )
     unavailable = [name for name in config.component_weights if component_values[name] is None]
     knowledge_weight_coverage = sum(
@@ -157,9 +203,9 @@ def score_book_fit(
     )
 
 
-def rank_books(
-    reader: ReaderProfile,
-    books: list[BookProfile],
+def rank_matching_books(
+    reader: MatchingReaderProfile,
+    books: list[MatchingBookProfile],
     loaded_config: LoadedRankingConfig,
     limit: int,
 ) -> RankingResponse:
@@ -171,11 +217,9 @@ def rank_books(
     candidates = books
     if config.filter_topic_candidates:
         candidates = [
-            book
-            for book in books
-            if book.concept_profile.topic_distribution.get(reader.topic_id, 0.0) > 0
+            book for book in books if book.topic_distribution.get(reader.topic_id, 0.0) > 0
         ]
-    items = [score_book_fit(reader, book, loaded_config) for book in candidates]
+    items = [score_matching_book_fit(reader, book, loaded_config) for book in candidates]
     items.sort(key=lambda item: (-item.score, item.book_id))
     return RankingResponse(
         topic_id=reader.topic_id,
@@ -186,4 +230,34 @@ def rank_books(
         reader_profile_version=reader.profile_version,
         reader_config_version=reader.config_version,
         reader_config_hash=reader.config_hash,
+    )
+
+
+def score_book_fit(
+    reader: ReaderProfile,
+    book: BookProfile,
+    loaded_config: LoadedRankingConfig,
+) -> RankedBook:
+    """Calculate one fit score from full internal profiles."""
+
+    return score_matching_book_fit(
+        to_matching_reader_profile(reader),
+        to_matching_book_profile(book),
+        loaded_config,
+    )
+
+
+def rank_books(
+    reader: ReaderProfile,
+    books: list[BookProfile],
+    loaded_config: LoadedRankingConfig,
+    limit: int,
+) -> RankingResponse:
+    """Return deterministic topic-filtered top-K recommendations."""
+
+    return rank_matching_books(
+        to_matching_reader_profile(reader),
+        [to_matching_book_profile(book) for book in books],
+        loaded_config,
+        limit,
     )

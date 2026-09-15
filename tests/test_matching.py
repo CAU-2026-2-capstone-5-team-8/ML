@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from bookmatch_ml.book.profile import build_book_profile, build_book_profiles
 from bookmatch_ml.config import (
@@ -10,8 +11,17 @@ from bookmatch_ml.config import (
 )
 from bookmatch_ml.data.evidence import assemble_book_evidence, calculate_evidence_coverage
 from bookmatch_ml.data.loader import load_canonical_dataset
-from bookmatch_ml.ranking.matching import RankingError, rank_books, score_book_fit
+from bookmatch_ml.ranking.matching import (
+    RankingError,
+    rank_books,
+    rank_matching_books,
+    score_book_fit,
+    score_matching_book_fit,
+    to_matching_book_profile,
+    to_matching_reader_profile,
+)
 from bookmatch_ml.reader.profile import build_reader_profile, load_assessment
+from bookmatch_ml.schemas import BookProfile, ReaderProfile
 
 ROOT = Path(__file__).parents[1]
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "canonical"
@@ -65,6 +75,38 @@ def test_score_decomposition_matches_configured_formula() -> None:
     assert item.knowledge_components.prerequisite_concept_fit is not None
     assert item.model_version == "rank-v1"
     assert item.config_version == "ranking-config-v1"
+
+
+def test_explicit_matching_boundary_preserves_internal_results() -> None:
+    reader = _reader()
+    profiles = _profiles()
+    matching_reader = to_matching_reader_profile(reader)
+    matching_books = [to_matching_book_profile(book) for book in profiles]
+
+    assert score_matching_book_fit(matching_reader, matching_books[0], RANKING_CONFIG) == (
+        score_book_fit(reader, profiles[0], RANKING_CONFIG)
+    )
+    assert rank_matching_books(matching_reader, matching_books, RANKING_CONFIG, 5) == rank_books(
+        reader, profiles, RANKING_CONFIG, 5
+    )
+
+
+@pytest.mark.parametrize("field", ["topic_id", "profile_version", "config_version"])
+def test_reader_profile_rejects_empty_matching_contract_fields(field: str) -> None:
+    payload = _reader().model_dump()
+    payload[field] = ""
+
+    with pytest.raises(ValidationError, match=field):
+        ReaderProfile.model_validate(payload)
+
+
+@pytest.mark.parametrize("field", ["book_id", "feature_version", "config_version"])
+def test_book_profile_rejects_empty_matching_contract_fields(field: str) -> None:
+    payload = _profiles()[0].model_dump()
+    payload[field] = ""
+
+    with pytest.raises(ValidationError, match=field):
+        BookProfile.model_validate(payload)
 
 
 def test_missing_components_are_renormalized_and_not_treated_as_zero() -> None:

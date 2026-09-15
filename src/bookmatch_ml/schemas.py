@@ -336,12 +336,12 @@ class DifficultyProfile(StrictModel):
 
 
 class BookProfile(StrictModel):
-    book_id: str
+    book_id: str = Field(min_length=1)
     concept_profile: ConceptProfile
     difficulty_profile: DifficultyProfile
     evidence_coverage: EvidenceCoverage
-    feature_version: str
-    config_version: str
+    feature_version: str = Field(min_length=1)
+    config_version: str = Field(min_length=1)
     config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
 
     @model_validator(mode="after")
@@ -480,15 +480,15 @@ class ConceptReadiness(StrictModel):
 
 class ReaderProfile(StrictModel):
     assessment_id: str
-    topic_id: str
+    topic_id: str = Field(min_length=1)
     vocabulary: float = Field(ge=0, le=1)
     background_knowledge: float = Field(ge=0, le=1)
     comprehension: float = Field(ge=0, le=1)
     dimension_details: list[ReaderDimensionDetail]
     concept_readiness: list[ConceptReadiness]
     response_count: int = Field(ge=1)
-    profile_version: str
-    config_version: str
+    profile_version: str = Field(min_length=1)
+    config_version: str = Field(min_length=1)
     config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
 
     @model_validator(mode="after")
@@ -506,6 +506,68 @@ class ReaderProfile(StrictModel):
         if sum(detail.response_count for detail in details.values()) != self.response_count:
             raise ValueError("dimension response counts do not match reader profile")
         return self
+
+
+class MatchingConceptReadiness(StrictModel):
+    concept_id: str = Field(min_length=1)
+    score: float = Field(ge=0, le=1)
+
+
+class MatchingReaderProfile(StrictModel):
+    topic_id: str = Field(min_length=1)
+    vocabulary: float = Field(ge=0, le=1)
+    background_knowledge: float = Field(ge=0, le=1)
+    comprehension: float = Field(ge=0, le=1)
+    concept_readiness: list[MatchingConceptReadiness]
+    profile_version: str = Field(min_length=1)
+    config_version: str = Field(min_length=1)
+    config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+    @field_validator("concept_readiness")
+    @classmethod
+    def concept_readiness_must_be_unique(
+        cls, value: list[MatchingConceptReadiness]
+    ) -> list[MatchingConceptReadiness]:
+        concept_ids = [item.concept_id for item in value]
+        if len(concept_ids) != len(set(concept_ids)):
+            raise ValueError("matching reader concept readiness contains duplicate concept_id")
+        return value
+
+
+class MatchingConcept(StrictModel):
+    concept: str = Field(min_length=1)
+    weight: float = Field(ge=0, le=1)
+
+
+class MatchingBookProfile(StrictModel):
+    book_id: str = Field(min_length=1)
+    topic_distribution: dict[str, float]
+    covered_concepts: list[MatchingConcept]
+    prerequisite_concepts: list[MatchingConcept]
+    lexical_difficulty: float | None = Field(default=None, ge=0, le=1)
+    syntactic_complexity: float | None = Field(default=None, ge=0, le=1)
+    concept_density: float | None = Field(default=None, ge=0, le=1)
+    prerequisite_demand: float | None = Field(default=None, ge=0, le=1)
+    feature_version: str = Field(min_length=1)
+    config_version: str = Field(min_length=1)
+    config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+    @field_validator("topic_distribution")
+    @classmethod
+    def topic_distribution_must_be_normalized(cls, value: dict[str, float]) -> dict[str, float]:
+        if any(score < 0 or score > 1 for score in value.values()):
+            raise ValueError("matching topic distribution values must be in [0, 1]")
+        if value and abs(sum(value.values()) - 1.0) > 1e-9:
+            raise ValueError("matching topic distribution must sum to 1.0")
+        return value
+
+    @field_validator("covered_concepts", "prerequisite_concepts")
+    @classmethod
+    def concepts_must_be_unique(cls, value: list[MatchingConcept]) -> list[MatchingConcept]:
+        concepts = [item.concept for item in value]
+        if len(concepts) != len(set(concepts)):
+            raise ValueError("matching book concepts contain duplicates")
+        return value
 
 
 class KnowledgeFitComponents(StrictModel):

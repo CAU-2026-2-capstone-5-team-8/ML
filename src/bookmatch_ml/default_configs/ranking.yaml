@@ -1,0 +1,18 @@
+config_version: ranking-config-v1
+model_version: rank-v1
+fit_strategy: absolute_gap_v1
+filter_topic_candidates: true
+component_weights:
+  topic_fit: 0.35
+  vocabulary_fit: 0.2
+  knowledge_fit: 0.3
+  comprehension_fit: 0.15
+knowledge_weights:
+  concept_density_fit: 0.4
+  prerequisite_demand_fit: 0.4
+  prerequisite_concept_fit: 0.2
+explanation:
+  close_gap: 0.1
+  moderate_gap: 0.25
+  topic_match: 0.8
+  maximum_covered_concepts: 3
