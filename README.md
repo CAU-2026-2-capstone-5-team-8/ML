@@ -4,7 +4,7 @@ Evidence-first ML and recommendation logic for the CAU Capstone Team 8 personali
 technical-book recommendation project.
 
 The current implementation covers the canonical-handoff, book-profile, reader-profile,
-matching/ranking, and evaluation baseline milestones:
+matching/ranking, evaluation baseline, and thin Spring integration milestones:
 
 ```text
 books.jsonl + documents.jsonl + toc.jsonl + sources.jsonl
@@ -22,10 +22,13 @@ books.jsonl + documents.jsonl + toc.jsonl + sources.jsonl
              explainable matching + ranking
                             ↓
       difficulty + recommendation + ablation evaluation
+                            ↓
+          stateless Spring-facing calculation API
 ```
 
-It deliberately contains no scraping, source-provider adapters, database integration, remote
-LLM calls, learned ranking, or network-dependent logic.
+It deliberately contains no scraping, source-provider adapters, database access, authentication,
+recommendation persistence, remote LLM calls, learned ranking, or network-dependent calculation
+logic.
 
 ## Requirements
 
@@ -254,6 +257,75 @@ after renormalization. This is not hidden or treated as high-confidence readines
 dimensions are explicit. Evaluation should compare and calibrate this baseline before changing
 the missing-evidence policy.
 
+## Spring integration API
+
+Start the stateless calculation adapter locally after the batch profiles have been generated:
+
+```bash
+uv run uvicorn bookmatch_ml.api:app --host 127.0.0.1 --port 8000
+```
+
+It exposes exactly two application routes:
+
+```text
+POST /ml/reader-profile
+POST /ml/rank
+```
+
+The JSON boundary uses camelCase for Spring DTOs while internal Python models remain snake_case.
+Interactive OpenAPI documentation is available at `http://127.0.0.1:8000/docs` while the process
+is running.
+
+`POST /ml/reader-profile` accepts the same assessment content as `examples/assessment.json`, with
+camelCase keys and an optional `userId` correlation value. It returns the three readiness
+dimensions, dimension details, concept readiness, and all profile/config versions. `userId` is
+only echoed; it is not a predictive feature.
+
+`POST /ml/rank` accepts this explicit boundary shape:
+
+```json
+{
+  "readerProfile": {
+    "userId": 1,
+    "topicId": "operating-systems",
+    "vocabulary": 0.72,
+    "backgroundKnowledge": 0.55,
+    "comprehension": 0.68,
+    "conceptReadiness": [],
+    "profileVersion": "reader-v1",
+    "configVersion": "reader-config-v1",
+    "configHash": "sha256:..."
+  },
+  "candidateBooks": [
+    {
+      "bookId": "isbn13:...",
+      "topicDistribution": {"operating-systems": 1.0},
+      "coveredConcepts": [],
+      "prerequisiteConcepts": [],
+      "lexicalDifficulty": 0.64,
+      "syntacticComplexity": 0.71,
+      "conceptDensity": 0.78,
+      "prerequisiteDemand": 0.82,
+      "featureVersion": "book-v1",
+      "configVersion": "features-config-v1",
+      "configHash": "sha256:..."
+    }
+  ],
+  "limit": 5
+}
+```
+
+Set the optional top-level `bookId` to score one supplied candidate even when it does not match
+the selected topic. Otherwise the endpoint returns the configured topic-filtered top K. Each item
+contains flat `topicFit`, `vocabularyFit`, `knowledgeFit`, and `comprehensionFit` fields plus the
+subcomponents, active weights, evidence diagnostics, deterministic reasons, and version hashes.
+
+Spring remains responsible for loading persisted assessments and candidate profiles, calling
+these endpoints, and storing results. The API does not connect to PostgreSQL or upstream book
+providers and does not own authentication or recommendation history. Its candidate schema is a
+small matching projection rather than the complete internal `BookProfile`, so internal analysis
+details are not coupled to Spring DTOs.
+
 ## Evaluate the baseline
 
 After generating the current ten-book profile artifact, run the combined evaluation report:
@@ -311,6 +383,7 @@ src/bookmatch_ml/
 ├── config.py           # strict versioned feature/reader/ranking/evaluation config
 ├── io.py               # deterministic atomic artifact writers
 ├── cli.py              # batch command entry points
+├── api.py              # stateless Spring-facing FastAPI routes
 ├── book/
 │   ├── concepts.py     # lexicon concept/prerequisite baseline
 │   ├── difficulty.py   # per-document prose features and aggregation
@@ -321,6 +394,9 @@ src/bookmatch_ml/
 │   ├── loader.py       # strict generated-profile loading
 │   ├── matching.py     # decomposed scoring and weight renormalization
 │   └── explanation.py  # deterministic Korean reason templates
+├── integration/
+│   ├── schemas.py      # explicit camelCase HTTP DTO boundary
+│   └── service.py      # thin reader-profile/ranking orchestration
 ├── evaluation/
 │   ├── ablation.py     # evidence-richness comparison and change summary
 │   ├── difficulty.py   # Spearman and pairwise human-order evaluation

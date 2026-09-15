@@ -1,7 +1,12 @@
 """Deterministic Korean explanation templates grounded in matching values."""
 
 from bookmatch_ml.config import ExplanationConfig
-from bookmatch_ml.schemas import BookProfile, MatchingDiagnostics, RankingComponents, ReaderProfile
+from bookmatch_ml.schemas import (
+    MatchingBookProfile,
+    MatchingDiagnostics,
+    MatchingReaderProfile,
+    RankingComponents,
+)
 
 
 def _gap_reason(
@@ -23,8 +28,8 @@ def _gap_reason(
 
 
 def build_reasons(
-    reader: ReaderProfile,
-    book: BookProfile,
+    reader: MatchingReaderProfile,
+    book: MatchingBookProfile,
     components: RankingComponents,
     diagnostics: MatchingDiagnostics,
     config: ExplanationConfig,
@@ -82,7 +87,7 @@ def build_reasons(
         )
 
     maximum = config.maximum_covered_concepts
-    concepts = [item.concept for item in book.concept_profile.covered_concepts[:maximum]]
+    concepts = [item.concept for item in book.covered_concepts[:maximum]]
     if concepts:
         reasons.append("주요 개념: " + ", ".join(concepts) + ".")
     return reasons
