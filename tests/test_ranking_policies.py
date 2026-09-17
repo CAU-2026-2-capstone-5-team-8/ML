@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 from typer.testing import CliRunner
 
 from bookmatch_ml.book.profile import build_book_profiles
@@ -20,6 +21,7 @@ from bookmatch_ml.evaluation.ranking_policies import evaluate_ranking_policies
 from bookmatch_ml.io import write_jsonl
 from bookmatch_ml.ranking.loader import load_reader_profile
 from bookmatch_ml.ranking.matching import rank_books
+from bookmatch_ml.schemas import RankingPolicyCandidate
 
 ROOT = Path(__file__).parents[1]
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "canonical"
@@ -173,6 +175,17 @@ def test_two_stage_topic_only_ties_use_book_id_and_keep_null_readiness_scores() 
         "topic_only",
     ]
     assert all(item.readiness_score is None for item in two_stage.items[1:])
+
+
+def test_readiness_candidate_rejects_topic_only_score() -> None:
+    report = evaluate_ranking_policies(
+        READER, _profiles(), RANKING, _policy_config(), canonical_book_count=2
+    )
+    candidate = report.policies[1].items[0].model_dump()
+    candidate["topic_only_score"] = 1.0
+
+    with pytest.raises(ValidationError, match="must not expose a topic_only_score"):
+        RankingPolicyCandidate.model_validate(candidate)
 
 
 @pytest.mark.parametrize(

@@ -841,6 +841,8 @@ class RankingPolicyCandidate(StrictModel):
             raise ValueError("readiness group requires readiness_score")
         if self.group != "readiness" and self.readiness_score is not None:
             raise ValueError("non-readiness group must not expose a readiness_score")
+        if self.group == "readiness" and self.topic_only_score is not None:
+            raise ValueError("readiness group must not expose a topic_only_score")
         if self.group != "readiness" and self.topic_only_score is None:
             raise ValueError("evidence-limited group requires topic_only_score")
         if self.group == "ineligible" and self.eligibility_reason is None:
