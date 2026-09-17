@@ -3,8 +3,9 @@
 Evidence-first ML and recommendation logic for the CAU Capstone Team 8 personalized
 technical-book recommendation project.
 
-The current implementation covers the canonical-handoff, book-profile, reader-profile,
-matching/ranking, evaluation baseline, and thin Spring integration milestones:
+The current implementation covers the canonical-handoff, book-profile, concept-assessment
+blueprint, reader-profile, matching/ranking, evaluation baseline, and thin Spring integration
+milestones:
 
 ```text
 books.jsonl + documents.jsonl + toc.jsonl + sources.jsonl
@@ -16,6 +17,8 @@ books.jsonl + documents.jsonl + toc.jsonl + sources.jsonl
                per-book coverage report
                             ↓
               concept + difficulty profiles
+                            ↓
+          topic concept pool + question specifications
                             ↓
               topic-specific reader profile
                             ↓
@@ -207,6 +210,40 @@ hash.
 The loader rejects malformed or empty assessments, duplicate question IDs, mixed topics,
 unsupported question types, missing required dimensions, unsupported difficulty labels, scores
 outside `[0, 1]`, and responses that provide both or neither of `correct` and `score`.
+
+## Build a concept-assessment blueprint
+
+With the canonical ten-book snapshot and matching book profiles available, generate an
+audit-friendly blueprint for each supported topic:
+
+```bash
+uv run bookmatch-ml build-assessment-blueprint \
+  --data-dir ../Data-Pipeline/data/processed \
+  --books data/output/book_profiles.jsonl \
+  --topic operating-systems \
+  --output data/output/operating_systems_assessment_blueprint.json
+
+uv run bookmatch-ml build-assessment-blueprint \
+  --data-dir ../Data-Pipeline/data/processed \
+  --books data/output/book_profiles.jsonl \
+  --topic linear-algebra \
+  --output data/output/linear_algebra_assessment_blueprint.json
+```
+
+The command validates all four canonical files and checks that every book profile matches the
+current canonical data and feature configuration. It emits separate covered and inferred
+prerequisite concept roles, assessment priorities, selected self-assessment concepts, and
+deterministic `QuestionSpec` targets. Specifications contain evidence references and source
+document IDs, never question text or raw book prose. Eligible comprehension targets require
+an analyzed prose document; missing targets appear as explicit shortages. The artifact records
+configuration versions and SHA-256 hashes for configuration and inputs. Assessment rules live in
+`configs/assessment.yaml`; optional `--feature-config` and `--assessment-config` arguments select
+versioned alternatives.
+
+This blueprint prepares Stage 1 concept self-report and Stage 2 quiz verification. It does not
+change the existing reader-profile scoring or ranking API. See
+[Question Difficulty v1](docs/assessment-difficulty-v1.md) for rules, real-data findings, and
+limitations.
 
 ## Rank books or score one book
 

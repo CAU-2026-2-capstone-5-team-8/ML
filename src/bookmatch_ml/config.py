@@ -228,6 +228,99 @@ class LoadedReaderConfig(ConfigModel):
     content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
 
 
+class AssessmentPriorityConfig(ConfigModel):
+    mean_book_weight: float = Field(ge=0, le=1)
+    book_coverage_rate: float = Field(ge=0, le=1)
+
+    @model_validator(mode="after")
+    def weights_must_sum_to_one(self) -> "AssessmentPriorityConfig":
+        if abs(self.mean_book_weight + self.book_coverage_rate - 1.0) > 1e-9:
+            raise ValueError("assessment priority weights must sum to 1.0")
+        return self
+
+
+class AssessmentConfig(ConfigModel):
+    config_version: str = Field(min_length=1)
+    pool_version: str = Field(min_length=1)
+    blueprint_version: str = Field(min_length=1)
+    self_assessment_version: str = Field(min_length=1)
+    question_spec_version: str = Field(min_length=1)
+    difficulty_version: str = Field(min_length=1)
+    priority: AssessmentPriorityConfig
+    self_assessment_limits: dict[str, int]
+    question_quotas: dict[str, dict[str, int]]
+    operation_levels: dict[str, int]
+    minimum_related_concepts: dict[str, int]
+    relationship_operations: list[str]
+    multi_step_operations: list[str]
+    relation_pairs: dict[str, list[tuple[str, str]]]
+    prose_document_preference: list[str]
+    max_evidence_refs_per_spec: int = Field(ge=2)
+
+    @model_validator(mode="after")
+    def assessment_rules_must_be_complete(self) -> "AssessmentConfig":
+        operations = {"recognize", "recall", "compare", "relate", "apply", "integrate", "infer"}
+        if set(self.operation_levels) != operations or any(
+            level not in {1, 2, 3} for level in self.operation_levels.values()
+        ):
+            raise ValueError("operation_levels must assign Level 1, 2, or 3 to every operation")
+        if set(self.minimum_related_concepts) != operations or any(
+            count < 0 for count in self.minimum_related_concepts.values()
+        ):
+            raise ValueError("minimum_related_concepts must cover every operation")
+        if len(self.relationship_operations) != len(set(self.relationship_operations)) or not set(
+            self.relationship_operations
+        ).issubset(operations):
+            raise ValueError("relationship_operations must be unique supported operations")
+        if len(self.multi_step_operations) != len(set(self.multi_step_operations)) or not set(
+            self.multi_step_operations
+        ).issubset(operations):
+            raise ValueError("multi_step_operations must be unique supported operations")
+        for operation, level in self.operation_levels.items():
+            relationship = operation in self.relationship_operations
+            multi_step = operation in self.multi_step_operations
+            related = self.minimum_related_concepts[operation]
+            if level == 1 and (relationship or multi_step or related):
+                raise ValueError("Level 1 operations must have direct-recall structure")
+            if level == 2 and multi_step:
+                raise ValueError("Level 2 operations cannot require multiple steps")
+            if level == 3 and not multi_step:
+                raise ValueError("Level 3 operations must require multiple steps")
+        if set(self.self_assessment_limits) != {"covered", "prerequisite"} or any(
+            count < 0 for count in self.self_assessment_limits.values()
+        ):
+            raise ValueError("self_assessment_limits must cover both roles")
+        allowed_quotas = {
+            "vocabulary": {"recognize", "compare"},
+            "background_knowledge": {"recall"},
+            "comprehension": {"apply", "integrate"},
+        }
+        if set(self.question_quotas) != set(allowed_quotas) or any(
+            set(self.question_quotas[kind]) != allowed
+            or any(count < 0 for count in self.question_quotas[kind].values())
+            for kind, allowed in allowed_quotas.items()
+        ):
+            raise ValueError("question_quotas must cover the supported type/operation pairs")
+        prose_types = {"preface", "introduction", "preview", "sample_chapter", "other"}
+        if set(self.prose_document_preference) != prose_types or len(
+            self.prose_document_preference
+        ) != len(prose_types):
+            raise ValueError("prose_document_preference must list each eligible prose type once")
+        if not self.relation_pairs or any(
+            not pairs
+            or len(pairs) != len(set(pairs))
+            or any(a == b or not a or not b for a, b in pairs)
+            for pairs in self.relation_pairs.values()
+        ):
+            raise ValueError("relation_pairs require distinct, nonblank concept pairs")
+        return self
+
+
+class LoadedAssessmentConfig(ConfigModel):
+    config: AssessmentConfig
+    content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+
 class ExplanationConfig(ConfigModel):
     close_gap: float = Field(ge=0, le=1)
     moderate_gap: float = Field(ge=0, le=1)
@@ -380,6 +473,23 @@ def load_reader_config(path: Path) -> LoadedReaderConfig:
     except (yaml.YAMLError, ValidationError, ValueError) as exc:
         raise ConfigError(f"invalid reader config: {path}: {exc}") from exc
     return LoadedReaderConfig(
+        config=config,
+        content_hash=f"sha256:{hashlib.sha256(content).hexdigest()}",
+    )
+
+
+def load_assessment_config(path: Path) -> LoadedAssessmentConfig:
+    """Load strict, versioned concept-assessment rules and retain exact bytes."""
+
+    try:
+        content = path.read_bytes()
+    except OSError as exc:
+        raise ConfigError(f"cannot read assessment config: {path}: {exc}") from exc
+    try:
+        config = AssessmentConfig.model_validate(_load_unique_key_yaml(content))
+    except (yaml.YAMLError, ValidationError, ValueError) as exc:
+        raise ConfigError(f"invalid assessment config: {path}: {exc}") from exc
+    return LoadedAssessmentConfig(
         config=config,
         content_hash=f"sha256:{hashlib.sha256(content).hexdigest()}",
     )
