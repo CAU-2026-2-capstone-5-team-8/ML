@@ -372,6 +372,26 @@ The first reproducible run against the current ten-book canonical output, includ
 limitations and next decision gates, is recorded in
 [`docs/evaluation-baseline-v1.md`](docs/evaluation-baseline-v1.md).
 
+## Compare ranking evidence policies
+
+The existing `rank` CLI and `/ml/rank` API retain renormalized scoring. A separate batch experiment
+compares that baseline with a configurable minimum coverage rule and a two-stage presentation:
+
+```bash
+uv run bookmatch-ml evaluate-ranking-policies \
+  --data-dir ../Data-Pipeline/data/processed \
+  --books data/output/book_profiles.jsonl \
+  --reader data/output/reader_profile.json \
+  --output data/reports/ranking_policy_evaluation.json
+```
+
+Run the profile-building commands above first. The policy parameters and versions are in
+`configs/ranking_policies.yaml`; use `--policy-config` to compare a different versioned setting.
+The report retains every candidate, including those below the coverage threshold, and separates
+readiness scores from topic-only or ineligible entries. The current ten-book results, snapshot
+hashes, tradeoffs, and next decision gate are in
+[`docs/ranking-policy-evaluation-v1.md`](docs/ranking-policy-evaluation-v1.md).
+
 ## Development checks
 
 ```bash
@@ -410,6 +430,7 @@ src/bookmatch_ml/
 │   ├── ablation.py     # evidence-richness comparison and change summary
 │   ├── difficulty.py   # Spearman and pairwise human-order evaluation
 │   ├── recommendation.py # topic-only versus readiness-aware comparison
+│   ├── ranking_policies.py # evidence-policy comparison over unchanged scores
 │   └── report.py       # combined versioned evaluation report
 └── data/
     ├── loader.py       # JSONL parsing and cross-record validation

@@ -283,6 +283,27 @@ class LoadedRankingConfig(ConfigModel):
     content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
 
 
+class RankingPolicyExperimentConfig(ConfigModel):
+    config_version: str = Field(min_length=1)
+    evaluation_version: str = Field(min_length=1)
+    policies: list[Literal["renormalized", "minimum_coverage", "two_stage"]]
+    minimum_component_weight_coverage: float = Field(gt=0, le=1)
+    top_k: int = Field(ge=1)
+
+    @field_validator("policies")
+    @classmethod
+    def policies_must_be_complete_and_unique(cls, value: list[str]) -> list[str]:
+        expected = {"renormalized", "minimum_coverage", "two_stage"}
+        if len(value) != len(expected) or set(value) != expected:
+            raise ValueError("policies must contain each supported policy exactly once")
+        return value
+
+
+class LoadedRankingPolicyExperimentConfig(ConfigModel):
+    config: RankingPolicyExperimentConfig
+    content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+
 class DifficultyEvaluationConfig(ConfigModel):
     component_weights: dict[str, float]
     minimum_comparable_books: int = Field(ge=2)
@@ -377,6 +398,24 @@ def load_ranking_config(path: Path) -> LoadedRankingConfig:
     except (yaml.YAMLError, ValidationError, ValueError) as exc:
         raise ConfigError(f"invalid ranking config: {path}: {exc}") from exc
     return LoadedRankingConfig(
+        config=config,
+        content_hash=f"sha256:{hashlib.sha256(content).hexdigest()}",
+    )
+
+
+def load_ranking_policy_config(path: Path) -> LoadedRankingPolicyExperimentConfig:
+    """Load the strict, versioned ranking-policy experiment configuration."""
+
+    try:
+        content = path.read_bytes()
+    except OSError as exc:
+        raise ConfigError(f"cannot read ranking policy config: {path}: {exc}") from exc
+    try:
+        payload = _load_unique_key_yaml(content)
+        config = RankingPolicyExperimentConfig.model_validate(payload)
+    except (yaml.YAMLError, ValidationError, ValueError) as exc:
+        raise ConfigError(f"invalid ranking policy config: {path}: {exc}") from exc
+    return LoadedRankingPolicyExperimentConfig(
         config=config,
         content_hash=f"sha256:{hashlib.sha256(content).hexdigest()}",
     )

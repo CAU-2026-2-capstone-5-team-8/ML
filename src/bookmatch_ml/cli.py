@@ -12,12 +12,14 @@ from bookmatch_ml.config import (
     load_evaluation_config,
     load_feature_config,
     load_ranking_config,
+    load_ranking_policy_config,
     load_reader_config,
 )
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import CanonicalDataError, load_canonical_dataset
 from bookmatch_ml.evaluation.ablation import build_evidence_ablation_report
 from bookmatch_ml.evaluation.difficulty import EvaluationDataError, load_difficulty_judgments
+from bookmatch_ml.evaluation.ranking_policies import evaluate_ranking_policies
 from bookmatch_ml.evaluation.report import build_evaluation_report
 from bookmatch_ml.io import write_json, write_jsonl
 from bookmatch_ml.ranking.loader import (
@@ -34,6 +36,7 @@ DEFAULT_FEATURE_CONFIG = Path("configs/features.yaml")
 DEFAULT_READER_CONFIG = Path("configs/reader.yaml")
 DEFAULT_RANKING_CONFIG = Path("configs/ranking.yaml")
 DEFAULT_EVALUATION_CONFIG = Path("configs/evaluation.yaml")
+DEFAULT_RANKING_POLICY_CONFIG = Path("configs/ranking_policies.yaml")
 
 
 @app.callback()
@@ -398,6 +401,79 @@ def rank(
                 sort_keys=True,
             )
         )
+
+
+@app.command("evaluate-ranking-policies")
+def evaluate_ranking_policies_command(
+    data_dir: Annotated[
+        Path,
+        typer.Option("--data-dir", file_okay=False, resolve_path=True),
+    ],
+    books: Annotated[
+        Path,
+        typer.Option("--books", exists=True, dir_okay=False, readable=True, resolve_path=True),
+    ],
+    reader: Annotated[
+        Path,
+        typer.Option("--reader", exists=True, dir_okay=False, readable=True, resolve_path=True),
+    ],
+    output: Annotated[
+        Path,
+        typer.Option("--output", dir_okay=False, resolve_path=True),
+    ],
+    policy_config: Annotated[
+        Path,
+        typer.Option("--policy-config", exists=True, dir_okay=False, resolve_path=True),
+    ] = DEFAULT_RANKING_POLICY_CONFIG,
+    ranking_config: Annotated[
+        Path,
+        typer.Option("--ranking-config", exists=True, dir_okay=False, resolve_path=True),
+    ] = DEFAULT_RANKING_CONFIG,
+) -> None:
+    """Compare evidence policies on one validated canonical book snapshot."""
+
+    try:
+        dataset = load_canonical_dataset(data_dir)
+        profiles = load_book_profiles(books)
+        canonical_ids = {book.book_id for book in dataset.books}
+        profile_ids = {book.book_id for book in profiles}
+        if canonical_ids != profile_ids:
+            raise EvaluationDataError(
+                "book profiles do not match canonical dataset: "
+                f"missing {sorted(canonical_ids - profile_ids)}, "
+                f"extra {sorted(profile_ids - canonical_ids)}"
+            )
+        report = evaluate_ranking_policies(
+            load_reader_profile(reader),
+            profiles,
+            load_ranking_config(ranking_config),
+            load_ranking_policy_config(policy_config),
+            canonical_book_count=len(dataset.books),
+        )
+        write_json(report, output)
+    except (
+        CanonicalDataError,
+        ConfigError,
+        EvaluationDataError,
+        RankingInputError,
+        RankingError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "output": str(output),
+                "topic_id": report.topic_id,
+                "candidate_count": report.candidate_count,
+                "policy_config_hash": report.policy_config_hash,
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+    )
 
 
 @app.command("evaluate")
