@@ -1,14 +1,18 @@
 """Command-line entry points for reproducible batch workflows."""
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Annotated
 
 import typer
 
+from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
+from bookmatch_ml.assessment.pool import AssessmentBlueprintError
 from bookmatch_ml.book.profile import build_book_profiles
 from bookmatch_ml.config import (
     ConfigError,
+    load_assessment_config,
     load_evaluation_config,
     load_feature_config,
     load_ranking_config,
@@ -37,6 +41,11 @@ DEFAULT_READER_CONFIG = Path("configs/reader.yaml")
 DEFAULT_RANKING_CONFIG = Path("configs/ranking.yaml")
 DEFAULT_EVALUATION_CONFIG = Path("configs/evaluation.yaml")
 DEFAULT_RANKING_POLICY_CONFIG = Path("configs/ranking_policies.yaml")
+DEFAULT_ASSESSMENT_CONFIG = Path("configs/assessment.yaml")
+
+
+def _sha256_file(path: Path) -> str:
+    return f"sha256:{hashlib.sha256(path.read_bytes()).hexdigest()}"
 
 
 @app.callback()
@@ -144,6 +153,85 @@ def build_profiles(
                 "books_with_difficulty": difficulty_count,
                 "config_hash": loaded_config.content_hash,
                 "config_version": loaded_config.config.config_version,
+                "output": str(output),
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("build-assessment-blueprint")
+def build_assessment_blueprint_command(
+    data_dir: Annotated[
+        Path,
+        typer.Option("--data-dir", file_okay=False, resolve_path=True),
+    ],
+    books: Annotated[
+        Path,
+        typer.Option("--books", exists=True, dir_okay=False, readable=True, resolve_path=True),
+    ],
+    topic: Annotated[str, typer.Option("--topic", help="Canonical topic ID.")],
+    output: Annotated[
+        Path,
+        typer.Option("--output", dir_okay=False, resolve_path=True),
+    ],
+    feature_config: Annotated[
+        Path,
+        typer.Option("--feature-config", exists=True, dir_okay=False, readable=True),
+    ] = DEFAULT_FEATURE_CONFIG,
+    assessment_config: Annotated[
+        Path,
+        typer.Option("--assessment-config", exists=True, dir_okay=False, readable=True),
+    ] = DEFAULT_ASSESSMENT_CONFIG,
+) -> None:
+    """Build an auditable concept pool and question targets from canonical evidence."""
+
+    try:
+        canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        canonical_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        book_profiles_hash = _sha256_file(books)
+        dataset = load_canonical_dataset(data_dir)
+        profiles = load_book_profiles(books)
+        features = load_feature_config(feature_config)
+        assessment = load_assessment_config(assessment_config)
+        if canonical_hashes != {
+            name: _sha256_file(data_dir / name) for name in canonical_files
+        } or book_profiles_hash != _sha256_file(books):
+            raise AssessmentBlueprintError(
+                "canonical input or book profiles changed during loading"
+            )
+        blueprint = build_assessment_blueprint(
+            topic,
+            dataset,
+            profiles,
+            features,
+            assessment,
+            canonical_file_hashes=canonical_hashes,
+            book_profiles_hash=book_profiles_hash,
+        )
+        write_json(blueprint, output)
+    except (
+        CanonicalDataError,
+        RankingInputError,
+        ConfigError,
+        AssessmentBlueprintError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(
+        json.dumps(
+            {
+                "topic_id": blueprint.topic_id,
+                "pool_concepts": len(blueprint.concept_pool.concepts),
+                "selected_concepts": len(blueprint.selected_assessment_concepts),
+                "question_specs": len(blueprint.question_specs),
+                "shortages": len(blueprint.shortages),
+                "config_version": blueprint.config_version,
+                "config_hash": blueprint.config_hash,
                 "output": str(output),
             },
             ensure_ascii=False,
