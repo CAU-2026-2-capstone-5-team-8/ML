@@ -806,6 +806,85 @@ class RecommendationComparisonReport(StrictModel):
     items: list[RecommendationComparisonItem]
 
 
+RankingPolicyName = Literal["renormalized", "minimum_coverage", "two_stage"]
+RankingPolicyGroup = Literal["readiness", "ineligible", "topic_only"]
+
+
+class RankingPolicyCandidate(StrictModel):
+    book_id: str
+    display_position: int = Field(ge=1)
+    position_within_group: int = Field(ge=1)
+    renormalized_position: int = Field(ge=1)
+    display_position_change: int
+    group: RankingPolicyGroup
+    readiness_evidence: Literal["full", "partial"]
+    readiness_score: float | None = Field(default=None, ge=0, le=1)
+    diagnostic_renormalized_score: float = Field(ge=0, le=1)
+    topic_only_score: float | None = Field(default=None, ge=0, le=1)
+    component_weight_coverage: float = Field(ge=0, le=1)
+    unavailable_components: list[RankingComponentName]
+    active_weights: dict[RankingComponentName, float]
+    components: RankingComponents
+    knowledge_components: KnowledgeFitComponents
+    knowledge_active_weights: dict[KnowledgeComponentName, float]
+    knowledge_weight_coverage: float = Field(ge=0, le=1)
+    diagnostics: MatchingDiagnostics
+    reasons: list[str]
+    eligibility_reason: str | None = None
+    book_feature_version: str
+    book_config_version: str
+    book_config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def score_must_match_group(self) -> "RankingPolicyCandidate":
+        if self.group == "readiness" and self.readiness_score is None:
+            raise ValueError("readiness group requires readiness_score")
+        if self.group != "readiness" and self.readiness_score is not None:
+            raise ValueError("non-readiness group must not expose a readiness_score")
+        if self.group != "readiness" and self.topic_only_score is None:
+            raise ValueError("evidence-limited group requires topic_only_score")
+        if self.group == "ineligible" and self.eligibility_reason is None:
+            raise ValueError("ineligible group requires eligibility_reason")
+        return self
+
+
+class RankingPolicyResult(StrictModel):
+    policy: RankingPolicyName
+    readiness_candidate_count: int = Field(ge=0)
+    evidence_limited_count: int = Field(ge=0)
+    readiness_top_k: list[str]
+    readiness_top_k_complete: bool
+    items: list[RankingPolicyCandidate]
+
+
+class RankingPolicyTopKDifference(StrictModel):
+    left_policy: RankingPolicyName
+    right_policy: RankingPolicyName
+    comparable: bool
+    left_only: list[str]
+    right_only: list[str]
+    limitation: str | None = None
+
+
+class RankingPolicyEvaluationReport(StrictModel):
+    evaluation_version: str
+    topic_id: str
+    canonical_book_count: int = Field(ge=1)
+    candidate_count: int = Field(ge=1)
+    top_k: int = Field(ge=1)
+    minimum_component_weight_coverage: float = Field(gt=0, le=1)
+    policy_config_version: str
+    policy_config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    ranking_model_version: str
+    ranking_config_version: str
+    ranking_config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    reader_profile_version: str
+    reader_config_version: str
+    reader_config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    policies: list[RankingPolicyResult]
+    top_k_differences: list[RankingPolicyTopKDifference]
+
+
 class AblationComparison(StrictModel):
     from_mode: Literal["toc_only", "toc_description"]
     to_mode: Literal["toc_description", "all_available"]

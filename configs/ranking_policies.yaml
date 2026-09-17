@@ -1,0 +1,10 @@
+config_version: ranking-policies-config-v1
+evaluation_version: ranking-policy-evaluation-v1
+policies:
+  - renormalized
+  - minimum_coverage
+  - two_stage
+# Requires at least 0.30 readiness weight beyond the default 0.35 topic weight.
+# This is an experimental eligibility rule, not a quality or confidence score.
+minimum_component_weight_coverage: 0.65
+top_k: 3
