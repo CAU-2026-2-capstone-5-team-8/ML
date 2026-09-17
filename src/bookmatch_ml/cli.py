@@ -44,6 +44,10 @@ DEFAULT_RANKING_POLICY_CONFIG = Path("configs/ranking_policies.yaml")
 DEFAULT_ASSESSMENT_CONFIG = Path("configs/assessment.yaml")
 
 
+def _sha256_file(path: Path) -> str:
+    return f"sha256:{hashlib.sha256(path.read_bytes()).hexdigest()}"
+
+
 @app.callback()
 def main() -> None:
     """Inspect and transform canonical book evidence."""
@@ -185,14 +189,19 @@ def build_assessment_blueprint_command(
     """Build an auditable concept pool and question targets from canonical evidence."""
 
     try:
+        canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        canonical_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        book_profiles_hash = _sha256_file(books)
         dataset = load_canonical_dataset(data_dir)
         profiles = load_book_profiles(books)
         features = load_feature_config(feature_config)
         assessment = load_assessment_config(assessment_config)
-        canonical_hashes = {
-            name: f"sha256:{hashlib.sha256((data_dir / name).read_bytes()).hexdigest()}"
-            for name in ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
-        }
+        if canonical_hashes != {
+            name: _sha256_file(data_dir / name) for name in canonical_files
+        } or book_profiles_hash != _sha256_file(books):
+            raise AssessmentBlueprintError(
+                "canonical input or book profiles changed during loading"
+            )
         blueprint = build_assessment_blueprint(
             topic,
             dataset,
@@ -200,7 +209,7 @@ def build_assessment_blueprint_command(
             features,
             assessment,
             canonical_file_hashes=canonical_hashes,
-            book_profiles_hash=f"sha256:{hashlib.sha256(books.read_bytes()).hexdigest()}",
+            book_profiles_hash=book_profiles_hash,
         )
         write_json(blueprint, output)
     except (

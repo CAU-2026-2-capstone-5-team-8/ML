@@ -1,5 +1,6 @@
 """Concept-assessment contracts kept separate from current reader and Spring DTOs."""
 
+import re
 from typing import Literal
 
 from pydantic import Field, field_validator, model_validator
@@ -248,8 +249,27 @@ class AssessmentBlueprint(StrictModel):
     canonical_file_hashes: dict[str, str]
     book_profiles_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
 
+    @field_validator("canonical_file_hashes")
+    @classmethod
+    def canonical_hashes_must_cover_exact_inputs(cls, value: dict[str, str]) -> dict[str, str]:
+        required = {"books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl"}
+        if set(value) != required or any(
+            re.fullmatch(r"sha256:[0-9a-f]{64}", digest) is None for digest in value.values()
+        ):
+            raise ValueError("canonical file hashes must cover all four JSONL inputs")
+        return value
+
     @model_validator(mode="after")
     def selected_concepts_and_questions_must_match_pool(self) -> "AssessmentBlueprint":
+        if (
+            self.config_version != self.concept_pool.assessment_config_version
+            or self.config_hash != self.concept_pool.assessment_config_hash
+            or any(
+                item.config_version != self.config_version or item.config_hash != self.config_hash
+                for item in self.question_specs
+            )
+        ):
+            raise ValueError("assessment configuration provenance must match pool and questions")
         pool_keys = {(item.concept_id, item.role) for item in self.concept_pool.concepts}
         selected_keys = {(item.concept_id, item.role) for item in self.selected_assessment_concepts}
         if (

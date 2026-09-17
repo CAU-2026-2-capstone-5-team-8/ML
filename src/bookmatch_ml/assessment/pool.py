@@ -110,6 +110,20 @@ def build_topic_concept_pool(
         "covered": set(features.concept.topics[topic_id].root),
         "prerequisite": set(features.prerequisite.topics[topic_id].root),
     }
+    other_topic_names = {
+        "covered": {
+            name
+            for other_topic, lexicon in features.concept.topics.items()
+            if other_topic != topic_id
+            for name in lexicon.root
+        },
+        "prerequisite": {
+            name
+            for other_topic, lexicon in features.prerequisite.topics.items()
+            if other_topic != topic_id
+            for name in lexicon.root
+        },
+    }
     grouped: dict[tuple[str, str], list[ConceptBookSupport]] = defaultdict(list)
     for profile in topic_books:
         for role, concepts in (
@@ -119,6 +133,8 @@ def build_topic_concept_pool(
             seen: set[str] = set()
             for concept in concepts:
                 if concept.concept not in names_by_role[role]:
+                    if concept.concept in other_topic_names[role]:
+                        continue
                     raise AssessmentBlueprintError(
                         f"concept {concept.concept!r} is outside {topic_id} {role} lexicon"
                     )
@@ -145,6 +161,7 @@ def build_topic_concept_pool(
                     )
                 )
     priority = assessment_config.config.priority
+    priority_total = priority.mean_book_weight + priority.book_coverage_rate
     concepts: list[TopicConcept] = []
     for (concept_id, role), supports in grouped.items():
         supports.sort(key=lambda item: item.book_id)
@@ -161,7 +178,8 @@ def build_topic_concept_pool(
                 assessment_priority=(
                     priority.mean_book_weight * mean_weight
                     + priority.book_coverage_rate * coverage_rate
-                ),
+                )
+                / priority_total,
                 evidence_types=sorted(
                     {reference.evidence_type for item in supports for reference in item.evidence}
                 ),

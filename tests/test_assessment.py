@@ -7,6 +7,7 @@ import pytest
 from pydantic import ValidationError
 from typer.testing import CliRunner
 
+import bookmatch_ml.cli as cli_module
 from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
 from bookmatch_ml.assessment.difficulty import assign_target_difficulty
 from bookmatch_ml.assessment.pool import AssessmentBlueprintError, build_topic_concept_pool
@@ -52,7 +53,9 @@ def _blueprint(topic: str = "operating-systems") -> AssessmentBlueprint:
         profiles,
         FEATURES,
         ASSESSMENT,
-        canonical_file_hashes={name: HASH for name in ("books", "documents", "toc", "sources")},
+        canonical_file_hashes={
+            name: HASH for name in ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        },
         book_profiles_hash=HASH,
     )
 
@@ -128,6 +131,39 @@ def test_same_concept_name_can_keep_separate_covered_and_prerequisite_roles() ->
     }
 
 
+def test_multitopic_book_filters_other_topic_concepts_but_rejects_unknown_names() -> None:
+    _, profiles = _inputs()
+    os_profile = profiles[0]
+    process = next(
+        item for item in os_profile.concept_profile.covered_concepts if item.concept == "process"
+    )
+    matrix = process.model_copy(update={"concept": "matrix"})
+    concept_profile = os_profile.concept_profile.model_copy(
+        update={
+            "covered_concepts": [*os_profile.concept_profile.covered_concepts, matrix],
+            "topic_distribution": {"operating-systems": 0.5, "linear-algebra": 0.5},
+        }
+    )
+    mixed = os_profile.model_copy(update={"concept_profile": concept_profile})
+
+    os_pool = build_topic_concept_pool("operating-systems", [mixed], FEATURES, ASSESSMENT)
+    la_pool = build_topic_concept_pool("linear-algebra", [mixed], FEATURES, ASSESSMENT)
+
+    assert "matrix" not in {item.concept_id for item in os_pool.concepts}
+    assert "process" not in {item.concept_id for item in la_pool.concepts}
+    assert "matrix" in {item.concept_id for item in la_pool.concepts}
+    unknown = matrix.model_copy(update={"concept": "not-in-any-topic"})
+    invalid = mixed.model_copy(
+        update={
+            "concept_profile": concept_profile.model_copy(
+                update={"covered_concepts": [*os_profile.concept_profile.covered_concepts, unknown]}
+            )
+        }
+    )
+    with pytest.raises(AssessmentBlueprintError, match="outside operating-systems"):
+        build_topic_concept_pool("operating-systems", [invalid], FEATURES, ASSESSMENT)
+
+
 def test_assessment_priority_is_configured_and_not_difficulty() -> None:
     _, profiles = _inputs()
     modified = ASSESSMENT.model_copy(
@@ -147,6 +183,20 @@ def test_assessment_priority_is_configured_and_not_difficulty() -> None:
     )
     assert all(item.assessment_priority == 1 for item in second.concepts)
 
+    nearly_normalized = ASSESSMENT.model_copy(
+        update={
+            "config": ASSESSMENT.config.model_copy(
+                update={
+                    "priority": AssessmentPriorityConfig(
+                        mean_book_weight=0.7000000008, book_coverage_rate=0.3
+                    )
+                }
+            )
+        }
+    )
+    bounded = build_topic_concept_pool("operating-systems", profiles, FEATURES, nearly_normalized)
+    assert all(item.assessment_priority <= 1 for item in bounded.concepts)
+
 
 def test_self_assessment_validates_boolean_duplicates_and_topic_membership() -> None:
     pool = _blueprint().concept_pool
@@ -161,7 +211,7 @@ def test_self_assessment_validates_boolean_duplicates_and_topic_membership() -> 
             "self_assessment_version": ASSESSMENT.config.self_assessment_version,
         }
     )
-    validate_self_assessment(valid, pool)
+    validate_self_assessment(valid, pool, ASSESSMENT)
     assert [item.knows_concept for item in valid.responses] == [True, False]
     with pytest.raises(ValidationError, match="duplicate concept_id"):
         ConceptSelfAssessment.model_validate(
@@ -184,6 +234,13 @@ def test_self_assessment_validates_boolean_duplicates_and_topic_membership() -> 
                 update={"responses": [valid.responses[0].model_copy(update={"concept_id": "fake"})]}
             ),
             pool,
+            ASSESSMENT,
+        )
+    with pytest.raises(AssessmentBlueprintError, match="version"):
+        validate_self_assessment(
+            valid.model_copy(update={"self_assessment_version": "unsupported"}),
+            pool,
+            ASSESSMENT,
         )
     with pytest.raises(ValidationError, match="identifiers"):
         ConceptSelfAssessment.model_validate(
@@ -238,6 +295,25 @@ def test_blueprint_ids_metadata_and_evidence_are_deterministic() -> None:
     )
     assert all(item.supporting_evidence for item in first.question_specs)
     assert "This synthetic preface" not in first.model_dump_json()
+
+
+def test_blueprint_rejects_incomplete_hashes_and_conflicting_configuration() -> None:
+    valid = _blueprint().model_dump()
+    missing = _blueprint().model_dump()
+    del missing["canonical_file_hashes"]["toc.jsonl"]
+    with pytest.raises(ValidationError, match="canonical file hashes"):
+        AssessmentBlueprint.model_validate(missing)
+    invalid_hash = _blueprint().model_dump()
+    invalid_hash["canonical_file_hashes"]["books.jsonl"] = "not-a-hash"
+    with pytest.raises(ValidationError, match="canonical file hashes"):
+        AssessmentBlueprint.model_validate(invalid_hash)
+    other_version = _blueprint().model_dump()
+    other_version["concept_pool"]["assessment_config_version"] = "other-version"
+    with pytest.raises(ValidationError, match="provenance"):
+        AssessmentBlueprint.model_validate(other_version)
+    valid["question_specs"][0]["config_hash"] = "sha256:" + "b" * 64
+    with pytest.raises(ValidationError, match="provenance"):
+        AssessmentBlueprint.model_validate(valid)
 
 
 def test_question_spec_rejects_invalid_level_and_unanchored_comprehension() -> None:
@@ -318,3 +394,41 @@ def test_cli_writes_deterministic_artifact_and_rejects_stale_profiles(tmp_path: 
     result = CliRunner().invoke(app, [*args, "--output", str(tmp_path / "invalid.json")])
     assert result.exit_code == 1
     assert "book profiles are stale" in result.output
+
+
+def test_cli_rejects_inputs_changed_while_loading(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, profiles = _inputs()
+    books = tmp_path / "profiles.jsonl"
+    write_jsonl(profiles, books)
+    loaded = cli_module.load_book_profiles
+
+    def change_after_load(path: Path):
+        result = loaded(path)
+        path.write_bytes(path.read_bytes() + b"\n")
+        return result
+
+    monkeypatch.setattr(cli_module, "load_book_profiles", change_after_load)
+    output = tmp_path / "blueprint.json"
+    result = CliRunner().invoke(
+        app,
+        [
+            "build-assessment-blueprint",
+            "--data-dir",
+            str(FIXTURE),
+            "--books",
+            str(books),
+            "--topic",
+            "operating-systems",
+            "--feature-config",
+            str(ROOT / "configs" / "features.yaml"),
+            "--assessment-config",
+            str(ROOT / "configs" / "assessment.yaml"),
+            "--output",
+            str(output),
+        ],
+    )
+    assert result.exit_code == 1
+    assert "changed during loading" in result.output
+    assert not output.exists()
