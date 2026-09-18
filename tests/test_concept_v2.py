@@ -4,7 +4,10 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
+from typer.testing import CliRunner
 
+from bookmatch_ml.book.profile import build_book_profiles
+from bookmatch_ml.cli import app
 from bookmatch_ml.concept_v2.graph import ConceptGraph, LoadedConceptGraph, load_concept_graph
 from bookmatch_ml.concept_v2.matching import match_book_concepts, order_matching_items
 from bookmatch_ml.concept_v2.profile import (
@@ -13,8 +16,10 @@ from bookmatch_ml.concept_v2.profile import (
     load_concept_matching_config,
 )
 from bookmatch_ml.concept_v2.toc import TocTreeError, reconstruct_toc
-from bookmatch_ml.config import load_feature_config
-from bookmatch_ml.data.evidence import calculate_evidence_coverage
+from bookmatch_ml.config import ConfigError, load_feature_config
+from bookmatch_ml.data.evidence import assemble_book_evidence, calculate_evidence_coverage
+from bookmatch_ml.data.loader import load_canonical_dataset
+from bookmatch_ml.io import write_jsonl
 from bookmatch_ml.ranking.loader import load_reader_profile
 from bookmatch_ml.schemas import Book, BookEvidence, ConceptReadiness, TocEntry
 
@@ -146,6 +151,40 @@ def test_graph_load_is_deterministic():
     assert first == second
     assert first.content_hash.startswith("sha256:")
     assert len(first.graph.edges) > 0
+
+
+def test_missing_prerequisite_topic_is_a_config_error():
+    prerequisite = FEATURES.config.prerequisite.model_copy(
+        update={"topics": {"linear-algebra": FEATURES.config.prerequisite.topics["linear-algebra"]}}
+    )
+    features = FEATURES.model_copy(
+        update={"config": FEATURES.config.model_copy(update={"prerequisite": prerequisite})}
+    )
+    with pytest.raises(ConfigError, match="feature prerequisite aliases missing topic"):
+        load_concept_graph(ROOT / "configs/concept_graph.yaml", features)
+
+
+def test_concept_cli_accepts_reordered_valid_v1_profiles(tmp_path: Path):
+    fixture_dir = ROOT / "tests/fixtures/canonical"
+    dataset = load_canonical_dataset(fixture_dir)
+    profiles = build_book_profiles(assemble_book_evidence(dataset), FEATURES)
+    books = tmp_path / "reversed_profiles.jsonl"
+    write_jsonl(list(reversed(profiles)), books)
+    result = CliRunner().invoke(
+        app,
+        [
+            "evaluate-concept-matching",
+            "--data-dir",
+            str(fixture_dir),
+            "--reader",
+            str(ROOT / "examples/reader_profile.json"),
+            "--books",
+            str(books),
+            "--output",
+            str(tmp_path / "report.json"),
+        ],
+    )
+    assert result.exit_code == 0, result.output
 
 
 def test_toc_hierarchy_and_sibling_order_independent_of_input_order():

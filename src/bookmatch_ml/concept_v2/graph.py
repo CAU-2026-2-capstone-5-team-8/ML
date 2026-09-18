@@ -97,7 +97,10 @@ def load_concept_graph(path: Path, features: LoadedFeatureConfig) -> LoadedConce
             raise ValueError("graph topics differ from feature concept topics")
         for topic, nodes in graph.nodes.items():
             available = set(features.config.concept.topics[topic].root)
-            available.update(features.config.prerequisite.topics[topic].root)
+            prerequisite_topic = features.config.prerequisite.topics.get(topic)
+            if prerequisite_topic is None:
+                raise ValueError(f"feature prerequisite aliases missing topic: {topic}")
+            available.update(prerequisite_topic.root)
             unknown = set(nodes) - available
             if unknown:
                 raise ValueError(f"graph nodes missing from feature aliases: {sorted(unknown)}")

@@ -616,9 +616,9 @@ def evaluate_concept_matching_command(
         matching = load_concept_matching_config(matching_config)
         v1_ranking = load_ranking_config(ranking_config)
         rebuilt_v1 = build_book_profiles(evidence, features)
-        if [item.model_dump(mode="json") for item in v1_profiles] != [
-            item.model_dump(mode="json") for item in rebuilt_v1
-        ]:
+        if {item.book_id: item.model_dump(mode="json") for item in v1_profiles} != {
+            item.book_id: item.model_dump(mode="json") for item in rebuilt_v1
+        }:
             raise ValueError("v1 book profiles are stale for the canonical input or feature config")
         v1_by_id = {item.book_id: item for item in v1_profiles}
         topic = reader_profile_value.topic_id
