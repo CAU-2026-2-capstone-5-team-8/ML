@@ -1,0 +1,68 @@
+config_version: concept-graph-config-v1
+graph_version: concept-graph-v1
+relation_type: prerequisite_candidate
+nodes:
+  operating-systems:
+    - computer architecture
+    - programming
+    - process
+    - thread
+    - scheduling
+    - concurrency
+    - synchronization
+    - deadlock
+    - memory management
+    - virtual memory
+    - storage
+    - file system
+    - input/output
+    - protection
+    - security
+    - virtualization
+    - distributed systems
+  linear-algebra:
+    - high school algebra
+    - systems of equations
+    - linear system
+    - gaussian elimination
+    - matrix
+    - vector
+    - vector space
+    - linear independence
+    - basis
+    - dimension
+    - rank
+    - determinant
+    - eigenvalue
+    - eigenvector
+    - orthogonality
+    - inner product
+    - linear transformation
+    - diagonalization
+    - least squares
+    - singular value decomposition
+edges:
+  - {topic: operating-systems, prerequisite: programming, dependent: process, source_type: proposed_seed, version: seed-v1}
+  - {topic: operating-systems, prerequisite: computer architecture, dependent: memory management, source_type: proposed_seed, version: seed-v1}
+  - {topic: operating-systems, prerequisite: process, dependent: thread, source_type: proposed_seed, version: seed-v1}
+  - {topic: operating-systems, prerequisite: process, dependent: scheduling, source_type: proposed_seed, version: seed-v1}
+  - {topic: operating-systems, prerequisite: process, dependent: concurrency, source_type: proposed_seed, version: seed-v1}
+  - {topic: operating-systems, prerequisite: thread, dependent: concurrency, source_type: proposed_seed, version: seed-v1}
+  - {topic: operating-systems, prerequisite: concurrency, dependent: synchronization, source_type: proposed_seed, version: seed-v1}
+  - {topic: operating-systems, prerequisite: synchronization, dependent: deadlock, source_type: proposed_seed, version: seed-v1}
+  - {topic: operating-systems, prerequisite: memory management, dependent: virtual memory, source_type: proposed_seed, version: seed-v1}
+  - {topic: operating-systems, prerequisite: storage, dependent: file system, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: high school algebra, dependent: linear system, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: systems of equations, dependent: linear system, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: linear system, dependent: gaussian elimination, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: vector, dependent: vector space, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: vector space, dependent: basis, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: vector space, dependent: linear independence, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: vector space, dependent: dimension, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: determinant, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: rank, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: linear transformation, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: eigenvalue, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: eigenvalue, dependent: eigenvector, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: inner product, dependent: orthogonality, source_type: proposed_seed, version: seed-v1}
+  - {topic: linear-algebra, prerequisite: orthogonality, dependent: least squares, source_type: proposed_seed, version: seed-v1}

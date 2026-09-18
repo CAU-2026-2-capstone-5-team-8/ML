@@ -1,0 +1,20 @@
+{
+  "assessment_id": "synthetic-la-concept-v2-001",
+  "topic_id": "linear-algebra",
+  "responses": [
+    {"question_id": "la-01", "topic_id": "linear-algebra", "concept_id": "high school algebra", "question_type": "background_knowledge", "difficulty": "easy", "score": 1.0},
+    {"question_id": "la-02", "topic_id": "linear-algebra", "concept_id": "systems of equations", "question_type": "background_knowledge", "difficulty": "easy", "score": 0.9},
+    {"question_id": "la-03", "topic_id": "linear-algebra", "concept_id": "linear system", "question_type": "background_knowledge", "difficulty": "medium", "score": 0.8},
+    {"question_id": "la-04", "topic_id": "linear-algebra", "concept_id": "matrix", "question_type": "vocabulary", "difficulty": "easy", "score": 1.0},
+    {"question_id": "la-05", "topic_id": "linear-algebra", "concept_id": "vector", "question_type": "vocabulary", "difficulty": "easy", "score": 0.9},
+    {"question_id": "la-06", "topic_id": "linear-algebra", "concept_id": "vector space", "question_type": "vocabulary", "difficulty": "medium", "score": 0.7},
+    {"question_id": "la-07", "topic_id": "linear-algebra", "concept_id": "gaussian elimination", "question_type": "comprehension", "difficulty": "medium", "score": 0.75},
+    {"question_id": "la-08", "topic_id": "linear-algebra", "concept_id": "basis", "question_type": "comprehension", "difficulty": "hard", "score": 0.5},
+    {"question_id": "la-09", "topic_id": "linear-algebra", "concept_id": "dimension", "question_type": "comprehension", "difficulty": "hard", "score": 0.6},
+    {"question_id": "la-10", "topic_id": "linear-algebra", "concept_id": "determinant", "question_type": "comprehension", "difficulty": "hard", "score": 0.4},
+    {"question_id": "la-11", "topic_id": "linear-algebra", "concept_id": "eigenvalue", "question_type": "comprehension", "difficulty": "hard", "score": 0.2},
+    {"question_id": "la-12", "topic_id": "linear-algebra", "concept_id": "eigenvector", "question_type": "comprehension", "difficulty": "hard", "score": 0.2},
+    {"question_id": "la-13", "topic_id": "linear-algebra", "concept_id": "orthogonality", "question_type": "comprehension", "difficulty": "hard", "score": 0.3},
+    {"question_id": "la-14", "topic_id": "linear-algebra", "concept_id": "inner product", "question_type": "comprehension", "difficulty": "hard", "score": 0.5}
+  ]
+}

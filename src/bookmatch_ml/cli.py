@@ -10,6 +10,17 @@ import typer
 from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
 from bookmatch_ml.assessment.pool import AssessmentBlueprintError
 from bookmatch_ml.book.profile import build_book_profiles
+from bookmatch_ml.concept_v2.graph import load_concept_graph
+from bookmatch_ml.concept_v2.matching import (
+    ConceptMatchingReport,
+    match_book_concepts,
+    order_matching_items,
+)
+from bookmatch_ml.concept_v2.profile import (
+    build_book_concept_profile_v2,
+    load_concept_matching_config,
+)
+from bookmatch_ml.concept_v2.toc import TocTreeError
 from bookmatch_ml.config import (
     ConfigError,
     load_assessment_config,
@@ -42,6 +53,8 @@ DEFAULT_RANKING_CONFIG = Path("configs/ranking.yaml")
 DEFAULT_EVALUATION_CONFIG = Path("configs/evaluation.yaml")
 DEFAULT_RANKING_POLICY_CONFIG = Path("configs/ranking_policies.yaml")
 DEFAULT_ASSESSMENT_CONFIG = Path("configs/assessment.yaml")
+DEFAULT_CONCEPT_GRAPH_CONFIG = Path("configs/concept_graph.yaml")
+DEFAULT_CONCEPT_MATCHING_CONFIG = Path("configs/concept_matching.yaml")
 
 
 def _sha256_file(path: Path) -> str:
@@ -559,6 +572,105 @@ def evaluate_ranking_policies_command(
             },
             ensure_ascii=False,
             indent=2,
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("evaluate-concept-matching")
+def evaluate_concept_matching_command(
+    data_dir: Annotated[Path, typer.Option("--data-dir", file_okay=False, resolve_path=True)],
+    reader: Annotated[
+        Path, typer.Option("--reader", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    books: Annotated[Path, typer.Option("--books", exists=True, dir_okay=False, resolve_path=True)],
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)],
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+    ranking_config: Annotated[
+        Path, typer.Option("--ranking-config", exists=True, dir_okay=False)
+    ] = DEFAULT_RANKING_CONFIG,
+) -> None:
+    """Compare unchanged rank-v1 with TOC concept matching for one topic."""
+
+    try:
+        canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        input_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        input_hashes["reader"] = _sha256_file(reader)
+        input_hashes["books_v1"] = _sha256_file(books)
+        dataset = load_canonical_dataset(data_dir)
+        evidence = assemble_book_evidence(dataset)
+        reader_profile_value = load_reader_profile(reader)
+        v1_profiles = load_book_profiles(books)
+        if {item.book_id for item in v1_profiles} != {item.book_id for item in dataset.books}:
+            raise ValueError("v1 books do not match canonical book IDs")
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        matching = load_concept_matching_config(matching_config)
+        v1_ranking = load_ranking_config(ranking_config)
+        rebuilt_v1 = build_book_profiles(evidence, features)
+        if {item.book_id: item.model_dump(mode="json") for item in v1_profiles} != {
+            item.book_id: item.model_dump(mode="json") for item in rebuilt_v1
+        }:
+            raise ValueError("v1 book profiles are stale for the canonical input or feature config")
+        v1_by_id = {item.book_id: item for item in v1_profiles}
+        topic = reader_profile_value.topic_id
+        if topic not in graph.graph.nodes:
+            raise ValueError(f"unsupported concept graph topic: {topic}")
+        items = []
+        for book in evidence:
+            if topic not in book.metadata.topics:
+                continue
+            profile = build_book_concept_profile_v2(
+                book, topic, features, graph, matching, input_hashes["toc.jsonl"]
+            )
+            items.append(
+                match_book_concepts(
+                    reader_profile_value, profile, matching, v1_by_id[book.book_id], v1_ranking
+                )
+            )
+        if input_hashes != {
+            **{name: _sha256_file(data_dir / name) for name in canonical_files},
+            "reader": _sha256_file(reader),
+            "books_v1": _sha256_file(books),
+        }:
+            raise ValueError("concept matching inputs changed during evaluation")
+        report = ConceptMatchingReport(
+            topic_id=topic,
+            candidate_count=len(items),
+            items=order_matching_items(items),
+            model_version=matching.config.model_version,
+            matching_config_version=matching.config.config_version,
+            matching_config_hash=matching.content_hash,
+            graph_version=graph.graph.graph_version,
+            graph_hash=graph.content_hash,
+            feature_config_hash=features.content_hash,
+            reader_profile_version=reader_profile_value.profile_version,
+            reader_config_hash=reader_profile_value.config_hash,
+            input_hashes=input_hashes,
+        )
+        write_json(report, output)
+    except (
+        CanonicalDataError,
+        ConfigError,
+        RankingError,
+        RankingInputError,
+        TocTreeError,
+        ValueError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {"topic_id": topic, "candidate_count": len(items), "output": str(output)},
             sort_keys=True,
         )
     )

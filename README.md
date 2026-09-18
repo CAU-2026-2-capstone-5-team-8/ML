@@ -245,6 +245,43 @@ change the existing reader-profile scoring or ranking API. See
 [Question Difficulty v1](docs/assessment-difficulty-v1.md) for rules, real-data findings, and
 limitations.
 
+## Experimental concept matching v2
+
+The existing `rank` CLI and `/ml/rank` API remain `absolute_gap_v1`. A separate batch command
+compares their v1 result with TOC-based book concept coverage and the existing
+`ReaderProfile.concept_readiness` values. It reports **prerequisite readiness** and **learning
+opportunity** separately, each with its own mastery-assessment coverage. Missing concept mastery
+is unknown, never zero. Prose difficulty remains in the report only as a v1 comparison and
+optional diagnostic.
+
+```bash
+uv run bookmatch-ml build-book-profiles \
+  --data-dir ../Data-Pipeline/data/processed \
+  --output data/output/book_profiles.jsonl
+
+uv run bookmatch-ml evaluate-concept-matching \
+  --data-dir ../Data-Pipeline/data/processed \
+  --reader examples/reader_profile.json \
+  --books data/output/book_profiles.jsonl \
+  --output data/reports/concept_matching_os.json
+
+uv run bookmatch-ml reader-profile \
+  --input examples/concept_matching_la_assessment.json \
+  --output data/output/concept_matching_la_reader.json
+
+uv run bookmatch-ml evaluate-concept-matching \
+  --data-dir ../Data-Pipeline/data/processed \
+  --reader data/output/concept_matching_la_reader.json \
+  --books data/output/book_profiles.jsonl \
+  --output data/reports/concept_matching_la.json
+```
+
+The versioned graph and display thresholds live in `configs/concept_graph.yaml` and
+`configs/concept_matching.yaml`. TOC parent links and order are preserved, graph edges are
+proposed prerequisite candidates, and every mapping retains its TOC path. The 10-book results,
+formulas, v1 comparison, and limitations are in
+[Concept matching v2](docs/concept-matching-v2.md). The LA assessment fixture is synthetic.
+
 ## Rank books or score one book
 
 After generating `book_profiles.jsonl`, produce topic-filtered top-K recommendations:
