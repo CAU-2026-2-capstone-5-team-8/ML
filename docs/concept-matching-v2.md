@@ -135,7 +135,7 @@ abbreviated for readability.
 | Operating Systems book | TOC | C | External / taught candidates | Readiness | Opportunity | V1 | V2 status |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | Stallings, *Operating Systems* | 60/201 | 15 | 2 / 7 | .800 / .500 | .261 / .529 | 1.000 (.35) | eligible |
-| *Think OS* | 23/65 | 9 | 5 / 2 | .486 / .636 | .258 / .706 | .651 (1.00) | challenge candidate |
+| *Think OS* | 22/65 | 9 | 5 / 2 | .486 / .636 | .258 / .706 | .651 (1.00) | challenge candidate |
 | *Operating Systems and Middleware* | 59/179 | 11 | 7 / 1 | .620 / .714 | .200 / .483 | .737 (1.00) | insufficient evidence |
 | *xv6* | 16/99 | 8 | 6 / 2 | .360 / .417 | .190 / .714 | .697 (1.00) | insufficient evidence |
 | *Operating Systems: Three Easy Pieces* | 24/62 | 11 | 5 / 3 | .250 / .182 | .130 / .455 | .705 (1.00) | insufficient evidence |
@@ -144,13 +144,13 @@ abbreviated for readability.
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | Strang, *Introduction to Linear Algebra* | 35/63 | 15 | 5 / 4 | .629 / 1.00 | .417 / .714 | 1.000 (.35) | eligible |
 | *Linear Algebra* | 29/96 | 11 | 4 / 3 | .800 / 1.00 | .358 / .960 | .597 (1.00) | eligible |
-| *Elementary linear algebra* | 8/9 | 8 | 2 / 1 | .667 / 1.00 | .337 / .800 | .634 (1.00) | eligible |
-| *Linear Algebra with Applications* | 72/167 | 17 | 5 / 4 | .575 / 1.00 | .450 / .674 | .678 (1.00) | challenge candidate |
-| *Understanding Linear Algebra* | 61/222 | 15 | 5 / 4 | .540 / 1.00 | .434 / .778 | .643 (1.00) | challenge candidate |
+| *Elementary linear algebra* | 8/9 | 9 | 4 / 1 | .780 / 1.00 | .322 / .818 | .634 (1.00) | eligible |
+| *Linear Algebra with Applications* | 74/167 | 18 | 4 / 5 | .633 / 1.00 | .434 / .689 | .678 (1.00) | eligible |
+| *Understanding Linear Algebra* | 62/222 | 15 | 5 / 4 | .540 / 1.00 | .426 / .784 | .643 (1.00) | challenge candidate |
 
 For every row, `unmatched = total - matched`; there were zero ambiguous rows in this snapshot.
-Thus the unmatched counts are respectively 141, 42, 120, 83, 38 for OS and 28, 67, 1, 95,
-161 for LA. These titles remain available in each report for lexicon review. The report also
+Thus the unmatched counts are respectively 141, 43, 120, 83, 38 for OS and 28, 67, 1, 93,
+160 for LA. These titles remain available in each report for lexicon review. The report also
 contains every concept weight and path, external/taught candidate, learning candidate, and
 unknown mastery concept, not just the table summaries.
 
@@ -178,7 +178,7 @@ unknown mastery concept, not just the table summaries.
   questions. Its TOC coverage does not prove the reader will learn every mapped item.
 
 Mapping gaps are substantial, especially for *xv6* (16/99) and *Understanding Linear Algebra*
-(61/222). Some headings are organizational or outside the fixed lexicon; some may expose
+(62/222). Some headings are organizational or outside the fixed lexicon; some may expose
 missing aliases. The 9-entry TOC for *Elementary linear algebra* has high entry mapping but
 coarse structural detail. Repeated TOC headings saturate weights. First occurrence can misread
 an early overview as teaching. Graph paths can propagate an unreviewed edge. Self-reported or

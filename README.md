@@ -291,15 +291,19 @@ uv run bookmatch-ml build-concept-review \
   --data-dir ../Data-Pipeline/data/processed \
   --reader examples/reader_profile.json \
   --reader data/output/concept_matching_la_reader.json \
+  --review-config configs/concept_graph_reviews.yaml \
   --output data/reports/concept_validation.json \
   --review-template data/reviews/concept_graph_review.json
 ```
 
-The command does not judge graph edges, change aliases, or influence ranking. The report exposes
-first-occurrence TOC paths and aliases, the complete matched/unmatched mapping queues, per-book
-structural counts, mastery assessment coverage, and descriptive opportunity counts and weights.
-The optional review template starts every edge as `unreviewed`; completed human decisions belong
-in a deliberate later change under `reviews/`. See
+`configs/concept_graph_reviews.yaml` is the version-controlled source of human decisions. The
+files under `data/reports/` and `data/reviews/` are generated snapshots. If the review config is
+absent, the command still runs and reports every edge as `unreviewed`.
+
+The command does not judge graph edges or influence ranking. It distinguishes `strict_before`,
+`same_entry`, `strict_after`, and unobserved first-occurrence evidence while retaining the TOC
+paths and legacy observation field. It also exposes the complete matched/unmatched queues,
+per-book structural counts, mastery coverage, and descriptive opportunity fields. See
 [Concept validation v1](docs/concept-validation-v1.md) for the schema, current 10-book metrics,
 review procedure, and interpretation limits.
 

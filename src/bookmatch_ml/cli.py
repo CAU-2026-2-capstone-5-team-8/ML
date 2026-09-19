@@ -22,9 +22,9 @@ from bookmatch_ml.concept_v2.profile import (
 )
 from bookmatch_ml.concept_v2.toc import TocTreeError
 from bookmatch_ml.concept_v2.validation import (
-    ConceptGraphReviewFile,
     build_concept_validation_report,
     build_review_template,
+    load_concept_graph_reviews,
 )
 from bookmatch_ml.config import (
     ConfigError,
@@ -60,6 +60,7 @@ DEFAULT_RANKING_POLICY_CONFIG = Path("configs/ranking_policies.yaml")
 DEFAULT_ASSESSMENT_CONFIG = Path("configs/assessment.yaml")
 DEFAULT_CONCEPT_GRAPH_CONFIG = Path("configs/concept_graph.yaml")
 DEFAULT_CONCEPT_MATCHING_CONFIG = Path("configs/concept_matching.yaml")
+DEFAULT_CONCEPT_GRAPH_REVIEWS_CONFIG = Path("configs/concept_graph_reviews.yaml")
 
 
 def _sha256_file(path: Path) -> str:
@@ -700,8 +701,17 @@ def build_concept_review_command(
     matching_config: Annotated[
         Path, typer.Option("--matching-config", exists=True, dir_okay=False)
     ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+    review_config: Annotated[
+        Path,
+        typer.Option(
+            "--review-config",
+            exists=False,
+            dir_okay=False,
+            help="Optional version-controlled human edge review YAML.",
+        ),
+    ] = DEFAULT_CONCEPT_GRAPH_REVIEWS_CONFIG,
 ) -> None:
-    """Build structural graph/TOC evidence and an optional unreviewed decision file."""
+    """Build structural evidence and an optional generated review snapshot."""
 
     try:
         if review_template == output:
@@ -713,6 +723,11 @@ def build_concept_review_command(
         features = load_feature_config(feature_config)
         graph = load_concept_graph(graph_config, features)
         matching = load_concept_matching_config(matching_config)
+        reviews = (
+            load_concept_graph_reviews(review_config, graph) if review_config.exists() else None
+        )
+        if reviews is not None:
+            input_hashes["concept_graph_reviews.yaml"] = reviews.content_hash
         reader_by_topic = {}
         reader_files = {}
         for path in readers or []:
@@ -731,23 +746,22 @@ def build_concept_review_command(
             reader_by_topic,
             input_hashes["toc.jsonl"],
             input_hashes,
+            reviews,
         )
         current_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
         current_hashes.update(
             {f"reader:{topic}": _sha256_file(path) for topic, path in reader_files.items()}
         )
+        if reviews is not None:
+            current_hashes["concept_graph_reviews.yaml"] = _sha256_file(review_config)
         if current_hashes != input_hashes:
             raise ValueError("concept review inputs changed during generation")
-        blank_review = build_review_template(graph) if review_template is not None else None
-        if review_template is not None and review_template.exists():
-            existing_review = ConceptGraphReviewFile.model_validate_json(
-                review_template.read_text(encoding="utf-8")
-            )
-            if existing_review != blank_review:
-                raise ValueError("refusing to overwrite a changed concept graph review file")
+        generated_review = (
+            build_review_template(graph, reviews) if review_template is not None else None
+        )
         write_json(report, output)
         if review_template is not None:
-            write_json(blank_review, review_template)
+            write_json(generated_review, review_template)
     except (
         CanonicalDataError,
         ConfigError,
