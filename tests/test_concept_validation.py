@@ -318,6 +318,16 @@ def test_human_review_config_rejects_invalid_status_and_unknown_edge(
         load_concept_graph_reviews(path, GRAPH)
 
 
+def test_human_review_config_wraps_malformed_yaml(tmp_path: Path):
+    path = tmp_path / "reviews.yaml"
+    path.write_text(
+        "config_version: concept-graph-reviews-v1\nconfig_version: duplicate\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ConfigError, match="invalid concept graph review config"):
+        load_concept_graph_reviews(path, GRAPH)
+
+
 def test_opportunity_descriptors_are_not_a_new_score():
     os_book = next(book for book in _report().books if book.topic == "operating-systems")
     assert os_book.learning_candidate_count is not None

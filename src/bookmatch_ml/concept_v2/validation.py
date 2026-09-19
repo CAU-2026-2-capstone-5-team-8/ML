@@ -5,6 +5,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Literal
 
+import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from bookmatch_ml.concept_v2.graph import LoadedConceptGraph
@@ -246,7 +247,7 @@ def load_concept_graph_reviews(path: Path, graph: LoadedConceptGraph) -> LoadedC
             raise ValueError(f"review references unknown graph edges: {sorted(unknown)}")
         if missing:
             raise ValueError(f"review is missing graph edges: {sorted(missing)}")
-    except (OSError, ValidationError, ValueError) as exc:
+    except (OSError, yaml.YAMLError, ValidationError, ValueError) as exc:
         raise ConfigError(f"invalid concept graph review config: {path}: {exc}") from exc
     return LoadedConceptGraphReviews(
         config=config, content_hash=f"sha256:{hashlib.sha256(content).hexdigest()}"

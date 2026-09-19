@@ -161,19 +161,34 @@ def _mapping_inputs(
     prerequisites = features.config.prerequisite.topics[topic].root
     aliases = {node: list(covered.get(node, prerequisites.get(node, []))) for node in nodes}
     rules = matching.config.toc_mapping
-    additions = {
-        concept: forms
-        for concept, forms in rules.alias_additions.get(topic, {}).items()
-        if concept in nodes
-    }
-    exclusions = {
-        concept: forms
-        for concept, forms in rules.exclusions.get(topic, {}).items()
-        if concept in nodes
-    }
+    additions = rules.alias_additions.get(topic, {})
+    exclusions = rules.exclusions.get(topic, {})
     for concept, forms in additions.items():
         aliases[concept] = list(dict.fromkeys([*aliases[concept], *forms]))
     return aliases, exclusions
+
+
+def validate_toc_mapping_rules(
+    matching: LoadedConceptMatchingConfig, graph: LoadedConceptGraph
+) -> None:
+    """Reject mapping rules that cannot target the loaded concept graph."""
+
+    rules = matching.config.toc_mapping
+    configured_topics = set(rules.alias_additions) | set(rules.exclusions)
+    unknown_topics = configured_topics - set(graph.graph.nodes)
+    if unknown_topics:
+        raise ConfigError(f"TOC mapping rules reference unknown topics: {sorted(unknown_topics)}")
+    for rule_name, topics in (
+        ("alias additions", rules.alias_additions),
+        ("exclusions", rules.exclusions),
+    ):
+        for topic, concepts in topics.items():
+            unknown_concepts = set(concepts) - set(graph.graph.nodes[topic])
+            if unknown_concepts:
+                raise ConfigError(
+                    f"TOC mapping {rule_name} reference unknown {topic} concepts: "
+                    f"{sorted(unknown_concepts)}"
+                )
 
 
 def _map_entry(
@@ -252,6 +267,7 @@ def build_book_concept_profile_v2(
 ) -> BookConceptProfileV2:
     if topic not in evidence.metadata.topics or topic not in graph.graph.nodes:
         raise ValueError(f"book {evidence.book_id} does not belong to graph topic {topic}")
+    validate_toc_mapping_rules(matching, graph)
     tree = reconstruct_toc(evidence.toc)
     aliases, exclusions = _mapping_inputs(features, graph, matching, topic)
     mappings: list[TocConceptMapping] = []

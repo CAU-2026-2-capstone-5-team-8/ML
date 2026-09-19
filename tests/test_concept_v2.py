@@ -14,6 +14,7 @@ from bookmatch_ml.concept_v2.profile import (
     _map_entry,
     build_book_concept_profile_v2,
     load_concept_matching_config,
+    validate_toc_mapping_rules,
 )
 from bookmatch_ml.concept_v2.toc import TocTreeError, reconstruct_toc
 from bookmatch_ml.config import ConfigError, load_feature_config
@@ -98,8 +99,16 @@ def profile(
         book_evidence = book_evidence.model_copy(
             update={"metadata": book_evidence.metadata.model_copy(update={"topics": [topic]})}
         )
+    compatible_matching = MATCHING
+    if loaded_graph.graph.graph_version == "test-graph-v1":
+        empty_rules = MATCHING.config.toc_mapping.model_copy(
+            update={"alias_additions": {}, "exclusions": {}}
+        )
+        compatible_matching = MATCHING.model_copy(
+            update={"config": MATCHING.config.model_copy(update={"toc_mapping": empty_rules})}
+        )
     return build_book_concept_profile_v2(
-        book_evidence, topic, FEATURES, loaded_graph, MATCHING, HASH
+        book_evidence, topic, FEATURES, loaded_graph, compatible_matching, HASH
     )
 
 
@@ -268,7 +277,7 @@ def test_toc_mapping_rules_remove_only_clear_false_positives():
             entry("disk", "Disk Scheduling", None, 1, 2),
             entry("cpu", "CPU Scheduling", None, 1, 3),
         ],
-        graph([], nodes=["process", "scheduling", "storage"]),
+        REAL_GRAPH,
     )
     mapped = {(row.toc_entry_id, row.concept_id) for row in result.toc_mappings}
     assert ("compilation", "process") not in mapped
@@ -287,6 +296,25 @@ def test_plural_systems_of_linear_equations_maps_to_linear_system():
     assert [(row.concept_id, row.matching_alias) for row in result.toc_mappings] == [
         ("linear system", "systems of linear equations")
     ]
+
+
+@pytest.mark.parametrize("rule_name", ["alias_additions", "exclusions"])
+@pytest.mark.parametrize("reference", ["unknown_topic", "unknown_concept"])
+def test_toc_mapping_rules_reject_unknown_topics_and_concepts(rule_name, reference):
+    rules = MATCHING.config.toc_mapping
+    update = {topic: dict(concepts) for topic, concepts in getattr(rules, rule_name).items()}
+    if reference == "unknown_topic":
+        update["unknown-topic"] = {"process": ["process"]}
+        message = "unknown topics"
+    else:
+        update.setdefault("operating-systems", {})["unknown concept"] = ["unknown"]
+        message = "unknown operating-systems concepts"
+    invalid_rules = rules.model_copy(update={rule_name: update})
+    invalid_matching = MATCHING.model_copy(
+        update={"config": MATCHING.config.model_copy(update={"toc_mapping": invalid_rules})}
+    )
+    with pytest.raises(ConfigError, match=message):
+        validate_toc_mapping_rules(invalid_matching, REAL_GRAPH)
 
 
 def test_prerequisite_before_use_missing_and_multiple_paths():
