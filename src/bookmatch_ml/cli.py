@@ -10,6 +10,12 @@ import typer
 from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
 from bookmatch_ml.assessment.pool import AssessmentBlueprintError
 from bookmatch_ml.book.profile import build_book_profiles
+from bookmatch_ml.concept_v2.gold_evaluation import (
+    DEFAULT_SAMPLE_SIZES,
+    build_toc_concept_gold_review,
+    evaluate_toc_concept_gold,
+    load_toc_concept_gold_review,
+)
 from bookmatch_ml.concept_v2.graph import load_concept_graph
 from bookmatch_ml.concept_v2.matching import (
     ConceptMatchingReport,
@@ -779,6 +785,130 @@ def build_concept_review_command(
                 "book_count": len(report.books),
                 "edge_count": len(report.graph_edges),
                 "review_template": str(review_template) if review_template else None,
+            },
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("build-toc-concept-gold-review")
+def build_toc_concept_gold_review_command(
+    data_dir: Annotated[Path, typer.Option("--data-dir", file_okay=False, resolve_path=True)],
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)],
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+) -> None:
+    """Build the deterministic 100-entry blank TOC concept gold review."""
+
+    try:
+        canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        input_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        evidence = assemble_book_evidence(load_canonical_dataset(data_dir))
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        matching = load_concept_matching_config(matching_config)
+        review = build_toc_concept_gold_review(
+            evidence=evidence,
+            graph=graph,
+            features=features,
+            matching=matching,
+            toc_file_hash=input_hashes["toc.jsonl"],
+            canonical_input_hashes=input_hashes,
+        )
+        if output.exists():
+            existing = load_toc_concept_gold_review(output, review, graph).review
+            if existing != review:
+                raise ValueError("refusing to overwrite a changed TOC concept gold review")
+        current_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        if current_hashes != input_hashes:
+            raise ValueError("TOC concept gold review inputs changed during generation")
+        write_json(review, output)
+    except (
+        CanonicalDataError,
+        ConfigError,
+        TocTreeError,
+        ValueError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    summary = {
+        topic: {
+            "sampled": sum(row.topic == topic for row in review.entries),
+            "predicted_matched": sum(
+                row.topic == topic and bool(row.predicted_concept_ids) for row in review.entries
+            ),
+            "predicted_unmatched": sum(
+                row.topic == topic and not row.predicted_concept_ids for row in review.entries
+            ),
+        }
+        for topic in sorted(DEFAULT_SAMPLE_SIZES)
+    }
+    typer.echo(json.dumps({"output": str(output), "topics": summary}, sort_keys=True))
+
+
+@app.command("evaluate-toc-concept-gold")
+def evaluate_toc_concept_gold_command(
+    data_dir: Annotated[Path, typer.Option("--data-dir", file_okay=False, resolve_path=True)],
+    review_file: Annotated[
+        Path, typer.Option("--review", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)],
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+) -> None:
+    """Evaluate current TOC concept predictions against completed human gold labels."""
+
+    try:
+        canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        input_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        evidence = assemble_book_evidence(load_canonical_dataset(data_dir))
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        matching = load_concept_matching_config(matching_config)
+        expected = build_toc_concept_gold_review(
+            evidence=evidence,
+            graph=graph,
+            features=features,
+            matching=matching,
+            toc_file_hash=input_hashes["toc.jsonl"],
+            canonical_input_hashes=input_hashes,
+        )
+        loaded = load_toc_concept_gold_review(review_file, expected, graph)
+        report = evaluate_toc_concept_gold(loaded, graph)
+        current_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        if current_hashes != input_hashes or _sha256_file(review_file) != loaded.content_hash:
+            raise ValueError("TOC concept gold evaluation inputs changed during evaluation")
+        write_json(report, output)
+    except (
+        CanonicalDataError,
+        ConfigError,
+        TocTreeError,
+        ValueError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "output": str(output),
+                "reviewed_entry_count": report.combined.reviewed_entry_count,
+                "micro_f1": report.combined.micro_f1,
             },
             sort_keys=True,
         )

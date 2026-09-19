@@ -307,6 +307,35 @@ per-book structural counts, mastery coverage, and descriptive opportunity fields
 [Concept validation v1](docs/concept-validation-v1.md) for the schema, current 10-book metrics,
 review procedure, and interpretation limits.
 
+## Evaluate TOC concept mappings against human labels
+
+Build the versioned 100-entry review source from the full canonical TOC population:
+
+```bash
+uv run bookmatch-ml build-toc-concept-gold-review \
+  --data-dir ../Data-Pipeline/data/processed \
+  --output reviews/toc_concept_gold_review.json
+```
+
+The deterministic sample contains 50 Operating Systems entries and 50 Linear Algebra entries.
+Reviewers edit only `human_gold_concept_ids`, `review_status`, and `review_note`. An empty gold
+list with `review_status: reviewed` means that the heading maps to none of the configured
+concepts. The builder refuses to overwrite a file after human decisions change.
+
+After all 100 rows are reviewed, evaluate the unchanged matcher predictions:
+
+```bash
+uv run bookmatch-ml evaluate-toc-concept-gold \
+  --data-dir ../Data-Pipeline/data/processed \
+  --review reviews/toc_concept_gold_review.json \
+  --output data/reports/toc_concept_gold_evaluation.json
+```
+
+The evaluator rejects incomplete or stale review files and reports per-topic and combined
+exact-set accuracy and micro precision, recall, and F1. See
+[TOC concept gold evaluation v1](docs/toc-concept-gold-evaluation-v1.md) for the labeling rules,
+sample composition, provenance fields, and metric semantics.
+
 ## Rank books or score one book
 
 After generating `book_profiles.jsonl`, produce topic-filtered top-K recommendations:

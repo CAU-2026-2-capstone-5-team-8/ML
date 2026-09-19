@@ -1,0 +1,2194 @@
+{
+  "canonical_input_hashes": {
+    "books.jsonl": "sha256:92c4452516ff7d721220aa98c534da9e532fa8b5b18655c4d0755347eb53d77c",
+    "documents.jsonl": "sha256:18e2144b7ff7249db920889eab39814054e81721c47dd92e7b604a696255109d",
+    "sources.jsonl": "sha256:13b008b86de0077fbe1f143f9f98741c5d95547b1d3237c770814a0d32c5f62e",
+    "toc.jsonl": "sha256:76f72b975f47effca5554987e4c56ad4e1986b6ddb91d4e4c748be18a0fe6851"
+  },
+  "entries": [
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "matrix"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrices"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_fdacd73ab592cf87a4d3",
+      "toc_path": [
+        "Vectors, matrices, and linear combinations",
+        "Matrix multiplication and linear combinations",
+        "Scalar multiplication and addition of matrices"
+      ],
+      "toc_title": "Scalar multiplication and addition of matrices",
+      "topic": "linear-algebra",
+      "traversal_position": 32
+    },
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_bcedc203ad16b74c370e",
+      "toc_path": [
+        "Vectors, matrices, and linear combinations",
+        "The span of a set of vectors",
+        "Introduction"
+      ],
+      "toc_title": "Introduction",
+      "topic": "linear-algebra",
+      "traversal_position": 39
+    },
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_d78f8f1f072a4e41e74d",
+      "toc_path": [
+        "Vectors, matrices, and linear combinations",
+        "The span of a set of vectors",
+        "Pivot positions and span"
+      ],
+      "toc_title": "Pivot positions and span",
+      "topic": "linear-algebra",
+      "traversal_position": 41
+    },
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_ac4a02b10f9f5a405353",
+      "toc_path": [
+        "Vectors, matrices, and linear combinations",
+        "The span of a set of vectors",
+        "Exercises"
+      ],
+      "toc_title": "Exercises",
+      "topic": "linear-algebra",
+      "traversal_position": 43
+    },
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_9767408bd2ead87b4dc2",
+      "toc_path": [
+        "Eigenvalues and eigenvectors",
+        "Finding eigenvalues and eigenvectors",
+        "Summary"
+      ],
+      "toc_title": "Summary",
+      "topic": "linear-algebra",
+      "traversal_position": 114
+    },
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_81202d73bec5cd0ca0ad",
+      "toc_path": [
+        "Linear algebra and computing"
+      ],
+      "toc_title": "Linear algebra and computing",
+      "topic": "linear-algebra",
+      "traversal_position": 137
+    },
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_2f5af0d6771d47f79019",
+      "toc_path": [
+        "Linear algebra and computing",
+        "Gaussian elimination revisited",
+        "Exercises"
+      ],
+      "toc_title": "Exercises",
+      "topic": "linear-algebra",
+      "traversal_position": 144
+    },
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "matrix"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrix"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_4ac658df094a3fe1f773",
+      "toc_path": [
+        "Orthogonality and Least Squares",
+        "Orthogonal complements and the matrix transpose",
+        "Properties of the matrix transpose"
+      ],
+      "toc_title": "Properties of the matrix transpose",
+      "topic": "linear-algebra",
+      "traversal_position": 163
+    },
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_8f3e1ef9761990e58cd8",
+      "toc_path": [
+        "Singular value decompositions",
+        "Introduction"
+      ],
+      "toc_title": "Introduction",
+      "topic": "linear-algebra",
+      "traversal_position": 187
+    },
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_d4a322ebb295ff007173",
+      "toc_path": [
+        "Singular value decompositions",
+        "Principal Component Analysis",
+        "Principal Component Analysis"
+      ],
+      "toc_title": "Principal Component Analysis",
+      "topic": "linear-algebra",
+      "traversal_position": 202
+    },
+    {
+      "book_id": "book_a1364d52179f6fca0403",
+      "book_title": "Understanding Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e6c61f3618ee072ad458",
+      "toc_entry_id": "toc_33c5b5280b37287159dc",
+      "toc_path": [
+        "Singular value decompositions",
+        "Using Singular Value Decompositions",
+        "Analyzing Supreme Court cases"
+      ],
+      "toc_title": "Analyzing Supreme Court cases",
+      "topic": "linear-algebra",
+      "traversal_position": 219
+    },
+    {
+      "book_id": "book_b9e14d342f56d9651d61",
+      "book_title": "Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "basis",
+        "dimension"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "basis",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "basis"
+        },
+        {
+          "concept_id": "dimension",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "dimension"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_2be3bafdc3fdb06d0dcf",
+      "toc_entry_id": "toc_e627570eb2798a1a149d",
+      "toc_path": [
+        "Vector Spaces",
+        "Basis and Dimension"
+      ],
+      "toc_title": "Basis and Dimension",
+      "topic": "linear-algebra",
+      "traversal_position": 21
+    },
+    {
+      "book_id": "book_b9e14d342f56d9651d61",
+      "book_title": "Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_2be3bafdc3fdb06d0dcf",
+      "toc_entry_id": "toc_fbebf9f00c85609227f4",
+      "toc_path": [
+        "Maps Between Spaces",
+        "Homomorphisms",
+        "Definition"
+      ],
+      "toc_title": "Definition",
+      "topic": "linear-algebra",
+      "traversal_position": 35
+    },
+    {
+      "book_id": "book_b9e14d342f56d9651d61",
+      "book_title": "Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_2be3bafdc3fdb06d0dcf",
+      "toc_entry_id": "toc_7ed9af056af1dc09eb1c",
+      "toc_path": [
+        "Maps Between Spaces",
+        "Projection"
+      ],
+      "toc_title": "Projection",
+      "topic": "linear-algebra",
+      "traversal_position": 48
+    },
+    {
+      "book_id": "book_b9e14d342f56d9651d61",
+      "book_title": "Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "matrix"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrices"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_2be3bafdc3fdb06d0dcf",
+      "toc_entry_id": "toc_a3531b0c0e25c2f7ca4c",
+      "toc_path": [
+        "Maps Between Spaces",
+        "Topic: Orthonormal Matrices"
+      ],
+      "toc_title": "Topic: Orthonormal Matrices",
+      "topic": "linear-algebra",
+      "traversal_position": 56
+    },
+    {
+      "book_id": "book_b9e14d342f56d9651d61",
+      "book_title": "Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_2be3bafdc3fdb06d0dcf",
+      "toc_entry_id": "toc_7554d090e381de8c2354",
+      "toc_path": [
+        "Determinants",
+        "Definition"
+      ],
+      "toc_title": "Definition",
+      "topic": "linear-algebra",
+      "traversal_position": 58
+    },
+    {
+      "book_id": "book_b9e14d342f56d9651d61",
+      "book_title": "Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_2be3bafdc3fdb06d0dcf",
+      "toc_entry_id": "toc_36eb76fcc54d27ce80e9",
+      "toc_path": [
+        "Similarity"
+      ],
+      "toc_title": "Similarity",
+      "topic": "linear-algebra",
+      "traversal_position": 72
+    },
+    {
+      "book_id": "book_b9e14d342f56d9651d61",
+      "book_title": "Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_2be3bafdc3fdb06d0dcf",
+      "toc_entry_id": "toc_2cc56ebcbc7b7e0af077",
+      "toc_path": [
+        "Similarity",
+        "Similarity",
+        "Diagonalizability"
+      ],
+      "toc_title": "Diagonalizability",
+      "topic": "linear-algebra",
+      "traversal_position": 78
+    },
+    {
+      "book_id": "book_b9e14d342f56d9651d61",
+      "book_title": "Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_2be3bafdc3fdb06d0dcf",
+      "toc_entry_id": "toc_9a71d686bfc29e81986d",
+      "toc_path": [
+        "Similarity",
+        "Jordan Form"
+      ],
+      "toc_title": "Jordan Form",
+      "topic": "linear-algebra",
+      "traversal_position": 83
+    },
+    {
+      "book_id": "book_b9e14d342f56d9651d61",
+      "book_title": "Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_2be3bafdc3fdb06d0dcf",
+      "toc_entry_id": "toc_f8ef8d74ae6e0c03a451",
+      "toc_path": [
+        "Similarity",
+        "Topic: Page Ranking"
+      ],
+      "toc_title": "Topic: Page Ranking",
+      "topic": "linear-algebra",
+      "traversal_position": 88
+    },
+    {
+      "book_id": "book_b9e14d342f56d9651d61",
+      "book_title": "Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_2be3bafdc3fdb06d0dcf",
+      "toc_entry_id": "toc_ca256fc133bc4d1ffeeb",
+      "toc_path": [
+        "Similarity",
+        "Topic: Coupled Oscillators"
+      ],
+      "toc_title": "Topic: Coupled Oscillators",
+      "topic": "linear-algebra",
+      "traversal_position": 90
+    },
+    {
+      "book_id": "book_d061d898abc6ada0c56b",
+      "book_title": "Linear Algebra with Applications",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_c797e263dda690ee3183",
+      "toc_entry_id": "toc_76b9c2de8f31a2c07bf8",
+      "toc_path": [
+        "Determinants and Diagonalization",
+        "The Cofactor Expansion"
+      ],
+      "toc_title": "The Cofactor Expansion",
+      "topic": "linear-algebra",
+      "traversal_position": 38
+    },
+    {
+      "book_id": "book_d061d898abc6ada0c56b",
+      "book_title": "Linear Algebra with Applications",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "vector"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "vector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_937d86887a45938874c3",
+      "toc_entry_id": "toc_ae7927ada0988c1c398a",
+      "toc_path": [
+        "Vector Geometry",
+        "Prelude to Vector Geometry"
+      ],
+      "toc_title": "Prelude to Vector Geometry",
+      "topic": "linear-algebra",
+      "traversal_position": 56
+    },
+    {
+      "book_id": "book_d061d898abc6ada0c56b",
+      "book_title": "Linear Algebra with Applications",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "linear transformation"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "linear transformation",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "linear transformations"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_64a8ffcbf79892375103",
+      "toc_entry_id": "toc_b2cd78ea92c259ea3af3",
+      "toc_path": [
+        "Linear Transformations"
+      ],
+      "toc_title": "Linear Transformations",
+      "topic": "linear-algebra",
+      "traversal_position": 100
+    },
+    {
+      "book_id": "book_d061d898abc6ada0c56b",
+      "book_title": "Linear Algebra with Applications",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_64a8ffcbf79892375103",
+      "toc_entry_id": "toc_ef76a10d1b20dc204249",
+      "toc_path": [
+        "Linear Transformations",
+        "Isomorphisms and Composition"
+      ],
+      "toc_title": "Isomorphisms and Composition",
+      "topic": "linear-algebra",
+      "traversal_position": 106
+    },
+    {
+      "book_id": "book_d061d898abc6ada0c56b",
+      "book_title": "Linear Algebra with Applications",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "diagonalization",
+        "orthogonality"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "diagonalization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "diagonalization"
+        },
+        {
+          "concept_id": "orthogonality",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "orthogonal"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_fcac55436a52731c2024",
+      "toc_entry_id": "toc_72c506da33d5d3d8d87e",
+      "toc_path": [
+        "Orthogonality",
+        "Orthogonal Diagonalization",
+        "Orthogonal Diagonalization Exercises"
+      ],
+      "toc_title": "Orthogonal Diagonalization Exercises",
+      "topic": "linear-algebra",
+      "traversal_position": 116
+    },
+    {
+      "book_id": "book_d061d898abc6ada0c56b",
+      "book_title": "Linear Algebra with Applications",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_fcac55436a52731c2024",
+      "toc_entry_id": "toc_40d5f2035c718b60e6da",
+      "toc_path": [
+        "Orthogonality",
+        "An Application to Linear Codes over Finite Fields"
+      ],
+      "toc_title": "An Application to Linear Codes over Finite Fields",
+      "topic": "linear-algebra",
+      "traversal_position": 127
+    },
+    {
+      "book_id": "book_d061d898abc6ada0c56b",
+      "book_title": "Linear Algebra with Applications",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "linear transformation",
+        "matrix"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "linear transformation",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "linear transformation"
+        },
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrix"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_15f6cd4e45d28d797ed6",
+      "toc_entry_id": "toc_af9cc00afa02fb863766",
+      "toc_path": [
+        "Change of Basis",
+        "The Matrix of a Linear Transformation",
+        "The Matrix of a Linear Transformation Exercises"
+      ],
+      "toc_title": "The Matrix of a Linear Transformation Exercises",
+      "topic": "linear-algebra",
+      "traversal_position": 136
+    },
+    {
+      "book_id": "book_d061d898abc6ada0c56b",
+      "book_title": "Linear Algebra with Applications",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_15f6cd4e45d28d797ed6",
+      "toc_entry_id": "toc_ad72f04733f9ac21314d",
+      "toc_path": [
+        "Change of Basis",
+        "Operators and Similarity",
+        "Operators and Similarity Exercises"
+      ],
+      "toc_title": "Operators and Similarity Exercises",
+      "topic": "linear-algebra",
+      "traversal_position": 138
+    },
+    {
+      "book_id": "book_d061d898abc6ada0c56b",
+      "book_title": "Linear Algebra with Applications",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_15f6cd4e45d28d797ed6",
+      "toc_entry_id": "toc_ca29f68b5f1ced7e3119",
+      "toc_path": [
+        "Change of Basis",
+        "Invariant Subspaces and Direct Sums",
+        "Invariant Subspaces and Direct Sums Exercises"
+      ],
+      "toc_title": "Invariant Subspaces and Direct Sums Exercises",
+      "topic": "linear-algebra",
+      "traversal_position": 140
+    },
+    {
+      "book_id": "book_d061d898abc6ada0c56b",
+      "book_title": "Linear Algebra with Applications",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "diagonalization",
+        "orthogonality"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "diagonalization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "diagonalization"
+        },
+        {
+          "concept_id": "orthogonality",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "orthogonal"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_3fa2a70501d7b50b34a7",
+      "toc_entry_id": "toc_2fe5b0674de9f14a5984",
+      "toc_path": [
+        "Inner Product Spaces",
+        "Orthogonal Diagonalization",
+        "Orthogonal Diagonalization Exercises"
+      ],
+      "toc_title": "Orthogonal Diagonalization Exercises",
+      "topic": "linear-algebra",
+      "traversal_position": 148
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "linear system",
+        "matrix"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "linear system",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "systems of linear equations"
+        },
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrices"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_1173d527172d3b6993f6",
+      "toc_entry_id": "toc_58e8949e3501b4a11691",
+      "toc_path": [
+        "SYSTEMS OF LINEAR EQUATIONS AND MATRICES."
+      ],
+      "toc_title": "SYSTEMS OF LINEAR EQUATIONS AND MATRICES.",
+      "topic": "linear-algebra",
+      "traversal_position": 0
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "determinant"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "determinant",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "determinants"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_1173d527172d3b6993f6",
+      "toc_entry_id": "toc_2f1457f3bffb1fd74233",
+      "toc_path": [
+        "DETERMINANTS."
+      ],
+      "toc_title": "DETERMINANTS.",
+      "topic": "linear-algebra",
+      "traversal_position": 1
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "vector",
+        "vector space"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "vector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector"
+        },
+        {
+          "concept_id": "vector space",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector spaces"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_1173d527172d3b6993f6",
+      "toc_entry_id": "toc_f97e00655408084389bd",
+      "toc_path": [
+        "EUCLIDEAN VECTOR SPACES."
+      ],
+      "toc_title": "EUCLIDEAN VECTOR SPACES.",
+      "topic": "linear-algebra",
+      "traversal_position": 2
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "vector",
+        "vector space"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "vector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector"
+        },
+        {
+          "concept_id": "vector space",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector spaces"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_1173d527172d3b6993f6",
+      "toc_entry_id": "toc_51e363df726aef006820",
+      "toc_path": [
+        "GENERAL VECTOR SPACES."
+      ],
+      "toc_title": "GENERAL VECTOR SPACES.",
+      "topic": "linear-algebra",
+      "traversal_position": 3
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "eigenvector"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "eigenvector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "eigenvectors"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_1173d527172d3b6993f6",
+      "toc_entry_id": "toc_790ccb49164f8fca25fc",
+      "toc_path": [
+        "EIGNVALUES AND EIGENVECTORS."
+      ],
+      "toc_title": "EIGNVALUES AND EIGENVECTORS.",
+      "topic": "linear-algebra",
+      "traversal_position": 4
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "inner product"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "inner product",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "inner product"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_1173d527172d3b6993f6",
+      "toc_entry_id": "toc_3addcd80598324012ab4",
+      "toc_path": [
+        "INNER PRODUCT SPACES."
+      ],
+      "toc_title": "INNER PRODUCT SPACES.",
+      "topic": "linear-algebra",
+      "traversal_position": 5
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "diagonalization"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "diagonalization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "diagonalization"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_1173d527172d3b6993f6",
+      "toc_entry_id": "toc_cfafee7b8b628a65dcec",
+      "toc_path": [
+        "DIAGONALIZATION AND QUADRATIC FORMS."
+      ],
+      "toc_title": "DIAGONALIZATION AND QUADRATIC FORMS.",
+      "topic": "linear-algebra",
+      "traversal_position": 6
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "linear transformation"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "linear transformation",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "linear transformations"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_1173d527172d3b6993f6",
+      "toc_entry_id": "toc_6f8634dbf4d86dfb6b93",
+      "toc_path": [
+        "LINEAR TRANSFORMATIONS."
+      ],
+      "toc_title": "LINEAR TRANSFORMATIONS.",
+      "topic": "linear-algebra",
+      "traversal_position": 7
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_1173d527172d3b6993f6",
+      "toc_entry_id": "toc_e98d5a3052a2344dccf8",
+      "toc_path": [
+        "NUMERICAL METHODS."
+      ],
+      "toc_title": "NUMERICAL METHODS.",
+      "topic": "linear-algebra",
+      "traversal_position": 8
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "vector"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "vector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vectors"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e5f21062368c4f9af207",
+      "toc_entry_id": "toc_bae5db4a07f09de88f1e",
+      "toc_path": [
+        "Solving Linear Equations",
+        "Vectors and Linear Equations"
+      ],
+      "toc_title": "Vectors and Linear Equations",
+      "topic": "linear-algebra",
+      "traversal_position": 5
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "matrix"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrices"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e5f21062368c4f9af207",
+      "toc_entry_id": "toc_a5df0ca691ad319fa8c2",
+      "toc_path": [
+        "Solving Linear Equations",
+        "Inverse Matrices"
+      ],
+      "toc_title": "Inverse Matrices",
+      "topic": "linear-algebra",
+      "traversal_position": 9
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "rank"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "rank",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "rank"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e5f21062368c4f9af207",
+      "toc_entry_id": "toc_d03a75a938911efce81e",
+      "toc_path": [
+        "Vector Spaces and Subspaces",
+        "The Rank and the Row Reduced Form"
+      ],
+      "toc_title": "The Rank and the Row Reduced Form",
+      "topic": "linear-algebra",
+      "traversal_position": 15
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "basis",
+        "dimension"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "basis",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "basis"
+        },
+        {
+          "concept_id": "dimension",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "dimension"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e5f21062368c4f9af207",
+      "toc_entry_id": "toc_190c6df8c3c7e060192d",
+      "toc_path": [
+        "Vector Spaces and Subspaces",
+        "Independence, Basis and Dimension"
+      ],
+      "toc_title": "Independence, Basis and Dimension",
+      "topic": "linear-algebra",
+      "traversal_position": 17
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "orthogonality"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "orthogonality",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "orthogonality"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e5f21062368c4f9af207",
+      "toc_entry_id": "toc_2ff47d2ff8eb516b6f28",
+      "toc_path": [
+        "Orthogonality",
+        "Orthogonality of the Four Subspaces"
+      ],
+      "toc_title": "Orthogonality of the Four Subspaces",
+      "topic": "linear-algebra",
+      "traversal_position": 20
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "basis",
+        "orthogonality"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "basis",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "bases"
+        },
+        {
+          "concept_id": "orthogonality",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "orthogonal"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e5f21062368c4f9af207",
+      "toc_entry_id": "toc_5fe61386c47eeaf2dcb7",
+      "toc_path": [
+        "Orthogonality",
+        "Orthogonal Bases and Gram-Schmidt"
+      ],
+      "toc_title": "Orthogonal Bases and Gram-Schmidt",
+      "topic": "linear-algebra",
+      "traversal_position": 23
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "eigenvalue"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "eigenvalue",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "eigenvalues"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e5f21062368c4f9af207",
+      "toc_entry_id": "toc_77e64d1423e8f70c3576",
+      "toc_path": [
+        "Eigenvalues and Eigenvectors",
+        "Introduction to Eigenvalues"
+      ],
+      "toc_title": "Introduction to Eigenvalues",
+      "topic": "linear-algebra",
+      "traversal_position": 29
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "singular value decomposition"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "singular value decomposition",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "singular value decomposition"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e5f21062368c4f9af207",
+      "toc_entry_id": "toc_ff7029d6c9fb39223c79",
+      "toc_path": [
+        "Eigenvalues and Eigenvectors",
+        "Singular Value Decomposition (SVD)"
+      ],
+      "toc_title": "Singular Value Decomposition (SVD)",
+      "topic": "linear-algebra",
+      "traversal_position": 35
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e5f21062368c4f9af207",
+      "toc_entry_id": "toc_7939567a66f6b6dfa6e5",
+      "toc_path": [
+        "Solutions to Selected Exercises"
+      ],
+      "toc_title": "Solutions to Selected Exercises",
+      "topic": "linear-algebra",
+      "traversal_position": 56
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_e5f21062368c4f9af207",
+      "toc_entry_id": "toc_55197a11973c407bcb8b",
+      "toc_path": [
+        "Teaching Codes"
+      ],
+      "toc_title": "Teaching Codes",
+      "topic": "linear-algebra",
+      "traversal_position": 60
+    },
+    {
+      "book_id": "book_21ac29d979effd89fad2",
+      "book_title": "xv6: a simple, Unix-like teaching operating system",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "security"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "security",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "security"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_0d6227a7a1bfd0722cbf",
+      "toc_entry_id": "toc_02b71785cfbc9ae35378",
+      "toc_path": [
+        "Operating system organization",
+        "Security Model"
+      ],
+      "toc_title": "Security Model",
+      "topic": "operating-systems",
+      "traversal_position": 14
+    },
+    {
+      "book_id": "book_21ac29d979effd89fad2",
+      "book_title": "xv6: a simple, Unix-like teaching operating system",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "process"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "process",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "process"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_0d6227a7a1bfd0722cbf",
+      "toc_entry_id": "toc_85701d19d3dfd27fea12",
+      "toc_path": [
+        "Page tables",
+        "Process address space"
+      ],
+      "toc_title": "Process address space",
+      "topic": "operating-systems",
+      "traversal_position": 23
+    },
+    {
+      "book_id": "book_21ac29d979effd89fad2",
+      "book_title": "xv6: a simple, Unix-like teaching operating system",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_0d6227a7a1bfd0722cbf",
+      "toc_entry_id": "toc_63f51c4eea0dd0917388",
+      "toc_path": [
+        "Page tables",
+        "Code: exec"
+      ],
+      "toc_title": "Code: exec",
+      "topic": "operating-systems",
+      "traversal_position": 24
+    },
+    {
+      "book_id": "book_21ac29d979effd89fad2",
+      "book_title": "xv6: a simple, Unix-like teaching operating system",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_0d6227a7a1bfd0722cbf",
+      "toc_entry_id": "toc_0ccd1df5169e4795028c",
+      "toc_path": [
+        "Page faults",
+        "Lazy allocation"
+      ],
+      "toc_title": "Lazy allocation",
+      "topic": "operating-systems",
+      "traversal_position": 36
+    },
+    {
+      "book_id": "book_21ac29d979effd89fad2",
+      "book_title": "xv6: a simple, Unix-like teaching operating system",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_0d6227a7a1bfd0722cbf",
+      "toc_entry_id": "toc_e71e49579edf115c87b5",
+      "toc_path": [
+        "Locking",
+        "Code: Using locks"
+      ],
+      "toc_title": "Code: Using locks",
+      "topic": "operating-systems",
+      "traversal_position": 52
+    },
+    {
+      "book_id": "book_21ac29d979effd89fad2",
+      "book_title": "xv6: a simple, Unix-like teaching operating system",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_0d6227a7a1bfd0722cbf",
+      "toc_entry_id": "toc_1e3067e66cab7ca04840",
+      "toc_path": [
+        "Sleep and Wakeup",
+        "Overview"
+      ],
+      "toc_title": "Overview",
+      "topic": "operating-systems",
+      "traversal_position": 68
+    },
+    {
+      "book_id": "book_21ac29d979effd89fad2",
+      "book_title": "xv6: a simple, Unix-like teaching operating system",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_0d6227a7a1bfd0722cbf",
+      "toc_entry_id": "toc_f3c89f57900bdc4d38a4",
+      "toc_path": [
+        "File system",
+        "Log design"
+      ],
+      "toc_title": "Log design",
+      "topic": "operating-systems",
+      "traversal_position": 80
+    },
+    {
+      "book_id": "book_21ac29d979effd89fad2",
+      "book_title": "xv6: a simple, Unix-like teaching operating system",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_0d6227a7a1bfd0722cbf",
+      "toc_entry_id": "toc_c3114cd5b499e8c7618e",
+      "toc_path": [
+        "File system",
+        "Code: Inodes"
+      ],
+      "toc_title": "Code: Inodes",
+      "topic": "operating-systems",
+      "traversal_position": 84
+    },
+    {
+      "book_id": "book_21ac29d979effd89fad2",
+      "book_title": "xv6: a simple, Unix-like teaching operating system",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_0d6227a7a1bfd0722cbf",
+      "toc_entry_id": "toc_66a69861dce68e43ae4a",
+      "toc_path": [
+        "Concurrency revisited",
+        "Exercises"
+      ],
+      "toc_title": "Exercises",
+      "topic": "operating-systems",
+      "traversal_position": 97
+    },
+    {
+      "book_id": "book_21ac29d979effd89fad2",
+      "book_title": "xv6: a simple, Unix-like teaching operating system",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_0d6227a7a1bfd0722cbf",
+      "toc_entry_id": "toc_62eee961fa641318299c",
+      "toc_path": [
+        "Summary"
+      ],
+      "toc_title": "Summary",
+      "topic": "operating-systems",
+      "traversal_position": 98
+    },
+    {
+      "book_id": "book_28fad378fb6e900626f2",
+      "book_title": "Operating Systems and Middleware: Supporting Controlled Interaction",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_492efdbb269a3c65d2af",
+      "toc_entry_id": "toc_870477f72affee793566",
+      "toc_path": [
+        "Introduction",
+        "Chapter Overview"
+      ],
+      "toc_title": "Chapter Overview",
+      "topic": "operating-systems",
+      "traversal_position": 2
+    },
+    {
+      "book_id": "book_28fad378fb6e900626f2",
+      "book_title": "Operating Systems and Middleware: Supporting Controlled Interaction",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "thread"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "thread",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "threads"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_492efdbb269a3c65d2af",
+      "toc_entry_id": "toc_2c4479d057e24e0f3a54",
+      "toc_path": [
+        "Threads"
+      ],
+      "toc_title": "Threads",
+      "topic": "operating-systems",
+      "traversal_position": 11
+    },
+    {
+      "book_id": "book_28fad378fb6e900626f2",
+      "book_title": "Operating Systems and Middleware: Supporting Controlled Interaction",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "scheduling",
+        "security"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "scheduling",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "scheduling"
+        },
+        {
+          "concept_id": "security",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "security"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_492efdbb269a3c65d2af",
+      "toc_entry_id": "toc_872265cecc91577d6f7b",
+      "toc_path": [
+        "Scheduling",
+        "Security and Scheduling"
+      ],
+      "toc_title": "Security and Scheduling",
+      "topic": "operating-systems",
+      "traversal_position": 30
+    },
+    {
+      "book_id": "book_28fad378fb6e900626f2",
+      "book_title": "Operating Systems and Middleware: Supporting Controlled Interaction",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_492efdbb269a3c65d2af",
+      "toc_entry_id": "toc_09ea1665f9db91118235",
+      "toc_path": [
+        "Atomic Transactions",
+        "Example Applications of Transactions",
+        "Database Systems"
+      ],
+      "toc_title": "Database Systems",
+      "topic": "operating-systems",
+      "traversal_position": 57
+    },
+    {
+      "book_id": "book_28fad378fb6e900626f2",
+      "book_title": "Operating Systems and Middleware: Supporting Controlled Interaction",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_492efdbb269a3c65d2af",
+      "toc_entry_id": "toc_251ce88b3bc3929b43f1",
+      "toc_path": [
+        "Atomic Transactions",
+        "Mechanisms to Ensure Atomicity"
+      ],
+      "toc_title": "Mechanisms to Ensure Atomicity",
+      "topic": "operating-systems",
+      "traversal_position": 60
+    },
+    {
+      "book_id": "book_28fad378fb6e900626f2",
+      "book_title": "Operating Systems and Middleware: Supporting Controlled Interaction",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_492efdbb269a3c65d2af",
+      "toc_entry_id": "toc_503cb8b345589ac7cca7",
+      "toc_path": [
+        "Virtual Memory",
+        "Uses for Virtual Memory",
+        "Sparse Address Spaces"
+      ],
+      "toc_title": "Sparse Address Spaces",
+      "topic": "operating-systems",
+      "traversal_position": 74
+    },
+    {
+      "book_id": "book_28fad378fb6e900626f2",
+      "book_title": "Operating Systems and Middleware: Supporting Controlled Interaction",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_492efdbb269a3c65d2af",
+      "toc_entry_id": "toc_6eabcee808a5d9b2cdd4",
+      "toc_path": [
+        "Virtual Memory",
+        "Mechanisms for Virtual Memory",
+        "Linear Page Tables"
+      ],
+      "toc_title": "Linear Page Tables",
+      "topic": "operating-systems",
+      "traversal_position": 81
+    },
+    {
+      "book_id": "book_28fad378fb6e900626f2",
+      "book_title": "Operating Systems and Middleware: Supporting Controlled Interaction",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_492efdbb269a3c65d2af",
+      "toc_entry_id": "toc_1b2b869f2bc3f883607d",
+      "toc_path": [
+        "Processes and Protection",
+        "Introduction"
+      ],
+      "toc_title": "Introduction",
+      "topic": "operating-systems",
+      "traversal_position": 91
+    },
+    {
+      "book_id": "book_28fad378fb6e900626f2",
+      "book_title": "Operating Systems and Middleware: Supporting Controlled Interaction",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_492efdbb269a3c65d2af",
+      "toc_entry_id": "toc_327398bb1fdabe169fa4",
+      "toc_path": [
+        "Files and Other Persistent Storage",
+        "POSIX File API"
+      ],
+      "toc_title": "POSIX File API",
+      "topic": "operating-systems",
+      "traversal_position": 108
+    },
+    {
+      "book_id": "book_28fad378fb6e900626f2",
+      "book_title": "Operating Systems and Middleware: Supporting Controlled Interaction",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "security"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "security",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "security"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_492efdbb269a3c65d2af",
+      "toc_entry_id": "toc_e01f6689a54100d8dd15",
+      "toc_path": [
+        "Networking",
+        "Network Security"
+      ],
+      "toc_title": "Network Security",
+      "topic": "operating-systems",
+      "traversal_position": 148
+    },
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "book_title": "Think OS: A Brief Introduction to Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_14a4a881b33dd5a335e3",
+      "toc_entry_id": "toc_fcb26bd6273ae5865762",
+      "toc_path": [
+        "Compilation",
+        "Compiled and interpreted languages"
+      ],
+      "toc_title": "Compiled and interpreted languages",
+      "topic": "operating-systems",
+      "traversal_position": 1
+    },
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "book_title": "Think OS: A Brief Introduction to Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_14a4a881b33dd5a335e3",
+      "toc_entry_id": "toc_5480cf7c5b73902ed772",
+      "toc_path": [
+        "Files and file systems",
+        "Everything is a file?"
+      ],
+      "toc_title": "Everything is a file?",
+      "topic": "operating-systems",
+      "traversal_position": 23
+    },
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "book_title": "Think OS: A Brief Introduction to Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_14a4a881b33dd5a335e3",
+      "toc_entry_id": "toc_3104e84a8266f64ec8dd",
+      "toc_path": [
+        "More bits and bytes",
+        "Bitwise operators"
+      ],
+      "toc_title": "Bitwise operators",
+      "topic": "operating-systems",
+      "traversal_position": 26
+    },
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "book_title": "Think OS: A Brief Introduction to Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_14a4a881b33dd5a335e3",
+      "toc_entry_id": "toc_a7cd02e25e13e0319ab9",
+      "toc_path": [
+        "Memory management",
+        "Implementation"
+      ],
+      "toc_title": "Implementation",
+      "topic": "operating-systems",
+      "traversal_position": 33
+    },
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "book_title": "Think OS: A Brief Introduction to Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_14a4a881b33dd5a335e3",
+      "toc_entry_id": "toc_0ebda31a3d4e8b24ac92",
+      "toc_path": [
+        "Caching"
+      ],
+      "toc_title": "Caching",
+      "topic": "operating-systems",
+      "traversal_position": 34
+    },
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "book_title": "Think OS: A Brief Introduction to Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_14a4a881b33dd5a335e3",
+      "toc_entry_id": "toc_7ca5d5c76201430825ba",
+      "toc_path": [
+        "Caching",
+        "Measuring cache performance"
+      ],
+      "toc_title": "Measuring cache performance",
+      "topic": "operating-systems",
+      "traversal_position": 38
+    },
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "book_title": "Think OS: A Brief Introduction to Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "thread"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "thread",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "threads"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_14a4a881b33dd5a335e3",
+      "toc_entry_id": "toc_10c00bb611937172b145",
+      "toc_path": [
+        "Threads",
+        "Creating threads"
+      ],
+      "toc_title": "Creating threads",
+      "topic": "operating-systems",
+      "traversal_position": 50
+    },
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "book_title": "Think OS: A Brief Introduction to Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "thread"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "thread",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "threads"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_14a4a881b33dd5a335e3",
+      "toc_entry_id": "toc_88416db7e8311a269fb8",
+      "toc_path": [
+        "Threads",
+        "Joining threads"
+      ],
+      "toc_title": "Joining threads",
+      "topic": "operating-systems",
+      "traversal_position": 52
+    },
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "book_title": "Think OS: A Brief Introduction to Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_14a4a881b33dd5a335e3",
+      "toc_entry_id": "toc_b45878c12beb08e0730b",
+      "toc_path": [
+        "Condition variables",
+        "The work queue"
+      ],
+      "toc_title": "The work queue",
+      "topic": "operating-systems",
+      "traversal_position": 56
+    },
+    {
+      "book_id": "book_7d22aef622717f0ad24b",
+      "book_title": "Think OS: A Brief Introduction to Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "synchronization"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "synchronization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "semaphores"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_14a4a881b33dd5a335e3",
+      "toc_entry_id": "toc_9ce50ca280c55f447971",
+      "toc_path": [
+        "Semaphores in C",
+        "POSIX Semaphores"
+      ],
+      "toc_title": "POSIX Semaphores",
+      "topic": "operating-systems",
+      "traversal_position": 62
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_entry_id": "toc_c3438673f8aabc506c85",
+      "toc_path": [
+        "PART ONE BACKGROUND",
+        "Operating System Overview"
+      ],
+      "toc_title": "Operating System Overview",
+      "topic": "operating-systems",
+      "traversal_position": 19
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "concurrency"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "concurrency",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "concurrency"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_entry_id": "toc_32d0f9a6ddbd4d981a16",
+      "toc_path": [
+        "PART TWO PROCESSES",
+        "Concurrency: Deadlock and Starvation",
+        "Windows 2000 Concurrency Mechanisms"
+      ],
+      "toc_title": "Windows 2000 Concurrency Mechanisms",
+      "topic": "operating-systems",
+      "traversal_position": 68
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_entry_id": "toc_30ce905f1e5c24a78a29",
+      "toc_path": [
+        "PART FOUR SCHEDULING",
+        "Multiprocessor and Real-Time Scheduling",
+        "Problems"
+      ],
+      "toc_title": "Problems",
+      "topic": "operating-systems",
+      "traversal_position": 110
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "storage"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "storage",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "disk scheduling"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_entry_id": "toc_2fca34dc1b2408b9ce28",
+      "toc_path": [
+        "PART FIVE INPUT/OUTPUT AND FILES",
+        "I/O Management and Disk Scheduling"
+      ],
+      "toc_title": "I/O Management and Disk Scheduling",
+      "topic": "operating-systems",
+      "traversal_position": 112
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_entry_id": "toc_b334ae639738e9152a4f",
+      "toc_path": [
+        "APPENDICES",
+        "Appendix B Object-Oriented Design",
+        "B.1 Motivation"
+      ],
+      "toc_title": "B.1 Motivation",
+      "topic": "operating-systems",
+      "traversal_position": 175
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_entry_id": "toc_052e644949e690ab178a",
+      "toc_path": [
+        "APPENDICES",
+        "Appendix D OSP: An Environment for Operating System Projects",
+        "D.4 The OSP Software Distribution"
+      ],
+      "toc_title": "D.4 The OSP Software Distribution",
+      "topic": "operating-systems",
+      "traversal_position": 189
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_entry_id": "toc_ab7e8cdf8a6bf2dbfea7",
+      "toc_path": [
+        "APPENDICES",
+        "Appendix E BACI: The Ben-Ari Concurrent Programming System",
+        "E.1 Introduction"
+      ],
+      "toc_title": "E.1 Introduction",
+      "topic": "operating-systems",
+      "traversal_position": 193
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_entry_id": "toc_ee66752ff9b1aa8bb247",
+      "toc_path": [
+        "APPENDICES",
+        "Appendix E BACI: The Ben-Ari Concurrent Programming System",
+        "E.3 Examples of BACI Programs"
+      ],
+      "toc_title": "E.3 Examples of BACI Programs",
+      "topic": "operating-systems",
+      "traversal_position": 195
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_entry_id": "toc_fb7b199492c0a944e976",
+      "toc_path": [
+        "APPENDICES",
+        "Appendix E BACI: The Ben-Ari Concurrent Programming System",
+        "E.4 BACI Projects"
+      ],
+      "toc_title": "E.4 BACI Projects",
+      "topic": "operating-systems",
+      "traversal_position": 196
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_entry_id": "toc_a41c7ba3ed65fe09f3fd",
+      "toc_path": [
+        "APPENDICES",
+        "Appendix E BACI: The Ben-Ari Concurrent Programming System",
+        "E.5 Enhancements to the BACI System"
+      ],
+      "toc_title": "E.5 Enhancements to the BACI System",
+      "topic": "operating-systems",
+      "traversal_position": 197
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "book_title": "Operating Systems: Three Easy Pieces",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_4ecd70379403ad23ea95",
+      "toc_entry_id": "toc_62e0ecbdfa6a33fdb55c",
+      "toc_path": [
+        "Intro",
+        "Dialogue"
+      ],
+      "toc_title": "Dialogue",
+      "topic": "operating-systems",
+      "traversal_position": 1
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "book_title": "Operating Systems: Three Easy Pieces",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_4ecd70379403ad23ea95",
+      "toc_entry_id": "toc_d6225a1594d540a6de9a",
+      "toc_path": [
+        "Intro",
+        "Introduction"
+      ],
+      "toc_title": "Introduction",
+      "topic": "operating-systems",
+      "traversal_position": 2
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "book_title": "Operating Systems: Three Easy Pieces",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "scheduling"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "scheduling",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "scheduling"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_4ecd70379403ad23ea95",
+      "toc_entry_id": "toc_c055c149c90d9651d98b",
+      "toc_path": [
+        "Virtualization",
+        "Lottery Scheduling"
+      ],
+      "toc_title": "Lottery Scheduling",
+      "topic": "operating-systems",
+      "traversal_position": 10
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "book_title": "Operating Systems: Three Easy Pieces",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_4ecd70379403ad23ea95",
+      "toc_entry_id": "toc_9735f483e0e2d87eba60",
+      "toc_path": [
+        "Virtualization",
+        "Summary"
+      ],
+      "toc_title": "Summary",
+      "topic": "operating-systems",
+      "traversal_position": 12
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "book_title": "Operating Systems: Three Easy Pieces",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_4ecd70379403ad23ea95",
+      "toc_entry_id": "toc_0eff3e2a4e264e547860",
+      "toc_path": [
+        "Virtualization",
+        "Free Space Management"
+      ],
+      "toc_title": "Free Space Management",
+      "topic": "operating-systems",
+      "traversal_position": 18
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "book_title": "Operating Systems: Three Easy Pieces",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_4ecd70379403ad23ea95",
+      "toc_entry_id": "toc_4d8c0d6e3a2c55d4cee3",
+      "toc_path": [
+        "Concurrency",
+        "Locks"
+      ],
+      "toc_title": "Locks",
+      "topic": "operating-systems",
+      "traversal_position": 30
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "book_title": "Operating Systems: Three Easy Pieces",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_4ecd70379403ad23ea95",
+      "toc_entry_id": "toc_e5a8331f8efbff775a41",
+      "toc_path": [
+        "Persistence",
+        "I/O Devices"
+      ],
+      "toc_title": "I/O Devices",
+      "topic": "operating-systems",
+      "traversal_position": 39
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "book_title": "Operating Systems: Three Easy Pieces",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_4ecd70379403ad23ea95",
+      "toc_entry_id": "toc_2017a6fcd10c75568301",
+      "toc_path": [
+        "Persistence",
+        "Redundant Disk Arrays (RAID)"
+      ],
+      "toc_title": "Redundant Disk Arrays (RAID)",
+      "topic": "operating-systems",
+      "traversal_position": 41
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "book_title": "Operating Systems: Three Easy Pieces",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "file system"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "file system",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "file system"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_4ecd70379403ad23ea95",
+      "toc_entry_id": "toc_6357eca09190fb2fb46c",
+      "toc_path": [
+        "Persistence",
+        "File System Implementation"
+      ],
+      "toc_title": "File System Implementation",
+      "topic": "operating-systems",
+      "traversal_position": 43
+    },
+    {
+      "book_id": "isbn13:9781985086593",
+      "book_title": "Operating Systems: Three Easy Pieces",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "security"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "security",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "security"
+        }
+      ],
+      "review_note": null,
+      "review_status": "unreviewed",
+      "source_id": "source_4ecd70379403ad23ea95",
+      "toc_entry_id": "toc_b0d5c95b97a265bf1116",
+      "toc_path": [
+        "Security"
+      ],
+      "toc_title": "Security",
+      "topic": "operating-systems",
+      "traversal_position": 55
+    }
+  ],
+  "feature_config_hash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6",
+  "graph_hash": "sha256:a30a726f28b27215df5aa397bca62ecea7badd8dbbdb90e0a46a43ac05cb2245",
+  "graph_version": "concept-graph-v1",
+  "matching_config_hash": "sha256:7e2386f1661041ee685f1d2988c8677e053325af932362f258fa3181c97023a0",
+  "matching_config_version": "concept-matching-config-v2",
+  "review_version": "toc-concept-gold-review-v1",
+  "sample_size_by_topic": {
+    "linear-algebra": 50,
+    "operating-systems": 50
+  },
+  "sample_version": "toc-concept-gold-sample-v1"
+}
