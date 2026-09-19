@@ -282,6 +282,27 @@ proposed prerequisite candidates, and every mapping retains its TOC path. The 10
 formulas, v1 comparison, and limitations are in
 [Concept matching v2](docs/concept-matching-v2.md). The LA assessment fixture is synthetic.
 
+## Review concept graph and TOC mappings
+
+Generate a human-review artifact for every graph edge and every matched or unmatched TOC entry:
+
+```bash
+uv run bookmatch-ml build-concept-review \
+  --data-dir ../Data-Pipeline/data/processed \
+  --reader examples/reader_profile.json \
+  --reader data/output/concept_matching_la_reader.json \
+  --output data/reports/concept_validation.json \
+  --review-template data/reviews/concept_graph_review.json
+```
+
+The command does not judge graph edges, change aliases, or influence ranking. The report exposes
+first-occurrence TOC paths and aliases, the complete matched/unmatched mapping queues, per-book
+structural counts, mastery assessment coverage, and descriptive opportunity counts and weights.
+The optional review template starts every edge as `unreviewed`; completed human decisions belong
+in a deliberate later change under `reviews/`. See
+[Concept validation v1](docs/concept-validation-v1.md) for the schema, current 10-book metrics,
+review procedure, and interpretation limits.
+
 ## Rank books or score one book
 
 After generating `book_profiles.jsonl`, produce topic-filtered top-K recommendations:
@@ -491,6 +512,12 @@ src/bookmatch_ml/
 │   ├── concepts.py     # lexicon concept/prerequisite baseline
 │   ├── difficulty.py   # per-document prose features and aggregation
 │   └── profile.py      # BookProfile assembly
+├── concept_v2/
+│   ├── graph.py        # versioned prerequisite-candidate DAG validation
+│   ├── toc.py          # ordered TOC hierarchy reconstruction
+│   ├── profile.py      # TOC mapping and v2 book concept profiles
+│   ├── matching.py     # separate readiness and opportunity axes
+│   └── validation.py   # graph-edge and complete TOC mapping review artifacts
 ├── reader/
 │   └── profile.py      # assessment loading and reader-readiness scoring
 ├── ranking/
