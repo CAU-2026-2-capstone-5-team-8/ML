@@ -1,10 +1,11 @@
 """Human-readable structural audit of unchanged concept-matching v2 inputs."""
 
+import hashlib
 from collections import Counter, defaultdict
-from datetime import datetime
+from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from bookmatch_ml.concept_v2.graph import LoadedConceptGraph
 from bookmatch_ml.concept_v2.matching import match_book_concepts
@@ -15,7 +16,7 @@ from bookmatch_ml.concept_v2.profile import (
     build_book_concept_profile_v2,
 )
 from bookmatch_ml.concept_v2.toc import reconstruct_toc
-from bookmatch_ml.config import LoadedFeatureConfig
+from bookmatch_ml.config import ConfigError, LoadedFeatureConfig, _load_unique_key_yaml
 from bookmatch_ml.schemas import BookEvidence, ReaderProfile
 
 
@@ -37,6 +38,12 @@ class EdgeBookObservation(_Strict):
     book_id: str
     book_title: str
     state: Literal[
+        "strict_before",
+        "same_entry",
+        "strict_after",
+        "one_or_both_unobserved",
+    ]
+    legacy_state: Literal[
         "observed_before_in_toc",
         "observed_at_or_after_in_toc",
         "prerequisite_not_mapped",
@@ -57,6 +64,13 @@ class GraphEdgeReviewRow(_Strict):
     dependent_book_count: int = Field(ge=0)
     dependent_book_ids: list[str]
     jointly_mapped_book_count: int = Field(ge=0)
+    jointly_observable_book_count: int = Field(ge=0)
+    strict_before_count: int = Field(ge=0)
+    same_entry_count: int = Field(ge=0)
+    strict_after_count: int = Field(ge=0)
+    unobserved_count: int = Field(ge=0)
+    review_status: Literal["unreviewed", "accepted", "rejected", "needs_revision"]
+    review_note: str | None
     books: list[EdgeBookObservation]
 
 
@@ -135,54 +149,75 @@ class TopicStructuralMetrics(_Strict):
     graph_edges_jointly_mapped_count: int = Field(ge=0)
     graph_edges_not_jointly_mapped_count: int = Field(ge=0)
     first_occurrence_order_distribution: dict[str, int]
+    ordering_evidence_distribution: dict[str, int]
     mean_readiness_assessment_coverage: float | None = Field(default=None, ge=0, le=1)
     mean_opportunity_assessment_coverage: float | None = Field(default=None, ge=0, le=1)
 
 
 class ConceptValidationReport(_Strict):
-    artifact_version: Literal["concept-validation-v1"]
+    artifact_version: Literal["concept-validation-v2"]
     graph_version: str
     graph_hash: str
     feature_config_hash: str
     matching_config_hash: str
+    review_config_version: str | None
+    review_config_hash: str | None
     input_hashes: dict[str, str]
     topics: list[TopicStructuralMetrics]
     graph_edges: list[GraphEdgeReviewRow]
     books: list[BookMappingReview]
 
 
-ReviewStatus = Literal["unreviewed", "accepted", "rejected", "uncertain"]
+ReviewStatus = Literal["unreviewed", "accepted", "rejected", "needs_revision"]
 
 
-class EdgeReviewDecision(_Strict):
+class HumanEdgeReview(_Strict):
     topic: str
     prerequisite: str
     dependent: str
-    source_type: Literal["proposed_seed", "human_reviewed_seed"]
-    edge_version: str
-    status: ReviewStatus
-    reviewer_id: str | None = None
-    reviewed_at: datetime | None = None
-    rationale: str | None = None
+    review_status: ReviewStatus
+    review_note: str | None = None
 
     @model_validator(mode="after")
-    def decision_has_review_metadata(self) -> "EdgeReviewDecision":
-        details = (self.reviewer_id, self.reviewed_at, self.rationale)
-        if self.status == "unreviewed" and any(value is not None for value in details):
-            raise ValueError("unreviewed edges must not carry review metadata")
-        if self.status != "unreviewed" and (
-            not self.reviewer_id or not self.rationale or self.reviewed_at is None
+    def decision_has_note(self) -> "HumanEdgeReview":
+        if self.review_status == "unreviewed" and self.review_note is not None:
+            raise ValueError("unreviewed edges must not carry a review note")
+        if self.review_status != "unreviewed" and (
+            self.review_note is None or not self.review_note.strip()
         ):
-            raise ValueError("reviewed edges require reviewer_id, reviewed_at, and rationale")
-        if self.reviewed_at is not None and self.reviewed_at.utcoffset() is None:
-            raise ValueError("reviewed_at must include a timezone")
+            raise ValueError("reviewed edges require a non-blank review note")
         return self
 
 
+class ConceptGraphReviewsConfig(_Strict):
+    config_version: Literal["concept-graph-reviews-v1"]
+    graph_version: str
+    reviews: list[HumanEdgeReview]
+
+    @model_validator(mode="after")
+    def reviews_are_unique(self) -> "ConceptGraphReviewsConfig":
+        keys = [(row.topic, row.prerequisite, row.dependent) for row in self.reviews]
+        if len(keys) != len(set(keys)):
+            raise ValueError("duplicate concept graph review")
+        return self
+
+
+class LoadedConceptGraphReviews(_Strict):
+    config: ConceptGraphReviewsConfig
+    content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+
+class EdgeReviewDecision(HumanEdgeReview):
+    source_type: Literal["proposed_seed", "human_reviewed_seed"]
+    edge_version: str
+
+
 class ConceptGraphReviewFile(_Strict):
-    review_schema_version: Literal["concept-graph-review-v1"]
+    review_schema_version: Literal["concept-graph-review-v2"]
     graph_version: str
     graph_hash: str
+    review_config_version: str | None
+    review_config_hash: str | None
     edges: list[EdgeReviewDecision]
 
     @model_validator(mode="after")
@@ -193,13 +228,51 @@ class ConceptGraphReviewFile(_Strict):
         return self
 
 
-def build_review_template(graph: LoadedConceptGraph) -> ConceptGraphReviewFile:
-    """Emit an unreviewed template; review decisions never enter matching code."""
+def load_concept_graph_reviews(path: Path, graph: LoadedConceptGraph) -> LoadedConceptGraphReviews:
+    """Load human decisions and require exact coverage of the configured graph."""
 
+    try:
+        content = path.read_bytes()
+        config = ConceptGraphReviewsConfig.model_validate(_load_unique_key_yaml(content))
+        if config.graph_version != graph.graph.graph_version:
+            raise ValueError("review graph_version differs from concept graph")
+        graph_edges = {
+            (edge.topic, edge.prerequisite, edge.dependent) for edge in graph.graph.edges
+        }
+        reviewed_edges = {(row.topic, row.prerequisite, row.dependent) for row in config.reviews}
+        unknown = reviewed_edges - graph_edges
+        missing = graph_edges - reviewed_edges
+        if unknown:
+            raise ValueError(f"review references unknown graph edges: {sorted(unknown)}")
+        if missing:
+            raise ValueError(f"review is missing graph edges: {sorted(missing)}")
+    except (OSError, ValidationError, ValueError) as exc:
+        raise ConfigError(f"invalid concept graph review config: {path}: {exc}") from exc
+    return LoadedConceptGraphReviews(
+        config=config, content_hash=f"sha256:{hashlib.sha256(content).hexdigest()}"
+    )
+
+
+def _review_by_edge(
+    reviews: LoadedConceptGraphReviews | None,
+) -> dict[tuple[str, str, str], HumanEdgeReview]:
+    if reviews is None:
+        return {}
+    return {(row.topic, row.prerequisite, row.dependent): row for row in reviews.config.reviews}
+
+
+def build_review_template(
+    graph: LoadedConceptGraph, reviews: LoadedConceptGraphReviews | None = None
+) -> ConceptGraphReviewFile:
+    """Emit a generated snapshot; only the YAML review config is human-authored."""
+
+    decisions = _review_by_edge(reviews)
     return ConceptGraphReviewFile(
-        review_schema_version="concept-graph-review-v1",
+        review_schema_version="concept-graph-review-v2",
         graph_version=graph.graph.graph_version,
         graph_hash=graph.content_hash,
+        review_config_version=reviews.config.config_version if reviews else None,
+        review_config_hash=reviews.content_hash if reviews else None,
         edges=[
             EdgeReviewDecision(
                 topic=edge.topic,
@@ -207,7 +280,20 @@ def build_review_template(graph: LoadedConceptGraph) -> ConceptGraphReviewFile:
                 dependent=edge.dependent,
                 source_type=edge.source_type,
                 edge_version=edge.version,
-                status="unreviewed",
+                review_status=decisions.get(
+                    (edge.topic, edge.prerequisite, edge.dependent),
+                    HumanEdgeReview(
+                        topic=edge.topic,
+                        prerequisite=edge.prerequisite,
+                        dependent=edge.dependent,
+                        review_status="unreviewed",
+                    ),
+                ).review_status,
+                review_note=(
+                    decisions[(edge.topic, edge.prerequisite, edge.dependent)].review_note
+                    if (edge.topic, edge.prerequisite, edge.dependent) in decisions
+                    else None
+                ),
             )
             for edge in sorted(
                 graph.graph.edges,
@@ -383,6 +469,7 @@ def build_concept_validation_report(
     readers: dict[str, ReaderProfile],
     toc_file_hash: str,
     input_hashes: dict[str, str],
+    reviews: LoadedConceptGraphReviews | None = None,
 ) -> ConceptValidationReport:
     """Expose every v2 mapping and direct graph edge without judging its truth."""
 
@@ -401,6 +488,7 @@ def build_concept_validation_report(
     book_reviews.sort(key=lambda item: (item.topic, item.book_id))
 
     edge_rows: list[GraphEdgeReviewRow] = []
+    decisions = _review_by_edge(reviews)
     for edge in sorted(
         graph.graph.edges,
         key=lambda item: (item.topic, item.prerequisite, item.dependent),
@@ -410,18 +498,27 @@ def build_concept_validation_report(
             before = _first_occurrence(profile, edge.prerequisite)
             after = _first_occurrence(profile, edge.dependent)
             if after is None:
-                state = "dependent_not_mapped"
+                legacy_state = "dependent_not_mapped"
             elif before is None:
-                state = "prerequisite_not_mapped"
+                legacy_state = "prerequisite_not_mapped"
             elif before.traversal_position < after.traversal_position:
-                state = "observed_before_in_toc"
+                legacy_state = "observed_before_in_toc"
             else:
-                state = "observed_at_or_after_in_toc"
+                legacy_state = "observed_at_or_after_in_toc"
+            if before is None or after is None:
+                state = "one_or_both_unobserved"
+            elif before.toc_entry_id == after.toc_entry_id:
+                state = "same_entry"
+            elif before.traversal_position < after.traversal_position:
+                state = "strict_before"
+            else:
+                state = "strict_after"
             observations.append(
                 EdgeBookObservation(
                     book_id=profile.book_id,
                     book_title=profile.title,
                     state=state,
+                    legacy_state=legacy_state,
                     prerequisite_first=before,
                     dependent_first=after,
                 )
@@ -429,6 +526,19 @@ def build_concept_validation_report(
         dependent_book_ids = [
             item.book_id for item in observations if item.dependent_first is not None
         ]
+        jointly_observable = sum(
+            item.prerequisite_first is not None and item.dependent_first is not None
+            for item in observations
+        )
+        decision = decisions.get(
+            (edge.topic, edge.prerequisite, edge.dependent),
+            HumanEdgeReview(
+                topic=edge.topic,
+                prerequisite=edge.prerequisite,
+                dependent=edge.dependent,
+                review_status="unreviewed",
+            ),
+        )
         edge_rows.append(
             GraphEdgeReviewRow(
                 topic=edge.topic,
@@ -443,20 +553,32 @@ def build_concept_validation_report(
                 ),
                 dependent_book_count=len(dependent_book_ids),
                 dependent_book_ids=dependent_book_ids,
-                jointly_mapped_book_count=sum(
-                    item.prerequisite_first is not None and item.dependent_first is not None
-                    for item in observations
+                jointly_mapped_book_count=jointly_observable,
+                jointly_observable_book_count=jointly_observable,
+                strict_before_count=sum(item.state == "strict_before" for item in observations),
+                same_entry_count=sum(item.state == "same_entry" for item in observations),
+                strict_after_count=sum(item.state == "strict_after" for item in observations),
+                unobserved_count=sum(
+                    item.state == "one_or_both_unobserved" for item in observations
                 ),
+                review_status=decision.review_status,
+                review_note=decision.review_note,
                 books=observations,
             )
         )
 
     topic_metrics: list[TopicStructuralMetrics] = []
-    states = (
+    legacy_states = (
         "observed_before_in_toc",
         "observed_at_or_after_in_toc",
         "prerequisite_not_mapped",
         "dependent_not_mapped",
+    )
+    evidence_states = (
+        "strict_before",
+        "same_entry",
+        "strict_after",
+        "one_or_both_unobserved",
     )
     for topic, nodes in sorted(graph.graph.nodes.items()):
         books = [item for item in book_reviews if item.topic == topic]
@@ -465,7 +587,12 @@ def build_concept_validation_report(
         matched = sum(item.matched_toc_entries for item in books)
         mapped_concepts = {row.concept_id for book in books for row in book.matched_entries}
         observed = sum(edge.jointly_mapped_book_count > 0 for edge in edges)
-        distribution = Counter(observation.state for edge in edges for observation in edge.books)
+        legacy_distribution = Counter(
+            observation.legacy_state for edge in edges for observation in edge.books
+        )
+        evidence_distribution = Counter(
+            observation.state for edge in edges for observation in edge.books
+        )
         readiness_coverages = [
             item.readiness_assessment_coverage
             for item in books
@@ -491,7 +618,10 @@ def build_concept_validation_report(
                 graph_edges_jointly_mapped_count=observed,
                 graph_edges_not_jointly_mapped_count=len(edges) - observed,
                 first_occurrence_order_distribution={
-                    state: distribution[state] for state in states
+                    state: legacy_distribution[state] for state in legacy_states
+                },
+                ordering_evidence_distribution={
+                    state: evidence_distribution[state] for state in evidence_states
                 },
                 mean_readiness_assessment_coverage=(
                     sum(readiness_coverages) / len(readiness_coverages)
@@ -506,11 +636,13 @@ def build_concept_validation_report(
             )
         )
     return ConceptValidationReport(
-        artifact_version="concept-validation-v1",
+        artifact_version="concept-validation-v2",
         graph_version=graph.graph.graph_version,
         graph_hash=graph.content_hash,
         feature_config_hash=features.content_hash,
         matching_config_hash=matching.content_hash,
+        review_config_version=reviews.config.config_version if reviews else None,
+        review_config_hash=reviews.content_hash if reviews else None,
         input_hashes=input_hashes,
         topics=topic_metrics,
         graph_edges=edge_rows,

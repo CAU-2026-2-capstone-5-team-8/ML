@@ -6,7 +6,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from bookmatch_ml.book.text import normalize_text
 from bookmatch_ml.concept_v2.graph import LoadedConceptGraph
@@ -27,11 +27,39 @@ class ConceptMatchingPolicy(_Strict):
     learning_mastery_threshold: float = Field(ge=0, le=1)
 
 
+class TocMappingRules(_Strict):
+    alias_additions: dict[str, dict[str, list[str]]] = Field(default_factory=dict)
+    exclusions: dict[str, dict[str, list[str]]] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def rules_are_non_empty_and_unique(self) -> "TocMappingRules":
+        for rule_name, topics in (
+            ("alias additions", self.alias_additions),
+            ("exclusions", self.exclusions),
+        ):
+            for topic, concepts in topics.items():
+                if not topic.strip() or not concepts:
+                    raise ValueError(f"TOC mapping {rule_name} require non-empty topics")
+                for concept, phrases in concepts.items():
+                    normalized = [normalize_text(phrase) for phrase in phrases]
+                    if (
+                        not concept.strip()
+                        or not phrases
+                        or any(not phrase for phrase in normalized)
+                        or len(normalized) != len(set(normalized))
+                    ):
+                        raise ValueError(
+                            f"TOC mapping {rule_name} require unique non-empty phrases"
+                        )
+        return self
+
+
 class ConceptMatchingConfig(_Strict):
     config_version: str
     profile_version: str
     model_version: str
     coverage_weight_rule: Literal["min_occurrences_over_three_v1"]
+    toc_mapping: TocMappingRules = Field(default_factory=TocMappingRules)
     policy: ConceptMatchingPolicy
 
 
@@ -122,19 +150,52 @@ class BookConceptProfileV2(_Strict):
     toc_file_hash: str
 
 
-def _aliases(features: LoadedFeatureConfig, topic: str, nodes: list[str]) -> dict[str, list[str]]:
+def _mapping_inputs(
+    features: LoadedFeatureConfig,
+    graph: LoadedConceptGraph,
+    matching: LoadedConceptMatchingConfig,
+    topic: str,
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    nodes = graph.graph.nodes[topic]
     covered = features.config.concept.topics[topic].root
     prerequisites = features.config.prerequisite.topics[topic].root
-    return {node: covered.get(node, prerequisites.get(node, [])) for node in nodes}
+    aliases = {node: list(covered.get(node, prerequisites.get(node, []))) for node in nodes}
+    rules = matching.config.toc_mapping
+    additions = {
+        concept: forms
+        for concept, forms in rules.alias_additions.get(topic, {}).items()
+        if concept in nodes
+    }
+    exclusions = {
+        concept: forms
+        for concept, forms in rules.exclusions.get(topic, {}).items()
+        if concept in nodes
+    }
+    for concept, forms in additions.items():
+        aliases[concept] = list(dict.fromkeys([*aliases[concept], *forms]))
+    return aliases, exclusions
 
 
 def _map_entry(
-    visit: TocVisit, aliases: dict[str, list[str]]
+    visit: TocVisit,
+    aliases: dict[str, list[str]],
+    exclusions: dict[str, list[str]] | None = None,
 ) -> tuple[list[TocConceptMapping], bool]:
     title = normalize_text(visit.entry.title)
+    excluded = {
+        concept
+        for concept, phrases in (exclusions or {}).items()
+        if any(
+            normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", title)
+            for phrase in phrases
+            if (normalized := normalize_text(phrase))
+        )
+    }
     found: dict[str, list[str]] = defaultdict(list)
     alias_to_concepts: dict[str, set[str]] = defaultdict(set)
     for concept, forms in aliases.items():
+        if concept in excluded:
+            continue
         for form in forms:
             normalized = normalize_text(form)
             if normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", title):
@@ -192,12 +253,12 @@ def build_book_concept_profile_v2(
     if topic not in evidence.metadata.topics or topic not in graph.graph.nodes:
         raise ValueError(f"book {evidence.book_id} does not belong to graph topic {topic}")
     tree = reconstruct_toc(evidence.toc)
-    aliases = _aliases(features, topic, graph.graph.nodes[topic])
+    aliases, exclusions = _mapping_inputs(features, graph, matching, topic)
     mappings: list[TocConceptMapping] = []
     unmapped: list[UnmappedTocEntry] = []
     matched_entry_ids: set[str] = set()
     for visit in tree.traversal:
-        entry_mappings, ambiguous = _map_entry(visit, aliases)
+        entry_mappings, ambiguous = _map_entry(visit, aliases, exclusions)
         mappings.extend(entry_mappings)
         if entry_mappings:
             matched_entry_ids.add(visit.entry.toc_entry_id)

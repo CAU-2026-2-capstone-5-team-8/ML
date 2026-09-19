@@ -1,14 +1,14 @@
 # Human concept graph reviews
 
-Generated evidence and blank review templates belong under ignored `data/reports/` and
-`data/reviews/`. After a person reviews every intended edge, copy the completed file here as
-`concept_graph_review.json` in a dedicated review change. Record a reviewer ID, timezone-aware
-review time, and rationale for every `accepted`, `rejected`, or `uncertain` decision.
+The version-controlled source of truth is
+[`configs/concept_graph_reviews.yaml`](../configs/concept_graph_reviews.yaml). Reviewers update
+`review_status` and `review_note` there in a dedicated change. Allowed statuses are `unreviewed`,
+`accepted`, `rejected`, and `needs_revision`; a decided edge requires a non-blank note.
 
-The review file is separate from `configs/concept_graph.yaml`. Current matching code does not
-load it, so review status cannot silently change v1 or v2 scores. Promoting an accepted edge from
-`proposed_seed` to `human_reviewed_seed` requires a later explicit graph configuration change,
-version change, and review.
+Generated evidence and review snapshots belong under ignored `data/reports/` and
+`data/reviews/`. Do not record decisions by editing those files. The CLI reads the config and
+copies each decision beside its automatic evidence.
 
-The committed [example template](../examples/concept_graph_review.json) contains only
-`unreviewed` decisions and shows the strict schema.
+The human review config is separate from `configs/concept_graph.yaml` and is never loaded by
+matching or ranking. Promoting an accepted edge from `proposed_seed` to `human_reviewed_seed`
+requires a later explicit graph configuration and version change.

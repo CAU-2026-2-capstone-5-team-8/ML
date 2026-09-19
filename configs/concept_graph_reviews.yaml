@@ -1,0 +1,27 @@
+config_version: concept-graph-reviews-v1
+graph_version: concept-graph-v1
+reviews:
+  - {topic: operating-systems, prerequisite: programming, dependent: process, review_status: unreviewed, review_note: null}
+  - {topic: operating-systems, prerequisite: computer architecture, dependent: memory management, review_status: unreviewed, review_note: null}
+  - {topic: operating-systems, prerequisite: process, dependent: thread, review_status: unreviewed, review_note: null}
+  - {topic: operating-systems, prerequisite: process, dependent: scheduling, review_status: unreviewed, review_note: null}
+  - {topic: operating-systems, prerequisite: process, dependent: concurrency, review_status: unreviewed, review_note: null}
+  - {topic: operating-systems, prerequisite: thread, dependent: concurrency, review_status: unreviewed, review_note: null}
+  - {topic: operating-systems, prerequisite: concurrency, dependent: synchronization, review_status: unreviewed, review_note: null}
+  - {topic: operating-systems, prerequisite: synchronization, dependent: deadlock, review_status: unreviewed, review_note: null}
+  - {topic: operating-systems, prerequisite: memory management, dependent: virtual memory, review_status: unreviewed, review_note: null}
+  - {topic: operating-systems, prerequisite: storage, dependent: file system, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: high school algebra, dependent: linear system, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: systems of equations, dependent: linear system, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: linear system, dependent: gaussian elimination, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: vector, dependent: vector space, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: vector space, dependent: basis, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: vector space, dependent: linear independence, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: vector space, dependent: dimension, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: determinant, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: rank, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: linear transformation, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: eigenvalue, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: eigenvalue, dependent: eigenvector, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: inner product, dependent: orthogonality, review_status: unreviewed, review_note: null}
+  - {topic: linear-algebra, prerequisite: orthogonality, dependent: least squares, review_status: unreviewed, review_note: null}

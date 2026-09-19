@@ -88,9 +88,18 @@ def evidence(entries: list[TocEntry]) -> BookEvidence:
     )
 
 
-def profile(entries: list[TocEntry], loaded_graph: LoadedConceptGraph):
+def profile(
+    entries: list[TocEntry],
+    loaded_graph: LoadedConceptGraph,
+    topic: str = "operating-systems",
+):
+    book_evidence = evidence(entries)
+    if topic != "operating-systems":
+        book_evidence = book_evidence.model_copy(
+            update={"metadata": book_evidence.metadata.model_copy(update={"topics": [topic]})}
+        )
     return build_book_concept_profile_v2(
-        evidence(entries), "operating-systems", FEATURES, loaded_graph, MATCHING, HASH
+        book_evidence, topic, FEATURES, loaded_graph, MATCHING, HASH
     )
 
 
@@ -249,6 +258,35 @@ def test_ambiguous_alias_is_preserved_without_guessing():
     mappings, ambiguous = _map_entry(visit, {"process": ["processes"], "thread": ["processes"]})
     assert mappings == []
     assert ambiguous is True
+
+
+def test_toc_mapping_rules_remove_only_clear_false_positives():
+    result = profile(
+        [
+            entry("compilation", "The compilation process", None, 1, 0),
+            entry("process", "Process Management", None, 1, 1),
+            entry("disk", "Disk Scheduling", None, 1, 2),
+            entry("cpu", "CPU Scheduling", None, 1, 3),
+        ],
+        graph([], nodes=["process", "scheduling", "storage"]),
+    )
+    mapped = {(row.toc_entry_id, row.concept_id) for row in result.toc_mappings}
+    assert ("compilation", "process") not in mapped
+    assert ("process", "process") in mapped
+    assert ("disk", "scheduling") not in mapped
+    assert ("disk", "storage") in mapped
+    assert ("cpu", "scheduling") in mapped
+
+
+def test_plural_systems_of_linear_equations_maps_to_linear_system():
+    result = profile(
+        [entry("systems", "Systems of Linear Equations", None, 1, 0)],
+        REAL_GRAPH,
+        topic="linear-algebra",
+    )
+    assert [(row.concept_id, row.matching_alias) for row in result.toc_mappings] == [
+        ("linear system", "systems of linear equations")
+    ]
 
 
 def test_prerequisite_before_use_missing_and_multiple_paths():

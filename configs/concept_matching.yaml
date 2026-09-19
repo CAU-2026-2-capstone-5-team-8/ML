@@ -1,7 +1,15 @@
-config_version: concept-matching-config-v1
-profile_version: toc-concept-profile-v1
+config_version: concept-matching-config-v2
+profile_version: toc-concept-profile-v2
 model_version: concept-matching-v2-experimental
 coverage_weight_rule: min_occurrences_over_three_v1
+toc_mapping:
+  alias_additions:
+    linear-algebra:
+      linear system: [systems of linear equations]
+  exclusions:
+    operating-systems:
+      process: [compilation process]
+      scheduling: [disk scheduling]
 policy:
   minimum_readiness_assessment_coverage: 0.5
   minimum_opportunity_assessment_coverage: 0.5
