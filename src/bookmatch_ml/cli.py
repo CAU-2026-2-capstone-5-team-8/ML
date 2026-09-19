@@ -21,6 +21,11 @@ from bookmatch_ml.concept_v2.profile import (
     load_concept_matching_config,
 )
 from bookmatch_ml.concept_v2.toc import TocTreeError
+from bookmatch_ml.concept_v2.validation import (
+    ConceptGraphReviewFile,
+    build_concept_validation_report,
+    build_review_template,
+)
 from bookmatch_ml.config import (
     ConfigError,
     load_assessment_config,
@@ -671,6 +676,96 @@ def evaluate_concept_matching_command(
     typer.echo(
         json.dumps(
             {"topic_id": topic, "candidate_count": len(items), "output": str(output)},
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("build-concept-review")
+def build_concept_review_command(
+    data_dir: Annotated[Path, typer.Option("--data-dir", file_okay=False, resolve_path=True)],
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)],
+    readers: Annotated[
+        list[Path] | None, typer.Option("--reader", exists=True, dir_okay=False, resolve_path=True)
+    ] = None,
+    review_template: Annotated[
+        Path | None, typer.Option("--review-template", dir_okay=False, resolve_path=True)
+    ] = None,
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+) -> None:
+    """Build structural graph/TOC evidence and an optional unreviewed decision file."""
+
+    try:
+        if review_template == output:
+            raise ValueError("review template path must differ from the report")
+        canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        input_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        dataset = load_canonical_dataset(data_dir)
+        evidence = assemble_book_evidence(dataset)
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        matching = load_concept_matching_config(matching_config)
+        reader_by_topic = {}
+        reader_files = {}
+        for path in readers or []:
+            reader_profile_value = load_reader_profile(path)
+            topic = reader_profile_value.topic_id
+            if topic in reader_by_topic:
+                raise ValueError(f"duplicate reader topic: {topic}")
+            reader_by_topic[topic] = reader_profile_value
+            reader_files[topic] = path
+            input_hashes[f"reader:{topic}"] = _sha256_file(path)
+        report = build_concept_validation_report(
+            evidence,
+            graph,
+            features,
+            matching,
+            reader_by_topic,
+            input_hashes["toc.jsonl"],
+            input_hashes,
+        )
+        current_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        current_hashes.update(
+            {f"reader:{topic}": _sha256_file(path) for topic, path in reader_files.items()}
+        )
+        if current_hashes != input_hashes:
+            raise ValueError("concept review inputs changed during generation")
+        blank_review = build_review_template(graph) if review_template is not None else None
+        if review_template is not None and review_template.exists():
+            existing_review = ConceptGraphReviewFile.model_validate_json(
+                review_template.read_text(encoding="utf-8")
+            )
+            if existing_review != blank_review:
+                raise ValueError("refusing to overwrite a changed concept graph review file")
+        write_json(report, output)
+        if review_template is not None:
+            write_json(blank_review, review_template)
+    except (
+        CanonicalDataError,
+        ConfigError,
+        RankingInputError,
+        TocTreeError,
+        ValueError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "output": str(output),
+                "book_count": len(report.books),
+                "edge_count": len(report.graph_edges),
+                "review_template": str(review_template) if review_template else None,
+            },
             sort_keys=True,
         )
     )
