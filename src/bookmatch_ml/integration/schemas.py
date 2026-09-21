@@ -145,7 +145,7 @@ class BookCandidateDto(ApiModel):
     feature_version: str = Field(min_length=1)
     config_version: str = Field(min_length=1)
     config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
-    concept_profile_v2: BookConceptProfileV2 | None = None
+    concept_profile: BookConceptProfileV2 | None = None
 
     def to_internal(self) -> MatchingBookProfile:
         return MatchingBookProfile(
@@ -232,9 +232,6 @@ class RankedBookDto(ApiModel):
     book_feature_version: str
     book_config_version: str
     book_config_hash: str
-    concept_difficulty: dict[str, object] | None = Field(
-        default=None, exclude_if=lambda value: value is None
-    )
 
     @classmethod
     def from_internal(cls, item: RankedBook) -> Self:
@@ -265,6 +262,10 @@ class RankedBookDto(ApiModel):
         )
 
 
+class ExperimentalRankedBookDto(RankedBookDto):
+    concept_difficulty: dict[str, object]
+
+
 def camelize_payload(value):
     """Recursively convert experimental evidence keys without changing their values."""
 
@@ -278,7 +279,7 @@ def camelize_payload(value):
 class RankResponse(ApiModel):
     user_id: int | None = Field(default=None, ge=1)
     topic_id: str
-    items: list[RankedBookDto]
+    items: list[ExperimentalRankedBookDto | RankedBookDto]
     model_version: str
     config_version: str
     config_hash: str

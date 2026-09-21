@@ -2,7 +2,7 @@
 
 ## Purpose and scope
 
-This extends the existing v2 TOC matcher and prerequisite graph with an explicit curriculum
+This extends the v3 TOC matcher and prerequisite graph with an explicit curriculum
 rubric, an intrinsic book score, and a separate reader-dependent learning-burden calculation.
 It does not infer prose complexity from chapter headings. It is a proposed baseline, not a
 validated human difficulty estimator. Existing `/ml/rank` behavior remains the default;
@@ -96,7 +96,8 @@ utility, not a percentage probability of suitability.
 - Phrase matching is boundary-aware. Configured false-positive exclusions (for example,
   `compilation process` and `disk scheduling`) are applied before matching and recorded as
   `excluded_alias` with the excluded concept IDs. An alias shared by multiple concepts is
-  preserved as `ambiguous_alias` and is not guessed.
+  preserved as `ambiguous_alias` and is not guessed. Exclusion events are also stored separately,
+  so `Disk Scheduling` retains the suppressed `scheduling` match even while `storage` maps.
 - A short or partial TOC is not penalized with an invented numeric factor. Exact total/matched
   counts, paths, hashes, and unmapped entries are returned. No mapped concepts means no score;
   it does not mean the book is easy, hard, or irrelevant.
@@ -107,13 +108,14 @@ utility, not a percentage probability of suitability.
 
 The default request remains `rankingStrategy=baseline_v1`. The opt-in value
 `concept_difficulty_v2_experimental` requires each candidate to carry its batch-produced
-`conceptProfileV2`. Candidates without sufficient concept evidence or reader assessment coverage
+`conceptProfile`. Candidates without sufficient concept evidence or reader assessment coverage
 do not receive an experimental score. The response retains baseline component diagnostics and adds
 `conceptDifficulty` with intrinsic score/band, personal burden interval, TOC coverage diagnostics,
 unmapped/excluded entries, TOC matches, graph paths, active weights, and hashes. Top-K applies the
 same topic filtering as the baseline before validating experimental profiles. This ML contract is
-implemented; the current Backend PRs do not yet
-persist or send `conceptProfileV2`.
+implemented; the current Backend PRs do not yet persist or send `conceptProfile`.
+New batch artifacts use `toc-concept-profile-v3` / `concept-matching-config-v3`. Older v2
+artifacts remain loadable; their newly introduced exclusion-audit fields default to empty/zero.
 
 ## Reproduce
 

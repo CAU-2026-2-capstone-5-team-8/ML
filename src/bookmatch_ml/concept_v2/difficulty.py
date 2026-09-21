@@ -192,6 +192,9 @@ def score_difficulty(
         "taught_before_use": sorted({c.concept_id for c in book.taught_before_use_candidates}),
         "toc_diagnostics": book.diagnostics.model_dump(mode="json"),
         "unmapped_toc_entries": [item.model_dump(mode="json") for item in book.unmapped_entries],
+        "excluded_alias_matches": [
+            item.model_dump(mode="json") for item in book.excluded_alias_matches
+        ],
         "concept_evidence": {
             concept: [
                 {

@@ -3,6 +3,7 @@
 from bookmatch_ml.concept_v2.difficulty import DifficultyPolicy, score_difficulty
 from bookmatch_ml.config import LoadedRankingConfig, LoadedReaderConfig
 from bookmatch_ml.integration.schemas import (
+    ExperimentalRankedBookDto,
     RankedBookDto,
     RankRequest,
     RankResponse,
@@ -69,13 +70,13 @@ class IntegrationService:
             ]
         items: list[RankedBookDto] = []
         for candidate, book in selected:
-            profile = candidate.concept_profile_v2
+            profile = candidate.concept_profile
             if profile is None:
                 raise ValueError(
-                    "conceptProfileV2 is required for concept_difficulty_v2_experimental"
+                    "conceptProfile is required for concept_difficulty_v2_experimental"
                 )
             if profile.book_id != candidate.book_id:
-                raise ValueError("conceptProfileV2 bookId does not match candidate bookId")
+                raise ValueError("conceptProfile bookId does not match candidate bookId")
             if profile.topic_id != reader.topic_id:
                 raise ValueError(
                     "experimental concept difficulty requires reader and book topics to match"
@@ -96,16 +97,16 @@ class IntegrationService:
                 ),
             ]
             policy, policy_hash = self._difficulty_policy
-            item = RankedBookDto.from_internal(baseline).model_copy(
-                update={
-                    "score": result["recommendation_score"],
-                    "reasons": reasons,
-                    "model_version": policy.model_version,
-                    "config_version": policy.config_version,
-                    "config_hash": policy_hash,
-                    "concept_difficulty": camelize_payload(result),
-                }
+            payload = RankedBookDto.from_internal(baseline).model_dump(by_alias=False)
+            payload.update(
+                score=result["recommendation_score"],
+                reasons=reasons,
+                model_version=policy.model_version,
+                config_version=policy.config_version,
+                config_hash=policy_hash,
+                concept_difficulty=camelize_payload(result),
             )
+            item = ExperimentalRankedBookDto.model_validate(payload)
             items.append(item)
         if not items:
             raise ValueError(

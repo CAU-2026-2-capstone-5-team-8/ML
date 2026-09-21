@@ -102,6 +102,14 @@ class UnmappedTocEntry(_Strict):
     excluded_concepts: list[str] = Field(default_factory=list)
 
 
+class ExcludedAliasMatch(_Strict):
+    toc_entry_id: str
+    toc_title: str
+    toc_path: list[str]
+    concept_id: str
+    exclusion_phrase: str
+
+
 class CoveredTocConcept(_Strict):
     concept_id: str
     coverage_weight: float = Field(ge=0, le=1)
@@ -127,8 +135,8 @@ class TocCoverageDiagnostics(_Strict):
     matched_toc_entries: int
     unmatched_toc_entries: int
     ambiguous_toc_entries: int
-    excluded_toc_entries: int
     concept_count: int
+    excluded_toc_entries: int = 0
 
 
 class BookConceptProfileV2(_Strict):
@@ -150,6 +158,7 @@ class BookConceptProfileV2(_Strict):
     matching_config_version: str
     matching_config_hash: str
     toc_file_hash: str
+    excluded_alias_matches: list[ExcludedAliasMatch] = Field(default_factory=list)
 
 
 def _mapping_inputs(
@@ -197,17 +206,15 @@ def _map_entry(
     visit: TocVisit,
     aliases: dict[str, list[str]],
     exclusions: dict[str, list[str]] | None = None,
-) -> tuple[list[TocConceptMapping], bool, set[str]]:
+) -> tuple[list[TocConceptMapping], bool, list[tuple[str, str]]]:
     title = normalize_text(visit.entry.title)
-    excluded = {
-        concept
-        for concept, phrases in (exclusions or {}).items()
-        if any(
-            normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", title)
-            for phrase in phrases
-            if (normalized := normalize_text(phrase))
-        )
-    }
+    excluded_matches = []
+    for concept, phrases in (exclusions or {}).items():
+        for phrase in phrases:
+            normalized = normalize_text(phrase)
+            if normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", title):
+                excluded_matches.append((concept, phrase))
+    excluded = {concept for concept, _ in excluded_matches}
     found: dict[str, list[str]] = defaultdict(list)
     alias_to_concepts: dict[str, set[str]] = defaultdict(set)
     for concept, forms in aliases.items():
@@ -219,7 +226,7 @@ def _map_entry(
                 found[concept].append(form)
                 alias_to_concepts[normalized].add(concept)
     if any(len(concepts) > 1 for concepts in alias_to_concepts.values()):
-        return [], True, excluded
+        return [], True, excluded_matches
     mappings = [
         TocConceptMapping(
             toc_entry_id=visit.entry.toc_entry_id,
@@ -237,7 +244,7 @@ def _map_entry(
         )
         for concept, forms in sorted(found.items())
     ]
-    return mappings, False, excluded
+    return mappings, False, excluded_matches
 
 
 def _ancestor_paths(
@@ -274,9 +281,21 @@ def build_book_concept_profile_v2(
     aliases, exclusions = _mapping_inputs(features, graph, matching, topic)
     mappings: list[TocConceptMapping] = []
     unmapped: list[UnmappedTocEntry] = []
+    excluded_alias_matches: list[ExcludedAliasMatch] = []
     matched_entry_ids: set[str] = set()
     for visit in tree.traversal:
-        entry_mappings, ambiguous, excluded = _map_entry(visit, aliases, exclusions)
+        entry_mappings, ambiguous, excluded_matches = _map_entry(visit, aliases, exclusions)
+        excluded = {concept for concept, _ in excluded_matches}
+        excluded_alias_matches.extend(
+            ExcludedAliasMatch(
+                toc_entry_id=visit.entry.toc_entry_id,
+                toc_title=visit.entry.title,
+                toc_path=list(visit.path),
+                concept_id=concept,
+                exclusion_phrase=phrase,
+            )
+            for concept, phrase in excluded_matches
+        )
         mappings.extend(entry_mappings)
         if entry_mappings:
             matched_entry_ids.add(visit.entry.toc_entry_id)
@@ -372,8 +391,8 @@ def build_book_concept_profile_v2(
             matched_toc_entries=len(matched_entry_ids),
             unmatched_toc_entries=sum(item.reason == "unmatched" for item in unmapped),
             ambiguous_toc_entries=sum(item.reason == "ambiguous_alias" for item in unmapped),
-            excluded_toc_entries=sum(item.reason == "excluded_alias" for item in unmapped),
             concept_count=len(covered),
+            excluded_toc_entries=len({item.toc_entry_id for item in excluded_alias_matches}),
         ),
         profile_version=matching.config.profile_version,
         graph_version=graph.graph.graph_version,
@@ -384,4 +403,5 @@ def build_book_concept_profile_v2(
         matching_config_version=matching.config.config_version,
         matching_config_hash=matching.content_hash,
         toc_file_hash=toc_file_hash,
+        excluded_alias_matches=excluded_alias_matches,
     )

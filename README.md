@@ -254,7 +254,7 @@ change the existing reader-profile scoring or ranking API. See
 [Question Difficulty v1](docs/assessment-difficulty-v1.md) for rules, real-data findings, and
 limitations.
 
-## Experimental concept matching and difficulty v2
+## Experimental concept matching v3 and difficulty v2
 
 The existing `rank` CLI and `/ml/rank` API default remain `absolute_gap_v1`. A separate batch command
 compares their v1 result with TOC-based book concept coverage and the existing
@@ -471,10 +471,12 @@ subcomponents, active weights, evidence diagnostics, deterministic reasons, and 
 
 The optional top-level `rankingStrategy=concept_difficulty_v2_experimental` selects the new
 concept-aware comparison. Every candidate must then include the batch-produced
-`conceptProfileV2`; the response adds `conceptDifficulty` containing the reader-independent book
+`conceptProfile`; the response adds `conceptDifficulty` containing the reader-independent book
 score/band, reader burden interval, TOC matches, prerequisite graph paths, and hashes. Omitting the
-strategy preserves the existing request and response behavior. The nested `conceptProfileV2` is
-the versioned ML batch artifact and therefore retains its canonical snake_case field names.
+strategy preserves the existing request and response behavior. The nested `conceptProfile` is
+the versioned ML batch artifact and therefore retains its canonical snake_case field names. New
+artifacts use `toc-concept-profile-v3`; v2 artifacts remain readable with empty exclusion-audit
+fields for compatibility.
 
 Spring remains responsible for loading persisted assessments and candidate profiles, calling
 these endpoints, and storing results. The API does not connect to PostgreSQL or upstream book

@@ -87,7 +87,7 @@ def _experimental_request(mastery: float) -> dict[str, object]:
     candidate = next(
         item for item in _candidate_payloads() if item["bookId"] == os_evidence.book_id
     )
-    candidate["conceptProfileV2"] = profile.model_dump(mode="json")
+    candidate["conceptProfile"] = profile.model_dump(mode="json")
     reader = _matching_reader_payload()
     reader["conceptReadiness"] = [
         {"conceptId": concept, "score": mastery}

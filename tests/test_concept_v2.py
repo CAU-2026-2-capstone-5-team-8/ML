@@ -11,6 +11,7 @@ from bookmatch_ml.cli import app
 from bookmatch_ml.concept_v2.graph import ConceptGraph, LoadedConceptGraph, load_concept_graph
 from bookmatch_ml.concept_v2.matching import match_book_concepts, order_matching_items
 from bookmatch_ml.concept_v2.profile import (
+    BookConceptProfileV2,
     _map_entry,
     build_book_concept_profile_v2,
     load_concept_matching_config,
@@ -269,7 +270,7 @@ def test_ambiguous_alias_is_preserved_without_guessing():
     )
     assert mappings == []
     assert ambiguous is True
-    assert excluded == set()
+    assert excluded == []
 
 
 def test_toc_mapping_rules_remove_only_clear_false_positives():
@@ -288,6 +289,43 @@ def test_toc_mapping_rules_remove_only_clear_false_positives():
     assert ("disk", "scheduling") not in mapped
     assert ("disk", "storage") in mapped
     assert ("cpu", "scheduling") in mapped
+
+
+def test_exclusion_evidence_is_preserved_when_another_concept_maps():
+    result = profile([entry("disk", "Disk Scheduling", None, 1, 0)], REAL_GRAPH)
+
+    assert [(row.concept_id, row.toc_entry_id) for row in result.toc_mappings] == [
+        ("storage", "disk")
+    ]
+    assert [row.model_dump() for row in result.excluded_alias_matches] == [
+        {
+            "toc_entry_id": "disk",
+            "toc_title": "Disk Scheduling",
+            "toc_path": ["Disk Scheduling"],
+            "concept_id": "scheduling",
+            "exclusion_phrase": "disk scheduling",
+        }
+    ]
+    assert result.diagnostics.excluded_toc_entries == 1
+
+
+def test_matching_schema_versions_exclusion_evidence_change():
+    assert MATCHING.config.config_version == "concept-matching-config-v3"
+    assert MATCHING.config.profile_version == "toc-concept-profile-v3"
+    assert MATCHING.config.model_version == "concept-matching-v3-experimental"
+
+
+def test_v2_profile_artifact_defaults_new_exclusion_fields_for_compatibility():
+    payload = profile([entry("p", "Processes", None, 1, 0)], REAL_GRAPH).model_dump()
+    payload["profile_version"] = "toc-concept-profile-v2"
+    payload.pop("excluded_alias_matches")
+    payload["diagnostics"].pop("excluded_toc_entries")
+
+    restored = BookConceptProfileV2.model_validate(payload)
+
+    assert restored.profile_version == "toc-concept-profile-v2"
+    assert restored.excluded_alias_matches == []
+    assert restored.diagnostics.excluded_toc_entries == 0
 
 
 def test_plural_systems_of_linear_equations_maps_to_linear_system():
