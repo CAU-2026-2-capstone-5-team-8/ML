@@ -1,5 +1,10 @@
 # BookMatch ML
 
+An experimental [concept difficulty and reader-fit rubric](docs/concept-difficulty-v1.md)
+extends the existing TOC/graph baseline with explicit concept levels, prerequisite gaps,
+learning burden, and a blind human-review export. Run it separately from the unchanged v1 API
+until independent recommendation-quality evaluation is complete.
+
 For a reproducible canonical-data → local HTTP verification workflow and the 25-book
 integration findings, see [Canonical HTTP verification](docs/canonical-http-verification-v1.md).
 The check verifies API consistency, not recommendation accuracy.
