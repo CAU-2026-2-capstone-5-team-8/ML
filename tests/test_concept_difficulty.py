@@ -91,6 +91,40 @@ def test_duplicate_headings_do_not_raise_intrinsic_level():
     assert one["book_level_score"] == repeated["book_level_score"]
 
 
+def test_duplicate_headings_do_not_change_structural_difficulty_or_burden():
+    concepts = {
+        "programming": 0.5,
+        "process": 0.5,
+        "thread": 0.5,
+        "concurrency": 0.5,
+        "synchronization": 0.5,
+        "deadlock": 0.5,
+        "storage": 0.5,
+        "file system": 0.5,
+    }
+    one = assess(["Deadlock", "File System"], concepts)
+    repeated = assess(["Deadlock", "Deadlock", "Deadlock", "File System"], concepts)
+
+    for field in ("book_difficulty_score", "burden_lower", "burden_upper"):
+        assert repeated[field] == pytest.approx(one[field])
+    assert repeated["recommendation_score"] == pytest.approx(one["recommendation_score"])
+
+
+def test_excluded_false_positive_and_partial_toc_diagnostics_are_returned():
+    result = assess(["The compilation process", "Processes"], {})
+
+    assert result["toc_diagnostics"] == {
+        "total_toc_entries": 2,
+        "matched_toc_entries": 1,
+        "unmatched_toc_entries": 0,
+        "ambiguous_toc_entries": 0,
+        "excluded_toc_entries": 1,
+        "concept_count": 1,
+    }
+    assert result["unmapped_toc_entries"][0]["reason"] == "excluded_alias"
+    assert result["unmapped_toc_entries"][0]["excluded_concepts"] == ["process"]
+
+
 def test_more_advanced_concepts_increase_intrinsic_level():
     basic = assess(["Processes"], {})
     advanced = assess(["Deadlock", "Distributed systems"], {})
@@ -118,3 +152,12 @@ def test_lower_mastery_never_reduces_burden():
         for score in [0, 0.25, 0.5, 0.75, 1]
     ]
     assert burdens == sorted(burdens, reverse=True)
+
+
+def test_unsupported_policy_topic_is_a_domain_error():
+    book = profile([entry("1", "Processes", None, 1, 0)], REAL_GRAPH)
+    unknown_book = book.model_copy(update={"topic_id": "unknown-topic"})
+    unknown_reader = reader({}).model_copy(update={"topic_id": "unknown-topic"})
+
+    with pytest.raises(ValueError, match="difficulty policy has no topic"):
+        score_difficulty(unknown_reader, unknown_book, load_difficulty_policy(POLICY_PATH))

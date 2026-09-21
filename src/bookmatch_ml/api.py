@@ -62,7 +62,10 @@ def create_app(
     if concept_difficulty_config_path is not None:
         difficulty_policy = load_difficulty_policy(concept_difficulty_config_path)
     elif config_dir := os.environ.get(CONFIG_DIR_ENV):
-        difficulty_policy = load_difficulty_policy(Path(config_dir) / "concept_difficulty.yaml")
+        difficulty_path = Path(config_dir) / "concept_difficulty.yaml"
+        difficulty_policy = (
+            load_difficulty_policy(difficulty_path) if difficulty_path.exists() else None
+        )
     else:
         resource = files("bookmatch_ml.default_configs").joinpath("concept_difficulty.yaml")
         with as_file(resource) as packaged_path:

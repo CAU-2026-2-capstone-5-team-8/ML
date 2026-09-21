@@ -29,8 +29,10 @@ book difficulty D = 0.7 * C + 0.3 * P
 
 If `E` is empty, active weights are renormalized and `D=C`; absence of an inferred prerequisite
 does not inject a zero. `C` maps levels 1/2/3 to 0/0.5/1. `P` maps them to 1/3, 2/3, and 1 because
-even a foundational prerequisite adds prior-knowledge demand. The prerequisite weights are the
-existing coverage weights of their related target concepts. All numbers are initial assumptions.
+even a foundational prerequisite adds prior-knowledge demand. Each prerequisite's structural
+weight is the number of unique covered target concepts that depend on it divided by the number of
+unique covered concepts. Heading occurrence counts never enter this weight. All numbers are
+initial assumptions.
 
 | Intrinsic score | Korean meaning | API label | Operational meaning |
 | --- | --- | --- | --- |
@@ -92,8 +94,9 @@ utility, not a percentage probability of suitability.
   from external demand but remains covered learning. Appearing later remains an external-or-late
   candidate.
 - Phrase matching is boundary-aware. Configured false-positive exclusions (for example,
-  `compilation process` and `disk scheduling`) are applied before matching. An alias shared by
-  multiple concepts is preserved as `ambiguous_alias` and is not guessed.
+  `compilation process` and `disk scheduling`) are applied before matching and recorded as
+  `excluded_alias` with the excluded concept IDs. An alias shared by multiple concepts is
+  preserved as `ambiguous_alias` and is not guessed.
 - A short or partial TOC is not penalized with an invented numeric factor. Exact total/matched
   counts, paths, hashes, and unmapped entries are returned. No mapped concepts means no score;
   it does not mean the book is easy, hard, or irrelevant.
@@ -106,8 +109,10 @@ The default request remains `rankingStrategy=baseline_v1`. The opt-in value
 `concept_difficulty_v2_experimental` requires each candidate to carry its batch-produced
 `conceptProfileV2`. Candidates without sufficient concept evidence or reader assessment coverage
 do not receive an experimental score. The response retains baseline component diagnostics and adds
-`conceptDifficulty` with intrinsic score/band, personal burden interval, TOC matches, graph paths,
-active weights, and hashes. This ML contract is implemented; the current Backend PRs do not yet
+`conceptDifficulty` with intrinsic score/band, personal burden interval, TOC coverage diagnostics,
+unmapped/excluded entries, TOC matches, graph paths, active weights, and hashes. Top-K applies the
+same topic filtering as the baseline before validating experimental profiles. This ML contract is
+implemented; the current Backend PRs do not yet
 persist or send `conceptProfileV2`.
 
 ## Reproduce
@@ -133,7 +138,7 @@ Input: the earlier `toc-enriched-20260920/processed` snapshot documented in
 Seven books have TOC; six map to the configured OS concepts. Nineteen receive no fabricated
 concept score. This does not classify those nineteen as irrelevant or difficult.
 
-The six mapped books span legacy concept levels 1.50–2.11 and intrinsic v2 scores 0.283–0.508.
+The six mapped books span legacy concept levels 1.50–2.11 and intrinsic v2 scores 0.275–0.506.
 One is introductory and five are intermediate under the proposed thresholds. For synthetic
 intermediate mastery their burden is 0.400–0.441 and utility 0.799–0.857, instead of the original
 ranking path's all-1.0 scores.

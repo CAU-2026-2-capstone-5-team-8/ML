@@ -22,7 +22,7 @@ class IntegrationService:
         self,
         reader_config: LoadedReaderConfig,
         ranking_config: LoadedRankingConfig,
-        difficulty_policy: tuple[DifficultyPolicy, str],
+        difficulty_policy: tuple[DifficultyPolicy, str] | None,
     ) -> None:
         self._reader_config = reader_config
         self._ranking_config = ranking_config
@@ -56,9 +56,17 @@ class IntegrationService:
         return RankResponse.from_internal(response, user_id=request.reader_profile.user_id)
 
     def _rank_concept_difficulty(self, request, reader, books) -> RankResponse:
+        if self._difficulty_policy is None:
+            raise ValueError("concept difficulty strategy is not configured")
         selected = list(zip(request.candidate_books, books, strict=True))
         if request.book_id is not None:
             selected = [item for item in selected if item[0].book_id == request.book_id]
+        elif self._ranking_config.config.filter_topic_candidates:
+            selected = [
+                item
+                for item in selected
+                if item[1].topic_distribution.get(reader.topic_id, 0.0) > 0
+            ]
         items: list[RankedBookDto] = []
         for candidate, book in selected:
             profile = candidate.concept_profile_v2
@@ -68,6 +76,10 @@ class IntegrationService:
                 )
             if profile.book_id != candidate.book_id:
                 raise ValueError("conceptProfileV2 bookId does not match candidate bookId")
+            if profile.topic_id != reader.topic_id:
+                raise ValueError(
+                    "experimental concept difficulty requires reader and book topics to match"
+                )
             baseline = score_matching_book_fit(reader, book, self._ranking_config)
             result = score_difficulty(reader, profile, self._difficulty_policy)
             if result["recommendation_score"] is None:

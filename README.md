@@ -421,6 +421,9 @@ is running.
 The factory loads packaged defaults without reading repository-relative files at import time.
 Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml`, `ranking.yaml`, and
 `concept_difficulty.yaml` to select externally mounted, versioned configuration in deployment.
+For backward compatibility, a directory containing only the original two files still starts the
+baseline API; the experimental strategy returns a validation error until its third config is
+mounted.
 
 `POST /ml/reader-profile` accepts the same assessment content as `examples/assessment.json`, with
 camelCase keys and an optional `userId` correlation value. It returns the three readiness

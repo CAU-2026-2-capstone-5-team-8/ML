@@ -264,9 +264,12 @@ def test_mapping_occurrences_unmatched_and_paths_are_stable():
 
 def test_ambiguous_alias_is_preserved_without_guessing():
     visit = reconstruct_toc([entry("p", "Processes", None, 1, 0)]).traversal[0]
-    mappings, ambiguous = _map_entry(visit, {"process": ["processes"], "thread": ["processes"]})
+    mappings, ambiguous, excluded = _map_entry(
+        visit, {"process": ["processes"], "thread": ["processes"]}
+    )
     assert mappings == []
     assert ambiguous is True
+    assert excluded == set()
 
 
 def test_toc_mapping_rules_remove_only_clear_false_positives():

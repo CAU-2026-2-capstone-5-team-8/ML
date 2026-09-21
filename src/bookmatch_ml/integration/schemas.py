@@ -232,7 +232,9 @@ class RankedBookDto(ApiModel):
     book_feature_version: str
     book_config_version: str
     book_config_hash: str
-    concept_difficulty: dict[str, object] | None = None
+    concept_difficulty: dict[str, object] | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
     @classmethod
     def from_internal(cls, item: RankedBook) -> Self:

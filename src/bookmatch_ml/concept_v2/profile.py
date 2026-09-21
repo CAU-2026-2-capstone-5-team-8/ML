@@ -98,7 +98,8 @@ class UnmappedTocEntry(_Strict):
     toc_entry_id: str
     title: str
     toc_path: list[str]
-    reason: Literal["unmatched", "ambiguous_alias"]
+    reason: Literal["unmatched", "ambiguous_alias", "excluded_alias"]
+    excluded_concepts: list[str] = Field(default_factory=list)
 
 
 class CoveredTocConcept(_Strict):
@@ -126,6 +127,7 @@ class TocCoverageDiagnostics(_Strict):
     matched_toc_entries: int
     unmatched_toc_entries: int
     ambiguous_toc_entries: int
+    excluded_toc_entries: int
     concept_count: int
 
 
@@ -195,7 +197,7 @@ def _map_entry(
     visit: TocVisit,
     aliases: dict[str, list[str]],
     exclusions: dict[str, list[str]] | None = None,
-) -> tuple[list[TocConceptMapping], bool]:
+) -> tuple[list[TocConceptMapping], bool, set[str]]:
     title = normalize_text(visit.entry.title)
     excluded = {
         concept
@@ -217,7 +219,7 @@ def _map_entry(
                 found[concept].append(form)
                 alias_to_concepts[normalized].add(concept)
     if any(len(concepts) > 1 for concepts in alias_to_concepts.values()):
-        return [], True
+        return [], True, excluded
     mappings = [
         TocConceptMapping(
             toc_entry_id=visit.entry.toc_entry_id,
@@ -235,7 +237,7 @@ def _map_entry(
         )
         for concept, forms in sorted(found.items())
     ]
-    return mappings, False
+    return mappings, False, excluded
 
 
 def _ancestor_paths(
@@ -274,7 +276,7 @@ def build_book_concept_profile_v2(
     unmapped: list[UnmappedTocEntry] = []
     matched_entry_ids: set[str] = set()
     for visit in tree.traversal:
-        entry_mappings, ambiguous = _map_entry(visit, aliases, exclusions)
+        entry_mappings, ambiguous, excluded = _map_entry(visit, aliases, exclusions)
         mappings.extend(entry_mappings)
         if entry_mappings:
             matched_entry_ids.add(visit.entry.toc_entry_id)
@@ -284,7 +286,14 @@ def build_book_concept_profile_v2(
                     toc_entry_id=visit.entry.toc_entry_id,
                     title=visit.entry.title,
                     toc_path=list(visit.path),
-                    reason="ambiguous_alias" if ambiguous else "unmatched",
+                    reason=(
+                        "ambiguous_alias"
+                        if ambiguous
+                        else "excluded_alias"
+                        if excluded
+                        else "unmatched"
+                    ),
+                    excluded_concepts=sorted(excluded),
                 )
             )
     by_concept: dict[str, list[TocConceptMapping]] = defaultdict(list)
@@ -363,6 +372,7 @@ def build_book_concept_profile_v2(
             matched_toc_entries=len(matched_entry_ids),
             unmatched_toc_entries=sum(item.reason == "unmatched" for item in unmapped),
             ambiguous_toc_entries=sum(item.reason == "ambiguous_alias" for item in unmapped),
+            excluded_toc_entries=sum(item.reason == "excluded_alias" for item in unmapped),
             concept_count=len(covered),
         ),
         profile_version=matching.config.profile_version,

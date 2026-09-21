@@ -1,5 +1,6 @@
 import asyncio
 import json
+import shutil
 from importlib.resources import files
 from pathlib import Path
 
@@ -139,6 +140,7 @@ def test_rank_endpoint_returns_flat_components_and_evidence_diagnostics() -> Non
     assert item["componentWeightCoverage"] == 1.0
     assert item["diagnostics"]["inferredPrerequisiteCount"] >= 0
     assert item["bookFeatureVersion"] == "book-v1"
+    assert "conceptDifficulty" not in item
 
 
 def test_rank_endpoint_opt_in_concept_difficulty_keeps_book_score_reader_independent() -> None:
@@ -160,6 +162,34 @@ def test_rank_endpoint_opt_in_concept_difficulty_keeps_book_score_reader_indepen
     )
     assert novice_item["score"] == novice_item["conceptDifficulty"]["recommendationScore"]
     assert novice_item["conceptDifficulty"]["conceptEvidence"]
+
+
+def test_experimental_rank_filters_unrelated_candidates_before_profile_validation() -> None:
+    request = _experimental_request(0.5)
+    unrelated = next(
+        candidate
+        for candidate in _candidate_payloads()
+        if candidate["topicDistribution"].get("linear-algebra") == 1.0
+    )
+    request["candidateBooks"].append(unrelated)
+
+    response = _post("/ml/rank", request)
+
+    assert response.status_code == 200, response.text
+    assert len(response.json()["items"]) == 1
+
+
+def test_baseline_app_starts_with_legacy_external_config_directory(monkeypatch, tmp_path: Path):
+    for name in ("reader.yaml", "ranking.yaml"):
+        shutil.copyfile(ROOT / "configs" / name, tmp_path / name)
+    monkeypatch.setenv("BOOKMATCH_ML_CONFIG_DIR", str(tmp_path))
+
+    application = create_app()
+
+    assert {route.path for route in application.routes if route.path.startswith("/ml/")} == {
+        "/ml/reader-profile",
+        "/ml/rank",
+    }
 
 
 def test_rank_endpoint_supports_specific_cross_topic_fit() -> None:

@@ -57,9 +57,15 @@ def score_difficulty(
     policy, policy_hash = loaded
     if reader.topic_id != book.topic_id:
         raise ValueError("reader and book topic differ")
+    if book.topic_id not in policy.levels:
+        raise ValueError(f"difficulty policy has no topic: {book.topic_id}")
     levels = policy.levels[book.topic_id]
     covered = sorted({item.concept_id for item in book.covered_concepts})
-    prerequisites = {item.concept_id: item.weight for item in book.prerequisite_requirements}
+    prerequisites = {
+        item.concept_id: len(set(item.related_target_concepts)) / len(covered)
+        for item in book.prerequisite_requirements
+        if covered
+    }
     missing = (set(covered) | set(prerequisites)) - levels.keys()
     if missing:
         raise ValueError(f"rubric missing concept levels: {sorted(missing)}")
@@ -184,6 +190,8 @@ def score_difficulty(
         ),
         "external_prerequisites": sorted(prereq_coefficients),
         "taught_before_use": sorted({c.concept_id for c in book.taught_before_use_candidates}),
+        "toc_diagnostics": book.diagnostics.model_dump(mode="json"),
+        "unmapped_toc_entries": [item.model_dump(mode="json") for item in book.unmapped_entries],
         "concept_evidence": {
             concept: [
                 {
@@ -200,7 +208,8 @@ def score_difficulty(
         },
         "prerequisite_evidence": {
             item.concept_id: {
-                "weight": item.weight,
+                "profile_weight": item.weight,
+                "difficulty_weight": prerequisites[item.concept_id],
                 "related_target_concepts": item.related_target_concepts,
                 "graph_paths": item.graph_paths,
                 "evidence_toc_entry_ids": item.evidence_toc_entry_ids,
