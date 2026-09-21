@@ -31,6 +31,40 @@ def test_teaching_prerequisite_before_use_reduces_external_gap():
     assert taught["prerequisite_gap_lower"] < assumed["prerequisite_gap_lower"]
 
 
+def test_intrinsic_difficulty_includes_external_prerequisite_structure():
+    mastery = {
+        "computer architecture": 0.0,
+        "memory management": 0.0,
+        "virtual memory": 0.0,
+    }
+    taught = assess(["Computer Architecture", "Memory Management", "Virtual Memory"], mastery)
+    assumed = assess(["Virtual Memory", "Memory Management", "Computer Architecture"], mastery)
+
+    assert taught["concept_levels"] == assumed["concept_levels"]
+    assert taught["book_difficulty_score"] < assumed["book_difficulty_score"]
+    assert taught["book_difficulty_components"]["external_prerequisite_demand"] is None
+    assert assumed["book_difficulty_components"]["external_prerequisite_demand"] is not None
+
+
+def test_learning_weight_is_renormalized_when_book_has_no_external_prerequisite():
+    result = assess(["Computer Architecture"], {"computer architecture": 0.0})
+
+    assert result["external_prerequisites"] == []
+    assert result["burden_lower"] == pytest.approx(1 / 3)
+    assert result["burden_active_weights"] == {"covered_learning": 1.0}
+
+
+def test_difficulty_exposes_toc_and_graph_evidence_for_each_reason():
+    result = assess(["Deadlock"], {})
+
+    assert result["concept_evidence"]["deadlock"][0]["toc_title"] == "Deadlock"
+    assert result["concept_evidence"]["deadlock"][0]["toc_entry_id"] == "0"
+    synchronization = result["prerequisite_evidence"]["synchronization"]
+    assert synchronization["related_target_concepts"] == ["deadlock"]
+    assert synchronization["graph_paths"] == [["synchronization", "deadlock"]]
+    assert synchronization["evidence_toc_entry_ids"] == ["0"]
+
+
 def test_unassessed_mastery_is_an_interval_not_a_fabricated_point():
     result = assess(["Processes"], {})
     assert result["burden_lower"] < result["burden_upper"]

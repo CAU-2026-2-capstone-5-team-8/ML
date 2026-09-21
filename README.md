@@ -254,14 +254,19 @@ change the existing reader-profile scoring or ranking API. See
 [Question Difficulty v1](docs/assessment-difficulty-v1.md) for rules, real-data findings, and
 limitations.
 
-## Experimental concept matching v2
+## Experimental concept matching and difficulty v2
 
-The existing `rank` CLI and `/ml/rank` API remain `absolute_gap_v1`. A separate batch command
+The existing `rank` CLI and `/ml/rank` API default remain `absolute_gap_v1`. A separate batch command
 compares their v1 result with TOC-based book concept coverage and the existing
 `ReaderProfile.concept_readiness` values. It reports **prerequisite readiness** and **learning
 opportunity** separately, each with its own mastery-assessment coverage. Missing concept mastery
 is unknown, never zero. Prose difficulty remains in the report only as a v1 comparison and
 optional diagnostic.
+
+`configs/concept_difficulty.yaml` also defines an experimental intrinsic book score and a separate
+reader learning-burden interval. The exact formulas, bands, evidence rules, real-data snapshot,
+and review workflow are documented in
+[`docs/concept-difficulty-v1.md`](docs/concept-difficulty-v1.md).
 
 ```bash
 uv run bookmatch-ml build-book-profiles \
@@ -414,8 +419,8 @@ Interactive OpenAPI documentation is available at `http://127.0.0.1:8000/docs` w
 is running.
 
 The factory loads packaged defaults without reading repository-relative files at import time.
-Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml` and `ranking.yaml` to select
-an externally mounted, versioned configuration in deployment.
+Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml`, `ranking.yaml`, and
+`concept_difficulty.yaml` to select externally mounted, versioned configuration in deployment.
 
 `POST /ml/reader-profile` accepts the same assessment content as `examples/assessment.json`, with
 camelCase keys and an optional `userId` correlation value. It returns the three readiness
@@ -460,6 +465,13 @@ Set the optional top-level `bookId` to score one supplied candidate even when it
 the selected topic. Otherwise the endpoint returns the configured topic-filtered top K. Each item
 contains flat `topicFit`, `vocabularyFit`, `knowledgeFit`, and `comprehensionFit` fields plus the
 subcomponents, active weights, evidence diagnostics, deterministic reasons, and version hashes.
+
+The optional top-level `rankingStrategy=concept_difficulty_v2_experimental` selects the new
+concept-aware comparison. Every candidate must then include the batch-produced
+`conceptProfileV2`; the response adds `conceptDifficulty` containing the reader-independent book
+score/band, reader burden interval, TOC matches, prerequisite graph paths, and hashes. Omitting the
+strategy preserves the existing request and response behavior. The nested `conceptProfileV2` is
+the versioned ML batch artifact and therefore retains its canonical snake_case field names.
 
 Spring remains responsible for loading persisted assessments and candidate profiles, calling
 these endpoints, and storing results. The API does not connect to PostgreSQL or upstream book

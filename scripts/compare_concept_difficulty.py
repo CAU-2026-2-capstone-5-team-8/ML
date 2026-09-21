@@ -94,7 +94,11 @@ def main():
                 "reviewer": "",
                 "topic_relevant": "",
                 "human_concept_level_1_to_3": "",
+                "human_book_difficulty_band": "",
                 "human_reader_band": "",
+                "human_external_prerequisites": "",
+                "concept_mapping_errors": "",
+                "toc_completeness_notes": "",
                 "evidence_reference": "",
                 "notes": "",
             }

@@ -1,11 +1,12 @@
-# Concept difficulty and reader fit (experimental v1)
+# Concept difficulty and reader fit (experimental v2)
 
 ## Purpose and scope
 
 This extends the existing v2 TOC matcher and prerequisite graph with an explicit curriculum
-rubric and a reader-dependent learning-burden calculation. It does not infer prose complexity
-from chapter headings. It is a proposed baseline, not a validated human difficulty estimator.
-Existing `/ml/rank`, v1 ranking, and v2 matching behavior remain unchanged for comparison.
+rubric, an intrinsic book score, and a separate reader-dependent learning-burden calculation.
+It does not infer prose complexity from chapter headings. It is a proposed baseline, not a
+validated human difficulty estimator. Existing `/ml/rank` behavior remains the default;
+`rankingStrategy=concept_difficulty_v2_experimental` is an opt-in comparison path.
 
 ## Criteria
 
@@ -14,18 +15,44 @@ proposed level: 1 foundational, 2 intermediate, 3 advanced *within the topic*. T
 curriculum judgments to review, not levels learned from data. Example: process = 1,
 concurrency = 2, deadlock = 3. Graph depth alone is not used as a difficulty label.
 
-The intrinsic book level is the arithmetic mean of levels of unique matched taught concepts
-(range 1–3). Repeated headings do not increase a concept's influence. This is a summary of
-mapped content; it is not a claim about the book's explanation quality or entire contents.
+### Intrinsic book difficulty
+
+Repeated headings never add scoring mass. Let `U` be the unique matched covered concepts and
+`E` the unique external-or-late prerequisite candidates projected by the graph. The components
+are:
+
+```text
+covered content C = mean((level(c) - 1) / 2 for c in U)
+external prerequisite P = weighted mean(level(p) / 3 for p in E)
+book difficulty D = 0.7 * C + 0.3 * P
+```
+
+If `E` is empty, active weights are renormalized and `D=C`; absence of an inferred prerequisite
+does not inject a zero. `C` maps levels 1/2/3 to 0/0.5/1. `P` maps them to 1/3, 2/3, and 1 because
+even a foundational prerequisite adds prior-knowledge demand. The prerequisite weights are the
+existing coverage weights of their related target concepts. All numbers are initial assumptions.
+
+| Intrinsic score | Korean meaning | API label | Operational meaning |
+| --- | --- | --- | --- |
+| `0.00 <= D <= 0.33` | 입문 | `introductory` | mostly foundational covered concepts and limited external prerequisite demand |
+| `0.33 < D <= 0.66` | 중급 | `intermediate` | intermediate concepts or a meaningful external prerequisite structure |
+| `0.66 < D <= 1.00` | 고급 | `advanced` | advanced concepts and/or high-level external prerequisite demand |
+
+The legacy `book_level_score` (mean level, range 1–3) remains in comparison output, but ranking
+uses `book_difficulty_score`. The intrinsic score is identical for every reader.
+
+### Reader-specific burden
 
 For reader mastery `m(c)` in [0,1]:
 
 ```text
-learning burden L = mean(level(c) / 3 * (1 - m(c))) over unique covered concepts
+covered learning L = mean(level(c) / 3 * (1 - m(c))) over unique covered concepts
 prerequisite gap G = weighted mean(1 - m(c)) over external/late prerequisite candidates
 personal burden B = 0.6 * G + 0.4 * L
 ```
 
+When there is no external prerequisite candidate, active weights are renormalized and `B=L`.
+This fixes the earlier v1 behavior in which such a book could never exceed burden 0.4.
 Prerequisite candidates and their weights come from the existing v2 graph projection.
 Concepts taught before use are not charged as external requirements; learning them still
 contributes to L. If no external requirement is projected, G's contribution is zero, with
@@ -53,8 +80,35 @@ mass is assessed. Utility is the worse endpoint utility. The script emits the ne
 to assess, in descending influence order. With no mapped concepts there is no numeric fit.
 
 The returned breakdown records concept levels, mastery, coefficients, prerequisite identities,
-taught-before-use identities, and policy/graph/mapping/input hashes. A numeric recommendation
-score is an experimental utility, not a percentage probability of suitability.
+taught-before-use identities, every matched TOC entry/path/alias, graph paths for prerequisite
+reasons, and policy/graph/mapping/input hashes. A numeric recommendation score is an experimental
+utility, not a percentage probability of suitability.
+
+## Evidence-quality rules
+
+- A concept receives one scoring unit regardless of repeated headings. Every occurrence remains
+  in `concept_evidence` for audit.
+- A prerequisite appearing earlier in depth-first TOC order is `taught_before_use`; it is removed
+  from external demand but remains covered learning. Appearing later remains an external-or-late
+  candidate.
+- Phrase matching is boundary-aware. Configured false-positive exclusions (for example,
+  `compilation process` and `disk scheduling`) are applied before matching. An alias shared by
+  multiple concepts is preserved as `ambiguous_alias` and is not guessed.
+- A short or partial TOC is not penalized with an invented numeric factor. Exact total/matched
+  counts, paths, hashes, and unmapped entries are returned. No mapped concepts means no score;
+  it does not mean the book is easy, hard, or irrelevant.
+- These rules estimate concept/prerequisite difficulty only. Prose difficulty continues to require
+  actual prose evidence and remains a separate profile.
+
+## Optional `/ml/rank` path
+
+The default request remains `rankingStrategy=baseline_v1`. The opt-in value
+`concept_difficulty_v2_experimental` requires each candidate to carry its batch-produced
+`conceptProfileV2`. Candidates without sufficient concept evidence or reader assessment coverage
+do not receive an experimental score. The response retains baseline component diagnostics and adds
+`conceptDifficulty` with intrinsic score/band, personal burden interval, TOC matches, graph paths,
+active weights, and hashes. This ML contract is implemented; the current Backend PRs do not yet
+persist or send `conceptProfileV2`.
 
 ## Reproduce
 
@@ -72,15 +126,17 @@ The output directory must be new. Outputs are ignored local artifacts:
   (0, 0.5, 1 for every topic concept; overall three-dimensional reader scores stay fixed).
 - `blind-review.csv`: no model predictions, rubric scores, or synthetic labels.
 
-## 25-book snapshot result (2026-09-21)
+## 25-book snapshot result (2026-09-21, rerun with v2)
 
 Input: the earlier `toc-enriched-20260920/processed` snapshot documented in
 [canonical HTTP verification](canonical-http-verification-v1.md), not a fresh crawl.
 Seven books have TOC; six map to the configured OS concepts. Nineteen receive no fabricated
 concept score. This does not classify those nineteen as irrelevant or difficult.
 
-The six mapped books span intrinsic concept levels 1.50–2.11. For synthetic intermediate
-mastery their burden is 0.400–0.441 and utility 0.799–0.857, instead of v1's all-1.0 scores.
+The six mapped books span legacy concept levels 1.50–2.11 and intrinsic v2 scores 0.283–0.508.
+One is introductory and five are intermediate under the proposed thresholds. For synthetic
+intermediate mastery their burden is 0.400–0.441 and utility 0.799–0.857, instead of the original
+ranking path's all-1.0 scores.
 All six are challenging with synthetic zero mastery, manageable at 0.5, and easy at 1.0.
 These checks show sensitivity to the specified criteria, **not improved recommendation accuracy**.
 
@@ -110,6 +166,7 @@ and prose acquisition remain separate work; Data-Pipeline was not modified.
 
 ## Verification
 
-Regression tests cover expertise/burden monotonicity, higher-level content, teaching order,
-unknown mastery, absent concepts, topic mismatch, repeated headings, learning opportunity,
-and rubric completeness against the graph. Full suite: 178 tests passed; Ruff passed.
+Regression tests cover expertise/burden monotonicity, higher-level content, intrinsic prerequisite
+structure, active-weight renormalization, teaching order, unknown mastery, absent concepts, topic
+mismatch, repeated headings, evidence traceability, optional API ranking, learning opportunity,
+and rubric completeness against the graph. The current verification result is recorded in the PR.

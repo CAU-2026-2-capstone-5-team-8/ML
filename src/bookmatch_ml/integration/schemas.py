@@ -1,10 +1,11 @@
 """Camel-case DTOs kept separate from internal ML schemas."""
 
-from typing import Self
+from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from pydantic.alias_generators import to_camel
 
+from bookmatch_ml.concept_v2.profile import BookConceptProfileV2
 from bookmatch_ml.schemas import (
     Assessment,
     AssessmentResponse,
@@ -144,6 +145,7 @@ class BookCandidateDto(ApiModel):
     feature_version: str = Field(min_length=1)
     config_version: str = Field(min_length=1)
     config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    concept_profile_v2: BookConceptProfileV2 | None = None
 
     def to_internal(self) -> MatchingBookProfile:
         return MatchingBookProfile(
@@ -171,6 +173,7 @@ class RankRequest(ApiModel):
     candidate_books: list[BookCandidateDto] = Field(min_length=1)
     limit: int = Field(default=5, ge=1, le=100)
     book_id: str | None = Field(default=None, min_length=1)
+    ranking_strategy: Literal["baseline_v1", "concept_difficulty_v2_experimental"] = "baseline_v1"
 
     @field_validator("candidate_books")
     @classmethod
@@ -229,6 +232,7 @@ class RankedBookDto(ApiModel):
     book_feature_version: str
     book_config_version: str
     book_config_hash: str
+    concept_difficulty: dict[str, object] | None = None
 
     @classmethod
     def from_internal(cls, item: RankedBook) -> Self:
@@ -257,6 +261,16 @@ class RankedBookDto(ApiModel):
             book_config_version=item.book_config_version,
             book_config_hash=item.book_config_hash,
         )
+
+
+def camelize_payload(value):
+    """Recursively convert experimental evidence keys without changing their values."""
+
+    if isinstance(value, dict):
+        return {to_camel(str(key)): camelize_payload(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [camelize_payload(item) for item in value]
+    return value
 
 
 class RankResponse(ApiModel):

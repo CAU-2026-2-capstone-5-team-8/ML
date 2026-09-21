@@ -7,6 +7,11 @@ import httpx
 
 from bookmatch_ml.api import create_app
 from bookmatch_ml.book.profile import build_book_profiles
+from bookmatch_ml.concept_v2.graph import load_concept_graph
+from bookmatch_ml.concept_v2.profile import (
+    build_book_concept_profile_v2,
+    load_concept_matching_config,
+)
 from bookmatch_ml.config import load_feature_config, load_reader_config
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import load_canonical_dataset
@@ -65,6 +70,35 @@ def _candidate_payloads() -> list[dict[str, object]]:
     ]
 
 
+def _experimental_request(mastery: float) -> dict[str, object]:
+    evidence = assemble_book_evidence(load_canonical_dataset(FIXTURE_DIR))
+    os_evidence = next(book for book in evidence if "operating-systems" in book.metadata.topics)
+    graph = load_concept_graph(ROOT / "configs" / "concept_graph.yaml", FEATURE_CONFIG)
+    matching = load_concept_matching_config(ROOT / "configs" / "concept_matching.yaml")
+    profile = build_book_concept_profile_v2(
+        os_evidence,
+        "operating-systems",
+        FEATURE_CONFIG,
+        graph,
+        matching,
+        "sha256:" + "0" * 64,
+    )
+    candidate = next(
+        item for item in _candidate_payloads() if item["bookId"] == os_evidence.book_id
+    )
+    candidate["conceptProfileV2"] = profile.model_dump(mode="json")
+    reader = _matching_reader_payload()
+    reader["conceptReadiness"] = [
+        {"conceptId": concept, "score": mastery}
+        for concept in graph.graph.nodes["operating-systems"]
+    ]
+    return {
+        "readerProfile": reader,
+        "candidateBooks": [candidate],
+        "rankingStrategy": "concept_difficulty_v2_experimental",
+    }
+
+
 def test_reader_profile_endpoint_uses_camel_case_and_echoes_correlation_id() -> None:
     first = _post("/ml/reader-profile", _reader_request())
     second = _post("/ml/reader-profile", _reader_request())
@@ -105,6 +139,27 @@ def test_rank_endpoint_returns_flat_components_and_evidence_diagnostics() -> Non
     assert item["componentWeightCoverage"] == 1.0
     assert item["diagnostics"]["inferredPrerequisiteCount"] >= 0
     assert item["bookFeatureVersion"] == "book-v1"
+
+
+def test_rank_endpoint_opt_in_concept_difficulty_keeps_book_score_reader_independent() -> None:
+    novice = _post("/ml/rank", _experimental_request(0.0))
+    expert = _post("/ml/rank", _experimental_request(1.0))
+
+    assert novice.status_code == 200, novice.text
+    assert expert.status_code == 200, expert.text
+    novice_item = novice.json()["items"][0]
+    expert_item = expert.json()["items"][0]
+    assert novice.json()["modelVersion"] == "concept-difficulty-v2-experimental"
+    assert (
+        novice_item["conceptDifficulty"]["bookDifficultyScore"]
+        == expert_item["conceptDifficulty"]["bookDifficultyScore"]
+    )
+    assert (
+        novice_item["conceptDifficulty"]["burdenLower"]
+        >= expert_item["conceptDifficulty"]["burdenUpper"]
+    )
+    assert novice_item["score"] == novice_item["conceptDifficulty"]["recommendationScore"]
+    assert novice_item["conceptDifficulty"]["conceptEvidence"]
 
 
 def test_rank_endpoint_supports_specific_cross_topic_fit() -> None:
@@ -213,5 +268,5 @@ def test_api_module_does_not_create_an_app_or_load_configs_at_import() -> None:
 def test_packaged_api_configs_match_versioned_project_defaults() -> None:
     packaged = files("bookmatch_ml.default_configs")
 
-    for name in ("reader.yaml", "ranking.yaml"):
+    for name in ("reader.yaml", "ranking.yaml", "concept_difficulty.yaml"):
         assert packaged.joinpath(name).read_bytes() == (ROOT / "configs" / name).read_bytes()
