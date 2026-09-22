@@ -1871,9 +1871,9 @@
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Windows XP` identifies a specific operating system but does not directly identify one of the configured canonical concepts.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1888,14 +1888,17 @@
       "evidence_id": "evidence_4b9a2f0defd52d547285",
       "evidence_text": "Ch. 4. Multithreaded programming",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "programming",
+        "thread"
+      ],
       "predicted_concept_ids": [],
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Multithreaded programming` directly supports both canonical `thread` and `programming`. Do not infer additional concepts such as concurrency unless they are directly supported by this evidence.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1915,9 +1918,9 @@
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`The Mach System` identifies a particular operating system but does not directly identify one of the configured specific concepts. Do not infer distributed systems, synchronization, or other concepts from external knowledge about Mach.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1932,7 +1935,10 @@
       "evidence_id": "evidence_9333847035e9932c263c",
       "evidence_text": "Ch. 5. Process scheduling",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "process",
+        "scheduling"
+      ],
       "predicted_concept_ids": [
         "process",
         "scheduling"
@@ -1951,9 +1957,9 @@
       ],
       "prediction_status": "matched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Process scheduling` directly supports canonical `process` and `scheduling`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1968,7 +1974,9 @@
       "evidence_id": "evidence_cacf77e29bfb0e3491e7",
       "evidence_text": "pt. 6. Distributed systems. Ch. 14. Distributed operating systems",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "distributed systems"
+      ],
       "predicted_concept_ids": [
         "distributed systems"
       ],
@@ -1981,9 +1989,9 @@
       ],
       "prediction_status": "matched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "The evidence explicitly names `Distributed systems` and `Distributed operating systems`, directly supporting canonical `distributed systems`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1998,7 +2006,9 @@
       "evidence_id": "evidence_de063c4ad256a77fa47b",
       "evidence_text": "Ch. 16. Distributed synchronization",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "synchronization"
+      ],
       "predicted_concept_ids": [
         "synchronization"
       ],
@@ -2011,9 +2021,9 @@
       ],
       "prediction_status": "matched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Distributed synchronization` directly supports canonical `synchronization`. Do not automatically add `distributed systems` merely because `distributed` modifies synchronization.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -2033,9 +2043,9 @@
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "The title identifies operating systems as the field but does not directly identify a configured specific concept.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": null,
       "source_id": "source_65fa0202f45142a963de",
       "toc_path": null,
@@ -2053,9 +2063,9 @@
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "Generic subject `computer-science` does not directly identify a configured operating-systems concept.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": null,
       "source_id": "source_65fa0202f45142a963de",
       "toc_path": null,
@@ -2073,9 +2083,9 @@
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "The evidence row itself is the generic subject `computer-science`. Do not derive `distributed systems` from the book title when labeling this evidence row.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": null,
       "source_id": "source_44b4035227af3c2ad1ea",
       "toc_path": null,
@@ -2088,14 +2098,16 @@
       "evidence_id": "evidence_0f0eccedaa371bd45f2e",
       "evidence_text": "Main Memory.",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "memory management"
+      ],
       "predicted_concept_ids": [],
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "The leaf `Main Memory` appears directly under the TOC parent `MEMORY MANAGEMENT`, which provides clear support for canonical `memory management`. Do not infer `virtual memory` without more specific evidence.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_e2ee9e81ad15ec9f1126",
       "toc_path": [
