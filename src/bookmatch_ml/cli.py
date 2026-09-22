@@ -41,6 +41,11 @@ from bookmatch_ml.config import (
     load_ranking_policy_config,
     load_reader_config,
 )
+from bookmatch_ml.data.book_evidence import (
+    BookEvidenceImportError,
+    load_book_evidence,
+    summarize_book_evidence,
+)
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import CanonicalDataError, load_canonical_dataset
 from bookmatch_ml.evaluation.ablation import build_evidence_ablation_report
@@ -118,6 +123,38 @@ def inspect_data(
     )
     typer.echo(
         json.dumps(report.model_dump(mode="json"), ensure_ascii=False, indent=2, sort_keys=True)
+    )
+
+
+@app.command("inspect-book-evidence")
+def inspect_book_evidence(
+    input_path: Annotated[
+        Path,
+        typer.Option(
+            "--input",
+            exists=False,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+            help="Data-Pipeline book-evidence-v1 JSONL artifact.",
+        ),
+    ],
+) -> None:
+    """Validate source-aware evidence and print availability counts."""
+
+    try:
+        records = load_book_evidence(input_path)
+    except BookEvidenceImportError as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            summarize_book_evidence(records),
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
     )
 
 
