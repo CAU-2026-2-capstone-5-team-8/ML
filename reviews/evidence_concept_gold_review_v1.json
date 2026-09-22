@@ -2123,7 +2123,9 @@
       "evidence_id": "evidence_f766cef8915333882364",
       "evidence_text": "The tenth edition of Operating System Concepts has been revised to keep it fresh and up-to-date with contemporary examples of how operating systems function, as well as enhanced interactive elements to improve learning and the students experience with the material. It combines instruction on concepts with real-world applications so that students can understand the practical usage of the content. End-of-chapter problems, exercises, review questions, and programming exercises help to further reinforce important concepts. New interactive self-assessment problems are provided throughout the text to help students monitor their level of understanding and progress. A Linux virtual machine (including C and Java source code and development tools) allows students to complete programming exercises that help them engage further with the material.",
       "evidence_type": "description",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "programming"
+      ],
       "predicted_concept_ids": [
         "virtualization"
       ],
@@ -2136,9 +2138,9 @@
       ],
       "prediction_status": "matched",
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "The description explicitly states that the book includes programming exercises and provides C and Java source code and development tools for those exercises, directly supporting canonical `programming`. Do not label `virtualization`: the phrase `Linux virtual machine` describes the supplied exercise environment, not evidence that virtualization is a concept taught by this description.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_9659fd63f9bd46b412ea",
       "toc_path": null,
@@ -2151,7 +2153,9 @@
       "evidence_id": "evidence_ed34dab97c4524d0c95f",
       "evidence_text": "I/O Systems",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "input/output"
+      ],
       "predicted_concept_ids": [
         "input/output"
       ],
@@ -2164,9 +2168,9 @@
       ],
       "prediction_status": "matched",
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`I/O Systems` directly supports canonical `input/output`. Do not automatically add `storage` merely because the parent path is `Storage Management`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_9659fd63f9bd46b412ea",
       "toc_path": [
@@ -2187,9 +2191,9 @@
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Multiprocessor Operating Systems` does not directly identify one of the configured canonical concepts. Do not infer `computer architecture`, `concurrency`, or `distributed systems` from the term multiprocessor alone.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -2211,9 +2215,9 @@
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Windows 8` identifies a specific operating system but does not directly identify one of the configured concepts.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -2228,7 +2232,9 @@
       "evidence_id": "evidence_312c93199bd1a1d6678c",
       "evidence_text": "Processes",
       "evidence_type": "toc_same_work",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "process"
+      ],
       "predicted_concept_ids": [
         "process"
       ],
@@ -2241,9 +2247,9 @@
       ],
       "prediction_status": "matched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Processes` directly supports canonical `process`. Do not add `thread` merely because the parent path is `Processes and Threads`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -2259,14 +2265,16 @@
       "evidence_id": "evidence_63f7bae02fa267641db0",
       "evidence_text": "Input Software",
       "evidence_type": "toc_same_work",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "input/output"
+      ],
       "predicted_concept_ids": [],
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Input Software` appears directly within the TOC path `Input/Output > User Interfaces: Keyboard, Mouse, Monitor > Input Software`, clearly supporting canonical `input/output`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -2283,7 +2291,9 @@
       "evidence_id": "evidence_b1467a1a9d649c00518a",
       "evidence_text": "Virtual File Systems",
       "evidence_type": "toc_same_work",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "file system"
+      ],
       "predicted_concept_ids": [
         "file system"
       ],
@@ -2296,9 +2306,9 @@
       ],
       "prediction_status": "matched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Virtual File Systems` directly supports canonical `file system`. Do not add `virtualization`; here `virtual` is part of the file-system concept and does not by itself establish operating-system virtualization.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -2315,14 +2325,16 @@
       "evidence_id": "evidence_bd8f6c857f52d62edc60",
       "evidence_text": "Hardware Issues",
       "evidence_type": "toc_same_work",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "input/output"
+      ],
       "predicted_concept_ids": [],
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "The leaf `Hardware Issues` is generic in isolation, but its direct TOC path is `Input/Output > Power Management > Hardware Issues`, providing clear input/output context. Do not add `computer architecture` merely from the word `Hardware`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -2344,9 +2356,9 @@
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "The title identifies operating-system design and the Xinu approach but does not directly identify a configured specific concept.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": null,
       "source_id": "source_b3a3e042a1a19417b408",
       "toc_path": null,
@@ -2364,9 +2376,9 @@
       "prediction_matches": [],
       "prediction_status": "unmatched",
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "Generic subject `computer-science` does not directly identify a configured operating-systems concept.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": null,
       "source_id": "source_b3a3e042a1a19417b408",
       "toc_path": null,
