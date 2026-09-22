@@ -25,6 +25,10 @@ from bookmatch_ml.concept_v2.gold_evaluation import (
     load_toc_concept_gold_review,
 )
 from bookmatch_ml.concept_v2.graph import LoadedConceptGraph, load_concept_graph
+from bookmatch_ml.concept_v2.matcher_experiment_evaluation import (
+    build_matcher_v2_experiment_report,
+)
+from bookmatch_ml.concept_v2.matcher_experiments import load_matcher_v2_experiment_config
 from bookmatch_ml.concept_v2.matching import (
     ConceptMatchingReport,
     match_book_concepts,
@@ -80,6 +84,7 @@ DEFAULT_ASSESSMENT_CONFIG = Path("configs/assessment.yaml")
 DEFAULT_CONCEPT_GRAPH_CONFIG = Path("configs/concept_graph.yaml")
 DEFAULT_CONCEPT_MATCHING_CONFIG = Path("configs/concept_matching.yaml")
 DEFAULT_CONCEPT_GRAPH_REVIEWS_CONFIG = Path("configs/concept_graph_reviews.yaml")
+DEFAULT_MATCHER_V2_EXPERIMENT_CONFIG = Path("configs/matcher_v2_experiments.yaml")
 
 
 def _sha256_file(path: Path) -> str:
@@ -313,6 +318,64 @@ def evaluate_evidence_concept_gold_command(
                 "metric_status": report.metric_status,
                 "reviewed": report.reviewed_entry_count,
                 "remaining": report.remaining_entry_count,
+            },
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("evaluate-matcher-v2-experiments")
+def evaluate_matcher_v2_experiments_command(
+    input_path: Annotated[
+        Path,
+        typer.Option("--input", exists=True, dir_okay=False, resolve_path=True),
+    ],
+    review_file: Annotated[
+        Path, typer.Option("--review", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)],
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+    experiment_config: Annotated[
+        Path, typer.Option("--experiment-config", exists=True, dir_okay=False)
+    ] = DEFAULT_MATCHER_V2_EXPERIMENT_CONFIG,
+) -> None:
+    """Evaluate isolated matcher variants against the frozen human gold."""
+
+    try:
+        expected, graph = _build_expected_evidence_review(
+            input_path, feature_config, graph_config, matching_config
+        )
+        loaded = load_evidence_concept_gold_review(review_file, expected, graph)
+        features = load_feature_config(feature_config)
+        matching = load_concept_matching_config(matching_config)
+        experiment = load_matcher_v2_experiment_config(experiment_config)
+        report = build_matcher_v2_experiment_report(
+            loaded,
+            features,
+            graph,
+            matching,
+            experiment,
+        )
+        if _sha256_file(review_file) != loaded.content_hash:
+            raise ValueError("frozen review changed during matcher-v2 evaluation")
+        write_json(report, output)
+    except (BookEvidenceImportError, ConfigError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "output": str(output),
+                "evaluable": report.evaluable_entry_count,
+                "variants": [variant.variant for variant in report.variants],
             },
             sort_keys=True,
         )
