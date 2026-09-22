@@ -1,0 +1,2387 @@
+{
+  "book_evidence_contract_version": "book-evidence-v1",
+  "book_evidence_hash": "sha256:3710cda83f028e3e37d82372c1b15a2e77c6c1fe87174938c6fe9a2a8f6f05d6",
+  "entries": [
+    {
+      "book_id": "book_09c91e7b456682eb19fb",
+      "book_title": "Linear algebra.",
+      "edition_relation": "unspecified",
+      "evidence_id": "evidence_c8c7b682c2eed436001f",
+      "evidence_text": "Linear Algebra is intended for a one-term course at the junior or senior level. It begins with an exposition of the basic theory of vector spaces and proceeds to explain the fundamental structure theorems for linear maps, including eigenvectors and eigenvalues, quadric and hermitian forms, diagonalization of symmetric, hermitian, and unitary linear maps and matrices, triangulation, and Jordan canonical form. The book also includes a useful chapter on convex sets and the finite-dimensional Krein-Milman theorem. The presentation is aimed at the student who has already had some exposure to the elementary theory of matrices, determinants, and linear maps. However, the book is logically self-contained. In this new edition, many parts of the book have been rewritten and reorganized, and new exercises have been added.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "determinant",
+        "diagonalization",
+        "eigenvalue",
+        "eigenvector",
+        "matrix",
+        "vector",
+        "vector space"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "determinant",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "determinants"
+        },
+        {
+          "concept_id": "diagonalization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "diagonalization"
+        },
+        {
+          "concept_id": "eigenvalue",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "eigenvalues"
+        },
+        {
+          "concept_id": "eigenvector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "eigenvectors"
+        },
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrices"
+        },
+        {
+          "concept_id": "vector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector"
+        },
+        {
+          "concept_id": "vector space",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector spaces"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_7dbae2544e8bdaa30dbc",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "book_09c91e7b456682eb19fb",
+      "book_title": "Linear algebra.",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_3c2dfc19ca3cb1d982d0",
+      "evidence_text": "Linear algebra.",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_377195c6cebf6a3d4809",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "book_2bd8811d69c06b3696e2",
+      "book_title": "Applied linear algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_0c823a783c06e6a329d3",
+      "evidence_text": "mathematics",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_f0b59ebee63a2a8da688",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "book_6efa911685e0a8f7f57d",
+      "book_title": "Linear algebra.",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_5ec0d0684691aa54c244",
+      "evidence_text": "mathematics",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_c3c2cdcb91e8fc4dd4f0",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "book_967599cb4ac88187f696",
+      "book_title": "Linear algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_d15c1c64f6f83fe644b4",
+      "evidence_text": "linear-algebra",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_d4532f5a0eb914415b01",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780023660450",
+      "book_title": "Elementary Linear Algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_f63deebae7a4849f07d2",
+      "evidence_text": "Elementary Linear Algebra",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_356a0e1eda560867a5c0",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780023660450",
+      "book_title": "Elementary Linear Algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_fe634486f9196c790803",
+      "evidence_text": "mathematics",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_356a0e1eda560867a5c0",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780070380233",
+      "book_title": "3000 solved problems in linear algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_36e4ce8618016fee9c72",
+      "evidence_text": "Solved Problem Series These books help readers review and master what they've learned by showing them how to solve thousands of relevant problems. Perfect for preparing for graduate or professional exams, these detailed reminders of problem-solving techniques show readers the best strategies for answering even the toughest questions, including the types that appear on typical tests.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_b3c8d3a9b57fd1bd59d8",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780070380233",
+      "book_title": "3000 solved problems in linear algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_5592aeb1467ecf822bf1",
+      "evidence_text": "Vector Spaces and Subspaces",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "vector",
+        "vector space"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "vector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector"
+        },
+        {
+          "concept_id": "vector space",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector spaces"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_b3c8d3a9b57fd1bd59d8",
+      "toc_path": [
+        "Vector Spaces and Subspaces"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780126736502",
+      "book_title": "Linear algebra and its applications",
+      "edition_relation": "unspecified",
+      "evidence_id": "evidence_5c07c19f15b40c78907e",
+      "evidence_text": "This text combines the underlying theory discussions with examples from electrical engineering, computer science, physics, biology, and economics.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_cbc1e5dccb47fab54731",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780131437401",
+      "book_title": "Introductory linear algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_eeb64baba9f8d6ede431",
+      "evidence_text": "This book presents an introduction to linear algebra and to some of its significant applications. It covers the essentials of linear algebra (including Eigenvalues and Eigenvectors) and shows how the computer is used for applications.Emphasizing the computational and geometrical aspects of the subject, this popular book covers the following topics comprehensively but not exhaustively: linear equations and matrices and their applications; determinants; vectors and linear transformations; real vector spaces; eigenvalues, eigenvectors, and diagonalization; linear programming; and MATLAB for linear algebra.Its useful and comprehensive appendices make this an excellent desk reference for anyone involved in mathematics and computer applications.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "determinant",
+        "diagonalization",
+        "eigenvalue",
+        "eigenvector",
+        "linear transformation",
+        "matrix",
+        "vector",
+        "vector space"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "determinant",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "determinants"
+        },
+        {
+          "concept_id": "diagonalization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "diagonalization"
+        },
+        {
+          "concept_id": "eigenvalue",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "eigenvalues"
+        },
+        {
+          "concept_id": "eigenvector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "eigenvectors"
+        },
+        {
+          "concept_id": "linear transformation",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "linear transformations"
+        },
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrices"
+        },
+        {
+          "concept_id": "vector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vectors"
+        },
+        {
+          "concept_id": "vector space",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector spaces"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_ec3f960582056586a41d",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780131437401",
+      "book_title": "Introductory linear algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_0d74466d0de5f93d67b9",
+      "evidence_text": "Input and Output in Matlab",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_ec3f960582056586a41d",
+      "toc_path": [
+        "Matlab for Linear Algebra",
+        "Input and Output in Matlab"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780131860612",
+      "book_title": "Differential Equations and Linear Algebra (2nd Edition)",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_546dd4e4056fca2d8300",
+      "evidence_text": "For sophomore-level courses in Differential Equations and Linear Algebra. Extensively rewritten throughout, the Second Edition of this flexible text features a seamless integration of linear algebra into the discipline of differential equations. Abundant computer graphics, IDE interactive illustration software, and well-thought-out problem sets make it an excellent choice for either the combination DE/LA course or pure differential equations courses. The authorsrs\" consistent, reader-friendly presentation encourages students to think both quantitatively and qualitatively when approaching differential equations - and reinforces concepts using similar methods to solve various systems (algebraic, differential, and iterative).",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_535862efe537f0fb7535",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780131860612",
+      "book_title": "Differential Equations and Linear Algebra (2nd Edition)",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_c9aadf321ff7790456ab",
+      "evidence_text": "Linear Algebra",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_535862efe537f0fb7535",
+      "toc_path": [
+        "Linear Algebra"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780131907294",
+      "book_title": "Linear algebra with applications",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_3a7d96c9cc361bcba5b5",
+      "evidence_text": "linear-algebra",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_2e32c9982b674be2a049",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780132819824",
+      "book_title": "Introductory Linear Algebra With Applications",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_d123d7a1a56a99bb4f87",
+      "evidence_text": "Introductory Linear Algebra With Applications — Students Solutions Manual",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_58124b39f6e1c5a83665",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780135367971",
+      "book_title": "Linear Algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_7d9f370bbe33c0790ee2",
+      "evidence_text": "Linear Transformations",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "linear transformation"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "linear transformation",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "linear transformations"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_59553429de094c6d7826",
+      "toc_path": [
+        "Linear Transformations"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780135370193",
+      "book_title": "Linear algebra",
+      "edition_relation": "unspecified",
+      "evidence_id": "evidence_3f6adc8423a01c87fac5",
+      "evidence_text": "A good text book on linear algebra.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_806288a0536785b8a883",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780135370193",
+      "book_title": "Linear algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_746d03cce61b64858256",
+      "evidence_text": "Linear algebra",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_0b91881f0e5e668f0f95",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780136054276",
+      "book_title": "Differential Equations and Linear Algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_9acfec2d6d71216768ab",
+      "evidence_text": "Differential Equations and Linear Algebra",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_1bce0ad25bf3ede1367a",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780136054276",
+      "book_title": "Differential Equations and Linear Algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_ade27da3860c9d16bf1c",
+      "evidence_text": "mathematics",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_1bce0ad25bf3ede1367a",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780138493080",
+      "book_title": "Linear algebra with applications",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_fc78b95661a19c12089e",
+      "evidence_text": "Linear algebra with applications",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_57d61837206e5d9beb29",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780201033922",
+      "book_title": "Introduction to linear algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_e58c97be36184fad2b35",
+      "evidence_text": "Introduction to linear algebra",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_06628c02f19101cea699",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780201033922",
+      "book_title": "Introduction to linear algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_bf9db50a403296489955",
+      "evidence_text": "mathematics",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_06628c02f19101cea699",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780201119497",
+      "book_title": "Linear algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_0e2a5bfb254bdabf3cb2",
+      "evidence_text": "linear-algebra",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_38b9f1559be2c68a1cb3",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780205080106",
+      "book_title": "Linear algebra with applications",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_12221ead4d7ec7b863d2",
+      "evidence_text": "Systems of Two Linear Equations in Two Variables",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_50fa3cd4484f158914a8",
+      "toc_path": [
+        "Systems of Linear Equations",
+        "Systems of Two Linear Equations in Two Variables"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780205080106",
+      "book_title": "Linear algebra with applications",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_182a7e404a4f12fa1ac5",
+      "evidence_text": "General Vector Spaces",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "vector",
+        "vector space"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "vector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector"
+        },
+        {
+          "concept_id": "vector space",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vector spaces"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_50fa3cd4484f158914a8",
+      "toc_path": [
+        "General Vector Spaces"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780205080106",
+      "book_title": "Linear algebra with applications",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_9737f776567fa795e8be",
+      "evidence_text": "Multiplication of Matrices (Section 2-2)",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "matrix"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrices"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_50fa3cd4484f158914a8",
+      "toc_path": [
+        "Computing*",
+        "Multiplication of Matrices (Section 2-2)"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780205080106",
+      "book_title": "Linear algebra with applications",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_e1aebcd2a589ce441efb",
+      "evidence_text": "One-to-One Mappings, Onto Mappings, and Isomorphisms",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_50fa3cd4484f158914a8",
+      "toc_path": [
+        "Mappings",
+        "One-to-One Mappings, Onto Mappings, and Isomorphisms"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780387982588",
+      "book_title": "Linear Algebra Done Right",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_4bc257ccede2e18b4ab8",
+      "evidence_text": "Linear Algebra Done Right",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_9553710ab243a1a6eb0f",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780387982588",
+      "book_title": "Linear Algebra Done Right",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_d157034ae8953bd3b04d",
+      "evidence_text": "mathematics",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_9553710ab243a1a6eb0f",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_6835ca8700f9180aa3aa",
+      "evidence_text": "Best Approximation Least Squares",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "least squares"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "least squares",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "least squares"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_2664a6566759eca34fbd",
+      "toc_path": [
+        "Best Approximation Least Squares"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_9095e0387f537dc46e04",
+      "evidence_text": "Diagonalization",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "diagonalization"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "diagonalization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "diagonalization"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_2664a6566759eca34fbd",
+      "toc_path": [
+        "Diagonalization"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780534074227",
+      "book_title": "Elementary linear algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_89fede3a353df8c04896",
+      "evidence_text": "Elementary linear algebra",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_205b27c9584f60b29177",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780534074227",
+      "book_title": "Elementary linear algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_53b701a57402c11ca46b",
+      "evidence_text": "linear-algebra",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_205b27c9584f60b29177",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780618335671",
+      "book_title": "Elementary linear algebra.",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_81b85f0e0a299cbf38eb",
+      "evidence_text": "The hallmark of this text has been the authors' clear, careful, and concise presentation of linear algebra so that students can fully understand how the mathematics works. The text balances theory with examples, applications, and geometric intuition. Learning Tools CD-ROM will be automatically packaged free with every new text purchased from Houghton Mifflin. Section 3.4, now named \"Introduction to Eigenvalues,\" has been broken into two separate sections to provide more emphasis on the early introduction of eigenvalues. The new Section 3.5, \"Applications of Determinants,\" covers the Adjoint of a Matrix; Cramer's Rule; and the Area, Volume, and Equations of Lines and Planes. All real data in exercises and examples have been updated to reflect current statistics and information. This edition features more Writing Exercises to reinforce critical-thinking skills and additional multi-part True/False Questions in the end-of-section and chapter review exercise sets to encourage students to think about mathematics from different perspectives. Additional exercises involving larger matrices have been added to the exercise sets where appropriate. These exercises will be linked to the data sets found on the web site and the Learning Tools CD-ROM. Eduspace is Houghton Mifflin's online learning tool. Powered by Blackboard, Eduspace is a customizable, powerful and interactive platform that provides instructors with text-specific online courses and content. The Larson Elementary Linear Algebra course features algorithmic exercises and test bank content in question pools.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "determinant",
+        "eigenvalue",
+        "matrix"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "determinant",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "determinants"
+        },
+        {
+          "concept_id": "eigenvalue",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "eigenvalues"
+        },
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrices"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_d7af4de9ce5302369fc1",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780618335671",
+      "book_title": "Elementary linear algebra.",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_db261c8e0a625620e503",
+      "evidence_text": "The Inverse of a Matrix",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "matrix"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "matrix",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "matrix"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_d7af4de9ce5302369fc1",
+      "toc_path": [
+        "The Inverse of a Matrix"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780716721772",
+      "book_title": "Linear algebra",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_f33d9b8e798e901f3fb6",
+      "evidence_text": "Linear algebra — a study guide and solutions manual for students and instructors",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_64ea0f1ec1450a0243bc",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_33c869a7b4665596407c",
+      "evidence_text": "Vectors and Linear Equations",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "vector"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "vector",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "vectors"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_011d2779b202dde9a547",
+      "toc_path": [
+        "Solving Linear Equations",
+        "Vectors and Linear Equations"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_5176c52fbf6563aff697",
+      "evidence_text": "The Rank and the Row Reduced Form",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "rank"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "rank",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "rank"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_011d2779b202dde9a547",
+      "toc_path": [
+        "Vector Spaces and Subspaces",
+        "The Rank and the Row Reduced Form"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_91d97f6829244e0cfb4d",
+      "evidence_text": "Dimensions of the Four Subspaces",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "dimension"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "dimension",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "dimensions"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_011d2779b202dde9a547",
+      "toc_path": [
+        "Vector Spaces and Subspaces",
+        "Dimensions of the Four Subspaces"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_b9952c679f8c56aab6d6",
+      "evidence_text": "Permutations and Cofactors",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_011d2779b202dde9a547",
+      "toc_path": [
+        "Determinants",
+        "Permutations and Cofactors"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9781118909584",
+      "book_title": "Linear algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_5aee25f2b6ec3969e08d",
+      "evidence_text": "Praise for the Third Edition  “This volume is ground-breaking in terms of mathematical texts in that it does not teach from a detached perspective, but instead, looks to show students that competent mathematicians bring an intuitive understanding to the subject rather than just a master of applications.” – Electric Review  A comprehensive introduction, Linear Algebra: Ideas and Applications, Fourth Edition provides a discussion of the theory and applications of linear algebra that blends abstract and computational concepts. With a focus on the development of mathematical intuition, the book emphasizes the need to understand both the applications of a particular technique and the mathematical ideas underlying the technique.  The book introduces each new concept in the context of an explicit numerical example, which allows the abstract concepts to grow organically out of the necessity to solve specific problems. The intuitive discussions are consistently followed by rigorous statements of results and proofs.  Linear Algebra: Ideas and Applications, Fourth Edition also features:   Two new and independent sections on the rapidly developing subject of wavelets  A thoroughly updated section on electrical circuit theory  Illuminating applications of linear algebra with self-study questions for additional study  End-of-chapter summaries and sections with true-false questions to aid readers with further comprehension of the presented material  Numerous computer exercises throughout using MATLAB® code   Linear Algebra: Ideas and Applications, Fourth Edition is an excellent undergraduate-level textbook for one or two semester courses for students majoring in mathematics, science, computer science, and engineering. With an emphasis on intuition development, the book is also an ideal self-study reference.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_1f9b4f7f2026d75997e8",
+      "toc_path": null,
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9781118909584",
+      "book_title": "Linear algebra",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_4502ab982c351415cd7a",
+      "evidence_text": "Exercises",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_1f9b4f7f2026d75997e8",
+      "toc_path": [
+        "Numerical Techniques",
+        "Exercises"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780070394551",
+      "book_title": "Operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_a042916bd87ee1d425fc",
+      "evidence_text": "Operating systems",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_99c6bb68c76ddb8efd1b",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780070394551",
+      "book_title": "Operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_b8167fee35c4af0b2d81",
+      "evidence_text": "operating-systems",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_99c6bb68c76ddb8efd1b",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780070419209",
+      "book_title": "Operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_5308bac85fbeeb302325",
+      "evidence_text": "Operating systems — concepts and design",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_293ac2a06c1af13e62c2",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780070575721",
+      "book_title": "Advanced concepts in operating systems",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_62592c8dda9dd670aed5",
+      "evidence_text": "Operating systems have evolved substantially over the past two decades, and there is a need for a book which can explain major developments and changes in this dynamic field. This is such a book. Comprehensive, and useful as a text and reference, Advanced Concepts in Operating Systems lays down all the concepts and mechanisms involved in the design of advanced operating systems. The discussion is reinforced by many examples and cases",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_afba77c8e714ab91721e",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780070575721",
+      "book_title": "Advanced concepts in operating systems",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_450d0a66b2a58dfb35ea",
+      "evidence_text": "Concurrency Control Theoretical Aspects",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "concurrency"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "concurrency",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "concurrency"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_afba77c8e714ab91721e",
+      "toc_path": [
+        "Database Operating Systems",
+        "Concurrency Control Theoretical Aspects"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780071364355",
+      "book_title": "Schaum's outline of operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_eacc7d40cb381d7b133e",
+      "evidence_text": "Schaum's outline of operating systems",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_244448f724db4dad5003",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780071364355",
+      "book_title": "Schaum's outline of operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_30ca636782839c9d491a",
+      "evidence_text": "computer-science",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_244448f724db4dad5003",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780074630839",
+      "book_title": "Systems Programming and Operating Systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_3b6a7e3bb0be8b10a44f",
+      "evidence_text": "operating-systems",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_b8a29e4d00a0632d2a22",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_59580a69a9805ad4d247",
+      "evidence_text": "For one-semester, introductory courses in Operating Systems in Computer Science, Computer Engineering, and Electrical Engineering programs. Blending up-to-date theory with broad coverage of fundamentals, this text offers a comprehensive treatment of operating systems, with an emphasis on internals and design issues. The book provides a thorough discussion of the fundamentals of operating systems design and relates these principles to contemporary design issues and to current trends in the development of operating systems. It helps students develop a solid understanding of the key structures and mechanisms of operating systems, the types of trade-offs and decisions involved in OS design, and the context within which the operating system functions (hardware, other system programs, application programs, interactive users).",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_4f6b3e7816c0e30e3106",
+      "evidence_text": "Computer System Overview",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_path": [
+        "PART ONE BACKGROUND",
+        "Computer System Overview"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780132017992",
+      "book_title": "The Design of the Unix Operating System",
+      "edition_relation": "unspecified",
+      "evidence_id": "evidence_1e1cc0b4b9ce520c7cf5",
+      "evidence_text": "In this timely new book, [Maurice J. Bach](/authors/OL1044889A/) traces the popularity of the UNIX® System throughout the computer industry. The author describes the internal algorithms and structures that form the basis of the operating system (the kernel) and their relationship to the programmer interface.\r\n\r\nAmong its key features, the book:\r\n\r\n - describes the outline of the kernel architecture\r\n - introduces the system buffer cache mechanism\r\n - includes data structures and algorithms used internally by the file system\r\n - covers the system calls that provide the user interface to the file system\r\n - defines the context of a process and investigates the internal kernel primitives that manipulate the process context\r\n - presents the system calls that control the process context\r\n - describes process scheduling\r\ndiscusses memory management, including swapping and paging systems\r\n - outlines general driver interfaces, with specific discussion of disk drivers and terminal drivers\r\n - presents an overview of streams\r\n - introduces inter-process communication and networking, including System V messages, shared memory, and semaphores\r\n - explains tightly coupled multiprocessor UNIX® systems\r\n - investigates distributed UNIX® systems",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "file system",
+        "memory management",
+        "process",
+        "scheduling",
+        "synchronization",
+        "virtual memory"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "file system",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "file system"
+        },
+        {
+          "concept_id": "memory management",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "memory management"
+        },
+        {
+          "concept_id": "process",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "process"
+        },
+        {
+          "concept_id": "scheduling",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "scheduling"
+        },
+        {
+          "concept_id": "synchronization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "semaphores"
+        },
+        {
+          "concept_id": "virtual memory",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "paging"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_10ee46a1def820392c48",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780132017992",
+      "book_title": "The Design of the Unix Operating System",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_8879e7a31717ccf3a8c9",
+      "evidence_text": "Process Control.",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "process"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "process",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "process"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_197776fb43d4914224a3",
+      "toc_path": [
+        "Process Control."
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780132199087",
+      "book_title": "Distributed operating systems",
+      "edition_relation": "unspecified",
+      "evidence_id": "evidence_bc4096e83d84841b02e2",
+      "evidence_text": "As distributed computer systems become more pervasive, there is a need for a book that explains how their operating systems are designed and implemented. This book, which is a revised and expanded Part II of the best selling MODERN OPERATING SYSTEMS, fulfills that need. KEY TOPICS: It covers the material from the original book, including communication, synchronization, processes and file systems, and adds new material on distributed shared memory. It also contains 4 detailed case studies, Amoeba, Mach, Chorus, and OSF/DCE. Tanenbaum's trademark writing style provides the reader with a thorough yet concise treatment of distributed systems.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "distributed systems",
+        "file system",
+        "process",
+        "synchronization"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "distributed systems",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "distributed systems"
+        },
+        {
+          "concept_id": "file system",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "file systems"
+        },
+        {
+          "concept_id": "process",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "processes"
+        },
+        {
+          "concept_id": "synchronization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "synchronization"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_70867335ea745f8ae013",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780132199087",
+      "book_title": "Distributed operating systems",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_fa0f6dcfdd6d5007c4f9",
+      "evidence_text": "Preface.",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_dde8a87213c0d51e95b8",
+      "toc_path": [
+        "Preface."
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780136374060",
+      "book_title": "Operating systems",
+      "edition_relation": "unspecified",
+      "evidence_id": "evidence_a92faad2a1ed5543d354",
+      "evidence_text": "Operating Systems Design and Implementation is ideal for introductory courses on computer operating systems. Written by the creator of Minux, professional programmers will now have the most up-to-date tutorial and reference available today.\r\n\r\nRevised to address the latest version of MINIX (MINIX 3), this streamlined, simplified new edition remains the only operating systems text to first explain relevant principles, then demonstrate their applications using a Unix-like operating system as a detailed example. It has been especially designed for high reliability, for use in embedded systems, and for ease of teaching.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_bcad48348ea57f94e659",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780136374060",
+      "book_title": "Operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_27c57c6a80ca1a35e9c3",
+      "evidence_text": "Operating systems — design and implementation",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_7a209405611bf1e50447",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201111859",
+      "book_title": "Operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_253a268e52b3a558f1fd",
+      "evidence_text": "operating-systems",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_1d8b8d5f3609a1f127db",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201498387",
+      "book_title": "Distributed operating systems & algorithms",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_d5c382bdb71af9646639",
+      "evidence_text": "9.2  Causality",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_a8a45ca3f986f09c138a",
+      "toc_path": [
+        "PART II  Distributed Algorithms",
+        "Chapter 9  Models of Distributed Computation",
+        "9.2  Causality"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201509397",
+      "book_title": "An introduction to operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_775ba6aa534a975bba79",
+      "evidence_text": "computer-science",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_666226f6577c368d4c82",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201612516",
+      "book_title": "Operating systems",
+      "edition_relation": "unspecified",
+      "evidence_id": "evidence_3769cb3efd29871bb693",
+      "evidence_text": "\"Operating Systems: A - Modern Perspective strikes a balance between principles and practice, presenting the key concepts together with well-chosen real-world examples, to give students both a theoretical and practical perspective on operating systems.\n\nThis book features a complete discussion of operating system principles - supplemented with code, algorithms, discussion of implementation issues, and lab exercises - providing a comprehensive understanding of contemporary operating system practice.\"--BOOK JACKET.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_c640aa4151d56434a27d",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201612516",
+      "book_title": "Operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_bdd7ac7e45ecd225385d",
+      "evidence_text": "Operating systems — a modern perspective",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_2f71da63a8b9541c6678",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201741964",
+      "book_title": "Operating Systems",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_a1089cdfb224a43b141c",
+      "evidence_text": "This Updated edition of Operating Systems, 2e brings this edition up-to-date in regards to the latest Operating Systems. It features material on the latest version of Windows 2000 and Linux, and also provides updated lab exercises for courses that do user-level programming projects in lab (whether they be using UNIX, Linux or Windows). Gary Nutt provides an understanding of contemporary operating system practice through a complete discussion of operating system principles, supplemented with code, algorithms, implementation issues, and lab exercises. The book's flexible arrangement, which separates principles from practice, allows professors to choose the appropriate breadth and depth of each topic presentation, as well as the balance they wish to strike between principles and practice. Each chapter begins with a conceptual presentation, then moves into the underlying theory that supports the concept. Examples (generic and specific commercial OS examples) support these presentations. Operating Systems also covers modern topics such as threads, concurrency, and distributed systems. It addresses both quantitative and qualitative theory, but is not overly mathematically sophisticated. It is an ideal text for professors who are interested in introducing students to core operating system concepts by and reinforcing these concepts with examples from and practice with popular real-world operating systems, namely Linux/UNIX and Windows 2000.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "concurrency",
+        "distributed systems",
+        "thread"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "concurrency",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "concurrency"
+        },
+        {
+          "concept_id": "distributed systems",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "distributed systems"
+        },
+        {
+          "concept_id": "thread",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "threads"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_a31ff1fd203b472c0493",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201741964",
+      "book_title": "Operating Systems",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_3c1565a9d77c9dd3daa6",
+      "evidence_text": "Multimedia Storage",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_a31ff1fd203b472c0493",
+      "toc_path": [
+        "File Management",
+        "Files",
+        "Multimedia Storage"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471694663",
+      "book_title": "Operating system concepts",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_1d17c260cfb53c9c8f22",
+      "evidence_text": "Operating system concepts",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_5679fb70a93502be0f9b",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471725954",
+      "book_title": "Operating system principles",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_01a7e920d8a089971b7b",
+      "evidence_text": "pt. 3. Process coordination. Ch. 6. Synchronization",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "process",
+        "synchronization"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "process",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "process"
+        },
+        {
+          "concept_id": "synchronization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "synchronization"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_986536519e38c03660e0",
+      "toc_path": [
+        "pt. 3. Process coordination. Ch. 6. Synchronization"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471725954",
+      "book_title": "Operating system principles",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_10a848ed88e6814dee6e",
+      "evidence_text": "Ch. 2. System structures",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_986536519e38c03660e0",
+      "toc_path": [
+        "Ch. 2. System structures"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471725954",
+      "book_title": "Operating system principles",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_1706023f84b2c6dfb2fb",
+      "evidence_text": "Ch. 22. Windows XP",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_986536519e38c03660e0",
+      "toc_path": [
+        "Ch. 22. Windows XP"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471725954",
+      "book_title": "Operating system principles",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_4b9a2f0defd52d547285",
+      "evidence_text": "Ch. 4. Multithreaded programming",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_986536519e38c03660e0",
+      "toc_path": [
+        "Ch. 4. Multithreaded programming"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471725954",
+      "book_title": "Operating system principles",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_6f79166d76aec9d4cc85",
+      "evidence_text": "App. B. The Mach System (contents online)",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_986536519e38c03660e0",
+      "toc_path": [
+        "App. B. The Mach System (contents online)"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471725954",
+      "book_title": "Operating system principles",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_9333847035e9932c263c",
+      "evidence_text": "Ch. 5. Process scheduling",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "process",
+        "scheduling"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "process",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "process"
+        },
+        {
+          "concept_id": "scheduling",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "scheduling"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_986536519e38c03660e0",
+      "toc_path": [
+        "Ch. 5. Process scheduling"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471725954",
+      "book_title": "Operating system principles",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_cacf77e29bfb0e3491e7",
+      "evidence_text": "pt. 6. Distributed systems. Ch. 14. Distributed operating systems",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "distributed systems"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "distributed systems",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "distributed systems"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_986536519e38c03660e0",
+      "toc_path": [
+        "pt. 6. Distributed systems. Ch. 14. Distributed operating systems"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471725954",
+      "book_title": "Operating system principles",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_de063c4ad256a77fa47b",
+      "evidence_text": "Ch. 16. Distributed synchronization",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "synchronization"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "synchronization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "synchronization"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_986536519e38c03660e0",
+      "toc_path": [
+        "Ch. 16. Distributed synchronization"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780534950934",
+      "book_title": "Understanding operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_54f5d266c1840b7ee0bb",
+      "evidence_text": "Understanding operating systems",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_65fa0202f45142a963de",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780534950934",
+      "book_title": "Understanding operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_6924d15be767f5c586c4",
+      "evidence_text": "computer-science",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_65fa0202f45142a963de",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780780311190",
+      "book_title": "Distributed Operating Systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_f8b3633932f754e8abfd",
+      "evidence_text": "computer-science",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_44b4035227af3c2ad1ea",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781118804926",
+      "book_title": "Operating system concepts essentials",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_0f0eccedaa371bd45f2e",
+      "evidence_text": "Main Memory.",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_e2ee9e81ad15ec9f1126",
+      "toc_path": [
+        "MEMORY MANAGEMENT.",
+        "Main Memory."
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781119800361",
+      "book_title": "Operating System Concepts",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_f766cef8915333882364",
+      "evidence_text": "The tenth edition of Operating System Concepts has been revised to keep it fresh and up-to-date with contemporary examples of how operating systems function, as well as enhanced interactive elements to improve learning and the students experience with the material. It combines instruction on concepts with real-world applications so that students can understand the practical usage of the content. End-of-chapter problems, exercises, review questions, and programming exercises help to further reinforce important concepts. New interactive self-assessment problems are provided throughout the text to help students monitor their level of understanding and progress. A Linux virtual machine (including C and Java source code and development tools) allows students to complete programming exercises that help them engage further with the material.",
+      "evidence_type": "description",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "virtualization"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "virtualization",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "virtual machine"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_9659fd63f9bd46b412ea",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781119800361",
+      "book_title": "Operating System Concepts",
+      "edition_relation": "exact",
+      "evidence_id": "evidence_ed34dab97c4524d0c95f",
+      "evidence_text": "I/O Systems",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "input/output"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "input/output",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "i/o systems"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_9659fd63f9bd46b412ea",
+      "toc_path": [
+        "Storage Management",
+        "I/O Systems"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_2292b50c219bc6c01720",
+      "evidence_text": "Multiprocessor Operating Systems",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "Introduction",
+        "The Operating System Zoo",
+        "Multiprocessor Operating Systems"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_3106ded495130a23e379",
+      "evidence_text": "Case Study 2: Windows 8",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "Case Study 2: Windows 8"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_312c93199bd1a1d6678c",
+      "evidence_text": "Processes",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "process"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "process",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "processes"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "Processes and Threads",
+        "Processes"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_63f7bae02fa267641db0",
+      "evidence_text": "Input Software",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "Input/Output",
+        "User Interfaces: Keyboard, Mouse, Monitor",
+        "Input Software"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_b1467a1a9d649c00518a",
+      "evidence_text": "Virtual File Systems",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [
+        "file system"
+      ],
+      "prediction_matches": [
+        {
+          "concept_id": "file system",
+          "match_method": "normalized_alias_phrase_v1",
+          "matching_alias": "file systems"
+        }
+      ],
+      "prediction_status": "matched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "File Systems",
+        "File-System Implementation",
+        "Virtual File Systems"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_bd8f6c857f52d62edc60",
+      "evidence_text": "Hardware Issues",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "Input/Output",
+        "Power Management",
+        "Hardware Issues"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781498712439",
+      "book_title": "Operating system design",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_ab67f8fa74e8d8fd25f7",
+      "evidence_text": "Operating system design — the Xinu approach",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_b3a3e042a1a19417b408",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781498712439",
+      "book_title": "Operating system design",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_865fefe01bd03607c194",
+      "evidence_text": "computer-science",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_b3a3e042a1a19417b408",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781549660115",
+      "book_title": "Operating System",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_1ad50dec30bb07c29e45",
+      "evidence_text": "Operating System — Operating System's Concepts",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_529e4211c9553c7e3e96",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781565920606",
+      "book_title": "Learning the UNIX Operating System",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_e10cafef4dd64f15b32e",
+      "evidence_text": "operating-systems",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_88eb68e730c3e8e6244e",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9788131703045",
+      "book_title": "Operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_0e13af608f73cd4ceada",
+      "evidence_text": "Operating systems — internals and design principles",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_82bdf2191f1728767c14",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9788131703045",
+      "book_title": "Operating systems",
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_59f12dc011d46fad7607",
+      "evidence_text": "operating-systems",
+      "evidence_type": "subject",
+      "human_gold_concept_ids": [],
+      "predicted_concept_ids": [],
+      "prediction_matches": [],
+      "prediction_status": "unmatched",
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_82bdf2191f1728767c14",
+      "toc_path": null,
+      "topic": "operating-systems"
+    }
+  ],
+  "feature_config_hash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6",
+  "generic_toc_cap_by_evidence_type": 2,
+  "graph_hash": "sha256:a30a726f28b27215df5aa397bca62ecea7badd8dbbdb90e0a46a43ac05cb2245",
+  "graph_version": "concept-graph-v1",
+  "matching_config_hash": "sha256:7e2386f1661041ee685f1d2988c8677e053325af932362f258fa3181c97023a0",
+  "matching_config_version": "concept-matching-config-v2",
+  "per_book_cap": 8,
+  "requested_sample_size_by_evidence_type": {
+    "description": 16,
+    "metadata_minimal": 20,
+    "subject": 20,
+    "toc_exact": 16,
+    "toc_public_web_exact": 16,
+    "toc_same_work": 6
+  },
+  "review_version": "evidence-concept-gold-review-v1",
+  "sample_version": "evidence-concept-gold-sample-v1"
+}

@@ -50,6 +50,24 @@ unweighted concept-candidate text for later experiments. No numeric source weigh
 selected. See
 [`docs/data-pipeline-book-evidence-v1.md`](docs/data-pipeline-book-evidence-v1.md).
 
+The source-aware handoff also has a deterministic human-review evaluation workflow. It samples
+TOC and metadata evidence by source type, keeps the current alias matcher frozen, and reports
+metrics only for explicit human labels:
+
+```bash
+uv run bookmatch-ml build-evidence-concept-gold-review \
+  --input ../Data-Pipeline/data/experiments/scale-50-bulk-web-20260922/ml-evidence-v1/book-evidence.jsonl \
+  --output reviews/evidence_concept_gold_review_v1.json
+
+uv run bookmatch-ml evaluate-evidence-concept-gold \
+  --input ../Data-Pipeline/data/experiments/scale-50-bulk-web-20260922/ml-evidence-v1/book-evidence.jsonl \
+  --review reviews/evidence_concept_gold_review_v1.json \
+  --output /tmp/evidence-concept-evaluation.json
+```
+
+See [`docs/evidence-concept-evaluation.md`](docs/evidence-concept-evaluation.md) for labeling
+semantics, sampling controls, and the row-count-neutral policy baselines.
+
 ## Requirements
 
 - Python 3.12 or newer

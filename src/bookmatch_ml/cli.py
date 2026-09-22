@@ -3,20 +3,28 @@
 import hashlib
 import json
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 import typer
 
 from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
 from bookmatch_ml.assessment.pool import AssessmentBlueprintError
 from bookmatch_ml.book.profile import build_book_profiles
+from bookmatch_ml.concept_v2.evidence_evaluation import (
+    EvidenceConceptGoldReview,
+    build_evidence_concept_gold_review,
+    evaluate_evidence_concept_gold,
+    load_evidence_concept_gold_review,
+    review_summary,
+    update_review_entry,
+)
 from bookmatch_ml.concept_v2.gold_evaluation import (
     DEFAULT_SAMPLE_SIZES,
     build_toc_concept_gold_review,
     evaluate_toc_concept_gold,
     load_toc_concept_gold_review,
 )
-from bookmatch_ml.concept_v2.graph import load_concept_graph
+from bookmatch_ml.concept_v2.graph import LoadedConceptGraph, load_concept_graph
 from bookmatch_ml.concept_v2.matching import (
     ConceptMatchingReport,
     match_book_concepts,
@@ -153,6 +161,159 @@ def inspect_book_evidence(
             summarize_book_evidence(records),
             ensure_ascii=False,
             indent=2,
+            sort_keys=True,
+        )
+    )
+
+
+def _build_expected_evidence_review(
+    input_path: Path,
+    feature_config: Path,
+    graph_config: Path,
+    matching_config: Path,
+) -> tuple[EvidenceConceptGoldReview, LoadedConceptGraph]:
+    records = load_book_evidence(input_path)
+    features = load_feature_config(feature_config)
+    graph = load_concept_graph(graph_config, features)
+    matching = load_concept_matching_config(matching_config)
+    return (
+        build_evidence_concept_gold_review(
+            records=records,
+            graph=graph,
+            features=features,
+            matching=matching,
+            book_evidence_hash=_sha256_file(input_path),
+        ),
+        graph,
+    )
+
+
+@app.command("build-evidence-concept-gold-review")
+def build_evidence_concept_gold_review_command(
+    input_path: Annotated[
+        Path,
+        typer.Option("--input", exists=True, dir_okay=False, resolve_path=True),
+    ],
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)],
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+) -> None:
+    """Build a deterministic source-stratified evidence review template."""
+
+    try:
+        input_hash = _sha256_file(input_path)
+        review, graph = _build_expected_evidence_review(
+            input_path, feature_config, graph_config, matching_config
+        )
+        if output.exists():
+            existing = load_evidence_concept_gold_review(output, review, graph).review
+            if existing != review:
+                raise ValueError("refusing to overwrite a changed evidence concept review")
+        if _sha256_file(input_path) != input_hash:
+            raise ValueError("book evidence changed during review generation")
+        write_json(review, output)
+    except (BookEvidenceImportError, ConfigError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps({"output": str(output), **review_summary(review)}, sort_keys=True))
+
+
+@app.command("review-evidence-concepts")
+def review_evidence_concepts_command(
+    input_path: Annotated[
+        Path,
+        typer.Option("--input", exists=True, dir_okay=False, resolve_path=True),
+    ],
+    review_file: Annotated[
+        Path, typer.Option("--review", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    evidence_id: Annotated[str, typer.Option("--evidence-id")],
+    outcome: Annotated[Literal["labeled", "no_concept", "not_judgable"], typer.Option("--outcome")],
+    gold: Annotated[
+        str,
+        typer.Option(
+            "--gold",
+            help="Comma-separated canonical concept IDs; required only for labeled outcomes.",
+        ),
+    ] = "",
+    note: Annotated[str | None, typer.Option("--note")] = None,
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+) -> None:
+    """Apply one explicit human decision to a pinned review row."""
+
+    try:
+        expected, graph = _build_expected_evidence_review(
+            input_path, feature_config, graph_config, matching_config
+        )
+        loaded = load_evidence_concept_gold_review(review_file, expected, graph)
+        gold_ids = [value.strip() for value in gold.split(",") if value.strip()]
+        updated = update_review_entry(loaded.review, graph, evidence_id, outcome, gold_ids, note)
+        if _sha256_file(review_file) != loaded.content_hash:
+            raise ValueError("review file changed while applying the human decision")
+        write_json(updated, review_file)
+    except (BookEvidenceImportError, ConfigError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps({"review": str(review_file), **review_summary(updated)}, sort_keys=True))
+
+
+@app.command("evaluate-evidence-concept-gold")
+def evaluate_evidence_concept_gold_command(
+    input_path: Annotated[
+        Path,
+        typer.Option("--input", exists=True, dir_okay=False, resolve_path=True),
+    ],
+    review_file: Annotated[
+        Path, typer.Option("--review", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)],
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+) -> None:
+    """Report review progress and metrics for human-reviewed evidence rows only."""
+
+    try:
+        expected, graph = _build_expected_evidence_review(
+            input_path, feature_config, graph_config, matching_config
+        )
+        loaded = load_evidence_concept_gold_review(review_file, expected, graph)
+        report = evaluate_evidence_concept_gold(loaded)
+        if _sha256_file(review_file) != loaded.content_hash:
+            raise ValueError("review file changed during evaluation")
+        write_json(report, output)
+    except (BookEvidenceImportError, ConfigError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "output": str(output),
+                "metric_status": report.metric_status,
+                "reviewed": report.reviewed_entry_count,
+                "remaining": report.remaining_entry_count,
+            },
             sort_keys=True,
         )
     )
