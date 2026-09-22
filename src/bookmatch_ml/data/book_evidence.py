@@ -22,6 +22,7 @@ EvidenceType = Literal[
     "toc_exact",
     "toc_same_work",
     "toc_public_web_exact",
+    "toc_unspecified",
     "description",
     "document",
     "subject",
@@ -166,6 +167,9 @@ class ImportedEvidenceItem(StrictModel):
         elif self.evidence_type in {"toc_exact", "toc_public_web_exact"}:
             if self.edition_relation != "exact":
                 raise ValueError("exact TOC must retain exact relation")
+        elif self.evidence_type == "toc_unspecified":
+            if self.edition_relation != "unspecified":
+                raise ValueError("unverified TOC must retain unspecified relation")
         elif self.evidence_type in {"subject", "metadata_minimal"}:
             if self.edition_relation != "canonical_record":
                 raise ValueError("canonical metadata must retain canonical_record relation")
@@ -319,7 +323,7 @@ def build_concept_candidate_inputs(
 def summarize_book_evidence(records: list[ImportedBookEvidence]) -> dict[str, Any]:
     """Report source-aware availability without interpreting evidence quality numerically."""
 
-    toc_types = {"toc_exact", "toc_same_work", "toc_public_web_exact"}
+    toc_types = {"toc_exact", "toc_same_work", "toc_public_web_exact", "toc_unspecified"}
     rows = Counter(item.evidence_type for record in records for item in record.evidence)
     referenced_sources: dict[str, str] = {}
     for record in records:
@@ -330,6 +334,25 @@ def summarize_book_evidence(records: list[ImportedBookEvidence]) -> dict[str, An
         "total_books": len(records),
         "books_with_toc_evidence": sum(
             any(item.evidence_type in toc_types for item in record.evidence) for record in records
+        ),
+        "books_with_exact_toc": sum(
+            any(
+                item.evidence_type in {"toc_exact", "toc_public_web_exact"}
+                for item in record.evidence
+            )
+            for record in records
+        ),
+        "books_with_public_web_toc": sum(
+            any(item.evidence_type == "toc_public_web_exact" for item in record.evidence)
+            for record in records
+        ),
+        "books_with_same_work_alternate_toc": sum(
+            any(item.evidence_type == "toc_same_work" for item in record.evidence)
+            for record in records
+        ),
+        "books_with_unspecified_toc": sum(
+            any(item.evidence_type == "toc_unspecified" for item in record.evidence)
+            for record in records
         ),
         "metadata_fallback_only": sum(
             all(item.evidence_type not in toc_types for item in record.evidence)

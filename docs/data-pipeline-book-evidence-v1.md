@@ -28,6 +28,7 @@ The supported categories are:
 toc_exact
 toc_public_web_exact
 toc_same_work
+toc_unspecified
 description
 document
 subject
@@ -36,7 +37,8 @@ metadata_minimal
 
 `toc_same_work` remains explicitly separate from exact-edition TOC. Description evidence retains
 document identity and cannot validate as TOC. Subject and title evidence retain their canonical
-metadata field.
+metadata field. `toc_unspecified` is the backward-compatible category for a TOC whose legacy
+source lacks explicit edition provenance; provider or page type alone never promotes it to exact.
 
 ## Validate an artifact
 
@@ -74,6 +76,10 @@ The Data-Pipeline artifact generated on 2026-09-22 loaded successfully with:
 | --- | ---: |
 | Total books | 50 |
 | Books with TOC evidence | 20 |
+| Books with exact-edition TOC | 19 |
+| Books with reviewed public-web exact TOC | 16 |
+| Books with same-Work alternate TOC | 1 |
+| Books with unspecified-edition TOC | 0 |
 | Metadata-fallback-only books | 30 |
 | Books with zero evidence | 0 |
 | TOC evidence rows | 2,217 |

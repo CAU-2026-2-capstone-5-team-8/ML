@@ -179,10 +179,30 @@ def test_summary_keeps_toc_and_metadata_coverage_separate(tmp_path: Path) -> Non
 
     assert summary["total_books"] == 2
     assert summary["books_with_toc_evidence"] == 1
+    assert summary["books_with_exact_toc"] == 1
+    assert summary["books_with_public_web_toc"] == 1
+    assert summary["books_with_same_work_alternate_toc"] == 0
+    assert summary["books_with_unspecified_toc"] == 0
     assert summary["metadata_fallback_only"] == 1
     assert summary["books_with_zero_evidence"] == 0
     assert summary["evidence_type_rows"]["description"] == 1
     assert summary["evidence_type_rows"]["toc_public_web_exact"] == 1
+
+
+def test_legacy_toc_without_provenance_stays_unspecified() -> None:
+    toc = _records()[0].evidence[1]
+    payload = toc.model_dump()
+    payload.update(
+        evidence_type="toc_unspecified",
+        source_evidence_tier=None,
+        source_evidence=None,
+        edition_relation="unspecified",
+    )
+
+    unspecified = ImportedEvidenceItem.model_validate(payload)
+
+    assert unspecified.evidence_type == "toc_unspecified"
+    assert unspecified.edition_relation == "unspecified"
 
 
 def test_rejects_changed_provenance_hash(tmp_path: Path) -> None:
