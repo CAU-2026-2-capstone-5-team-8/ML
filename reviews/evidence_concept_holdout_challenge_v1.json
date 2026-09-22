@@ -1,0 +1,941 @@
+{
+  "entries": [
+    {
+      "book_id": "isbn13:9780070380233",
+      "book_title": "3000 solved problems in linear algebra",
+      "challenge_categories": [
+        "modifier_insertion"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_66fed601fed9c9412533",
+      "evidence_text": "Systems of Linear Equations",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_b3c8d3a9b57fd1bd59d8",
+      "toc_path": [
+        "Systems of Linear Equations"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780131437401",
+      "book_title": "Introductory linear algebra",
+      "challenge_categories": [
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_4ac4ab98dc6fecad0ed2",
+      "evidence_text": "Cross Product in R3",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_ec3f960582056586a41d",
+      "toc_path": [
+        "Applications of Vectors in R2 and R3 (Optional)",
+        "Cross Product in R3"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780131437401",
+      "book_title": "Introductory linear algebra",
+      "challenge_categories": [
+        "nested_overlap"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_58b2175c8db8ad10adc8",
+      "evidence_text": "Vector Spaces",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_ec3f960582056586a41d",
+      "toc_path": [
+        "Real Vector Spaces",
+        "Vector Spaces"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780131437401",
+      "book_title": "Introductory linear algebra",
+      "challenge_categories": [
+        "nested_overlap",
+        "parent_overinheritance_counterexample",
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_749f3b385a0bb168cb33",
+      "evidence_text": "Linear Independence",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_ec3f960582056586a41d",
+      "toc_path": [
+        "Real Vector Spaces",
+        "Linear Independence"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780131860612",
+      "book_title": "Differential Equations and Linear Algebra (2nd Edition)",
+      "challenge_categories": [
+        "nested_overlap"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_7ef45cf066af90fd0276",
+      "evidence_text": "Properties of Linear Transformations",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_535862efe537f0fb7535",
+      "toc_path": [
+        "Properties of Linear Transformations"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780135367971",
+      "book_title": "Linear Algebra",
+      "challenge_categories": [
+        "parent_overinheritance_counterexample",
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_1a33377582dc3cc45719",
+      "evidence_text": "Bases and Dimension",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_59553429de094c6d7826",
+      "toc_path": [
+        "Vector Spaces",
+        "Bases and Dimension"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780135367971",
+      "book_title": "Linear Algebra",
+      "challenge_categories": [
+        "modifier_insertion"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_d5e594e525323d0dfd56",
+      "evidence_text": "Systems of Linear Equations",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_59553429de094c6d7826",
+      "toc_path": [
+        "Linear Equations",
+        "Systems of Linear Equations"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780205080106",
+      "book_title": "Linear algebra with applications",
+      "challenge_categories": [
+        "parent_overinheritance_counterexample",
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_1d7f307f003eaea350c0",
+      "evidence_text": "Vector Products",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_50fa3cd4484f158914a8",
+      "toc_path": [
+        "The Vector Space $R^n$",
+        "Vector Products"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780205080106",
+      "book_title": "Linear algebra with applications",
+      "challenge_categories": [
+        "modifier_insertion"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_7078b00ca52a9ca88e17",
+      "evidence_text": "Matrices and Systems of Linear Equations",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_50fa3cd4484f158914a8",
+      "toc_path": [
+        "Systems of Linear Equations",
+        "Matrices and Systems of Linear Equations"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780470458211",
+      "book_title": "Elementary linear algebra",
+      "challenge_categories": [
+        "nested_overlap"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_98623db2666a0bd1fa99",
+      "evidence_text": "General Vector Spaces",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_2664a6566759eca34fbd",
+      "toc_path": [
+        "General Vector Spaces"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780618335671",
+      "book_title": "Elementary linear algebra.",
+      "challenge_categories": [
+        "modifier_insertion"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_5deabf69ebf27950bf77",
+      "evidence_text": "Applications of Systems of Linear Equations",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_d7af4de9ce5302369fc1",
+      "toc_path": [
+        "Applications of Systems of Linear Equations"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "challenge_categories": [
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_556c900b5e84c3dc5501",
+      "evidence_text": "The Nullspace of A: Solving Ax = 0",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_011d2779b202dde9a547",
+      "toc_path": [
+        "Vector Spaces and Subspaces",
+        "The Nullspace of A: Solving Ax = 0"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780980232714",
+      "book_title": "Introduction to Linear Algebra",
+      "challenge_categories": [
+        "parent_overinheritance_counterexample",
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_bcd3d5ad9077f2cc8077",
+      "evidence_text": "Spaces of Vectors",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_011d2779b202dde9a547",
+      "toc_path": [
+        "Vector Spaces and Subspaces",
+        "Spaces of Vectors"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9781118909584",
+      "book_title": "Linear algebra",
+      "challenge_categories": [
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_3cdc48a3f400449e96d2",
+      "evidence_text": "Applications to Economics",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_1f9b4f7f2026d75997e8",
+      "toc_path": [
+        "Linear Transformations",
+        "Applications to Economics"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9781118909584",
+      "book_title": "Linear algebra",
+      "challenge_categories": [
+        "modifier_insertion",
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_8de49c7514eba5e8a1bb",
+      "evidence_text": "Application to Systems of Differential Equations",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_1f9b4f7f2026d75997e8",
+      "toc_path": [
+        "Eigenvectors and Eigenvalues",
+        "Application to Systems of Differential Equations"
+      ],
+      "topic": "linear-algebra"
+    },
+    {
+      "book_id": "isbn13:9780070575721",
+      "book_title": "Advanced concepts in operating systems",
+      "challenge_categories": [
+        "parent_overinheritance_counterexample",
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_04bfbb56a9cb24bd6ce2",
+      "evidence_text": "Data Security Cryptography",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_afba77c8e714ab91721e",
+      "toc_path": [
+        "Protection and Security",
+        "Data Security Cryptography"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780070575721",
+      "book_title": "Advanced concepts in operating systems",
+      "challenge_categories": [
+        "modifier_insertion"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_d471cbda71b9c553eaad",
+      "evidence_text": "Distributed Operating Systems",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_afba77c8e714ab91721e",
+      "toc_path": [
+        "Distributed Operating Systems"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "challenge_categories": [
+        "morphological_lexical"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_02c85c4cdf09334725ea",
+      "evidence_text": "Threads, SMP, and Microkernels",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_path": [
+        "PART TWO PROCESSES",
+        "Threads, SMP, and Microkernels"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780130319999",
+      "book_title": "Operating Systems",
+      "challenge_categories": [
+        "nested_overlap"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_70a71b0e71194d68e6fd",
+      "evidence_text": "Memory Management",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_42e3b75c249d30ee8d68",
+      "toc_path": [
+        "PART THREE MEMORY",
+        "Memory Management"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780132017992",
+      "book_title": "The Design of the Unix Operating System",
+      "challenge_categories": [
+        "nested_overlap"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_6736723c0a860339975c",
+      "evidence_text": "Memory Management Policies.",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_197776fb43d4914224a3",
+      "toc_path": [
+        "Memory Management Policies."
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780132017992",
+      "book_title": "The Design of the Unix Operating System",
+      "challenge_categories": [
+        "modifier_insertion"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_fece78baa40e7d4199d4",
+      "evidence_text": "Distributed UNIX System.",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_197776fb43d4914224a3",
+      "toc_path": [
+        "Distributed UNIX System."
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780132199087",
+      "book_title": "Distributed operating systems",
+      "challenge_categories": [
+        "modifier_insertion"
+      ],
+      "edition_relation": "canonical_record",
+      "evidence_id": "evidence_7d0a70559c1a1346a250",
+      "evidence_text": "Distributed operating systems",
+      "evidence_type": "metadata_minimal",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": null,
+      "source_id": "source_70867335ea745f8ae013",
+      "toc_path": null,
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201498387",
+      "book_title": "Distributed operating systems & algorithms",
+      "challenge_categories": [
+        "parent_overinheritance_counterexample",
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_23fb6a2927097a09125b",
+      "evidence_text": "8.2.1  Access Control Matrix",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_a8a45ca3f986f09c138a",
+      "toc_path": [
+        "PART I  Distributed Operating Systems",
+        "Chapter 8  Distributed Computer Security",
+        "8.2  Discretionary Access Control Models",
+        "8.2.1  Access Control Matrix"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201498387",
+      "book_title": "Distributed operating systems & algorithms",
+      "challenge_categories": [
+        "morphological_lexical",
+        "parent_overinheritance_counterexample",
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_797e7139a8e5954b85ff",
+      "evidence_text": "3.1.2  User Space Thread Implementation",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_a8a45ca3f986f09c138a",
+      "toc_path": [
+        "PART I  Distributed Operating Systems",
+        "Chapter 3  Concurrent Processes and Programming",
+        "3.1  Processes and Threads",
+        "3.1.2  User Space Thread Implementation"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201498387",
+      "book_title": "Distributed operating systems & algorithms",
+      "challenge_categories": [
+        "modifier_insertion",
+        "nested_overlap"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_e97e46d96216f28dcaa1",
+      "evidence_text": "Chapter 6  Distributed File Systems",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_a8a45ca3f986f09c138a",
+      "toc_path": [
+        "PART I  Distributed Operating Systems",
+        "Chapter 6  Distributed File Systems"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201741964",
+      "book_title": "Operating Systems",
+      "challenge_categories": [
+        "morphological_lexical"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_506dd3a35dc3d1404758",
+      "evidence_text": "C Threads",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_a31ff1fd203b472c0493",
+      "toc_path": [
+        "Using the Operating System",
+        "Threads",
+        "C Threads"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780201741964",
+      "book_title": "Operating Systems",
+      "challenge_categories": [
+        "morphological_lexical"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_59930abd0ffdbdc89081",
+      "evidence_text": "A Multithreaded Windows Console Application",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_a31ff1fd203b472c0493",
+      "toc_path": [
+        "Using the Operating System",
+        "Exercises",
+        "A Multithreaded Windows Console Application"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471694663",
+      "book_title": "Operating system concepts",
+      "challenge_categories": [
+        "nested_overlap"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_2ab107629c2cc57c33f6",
+      "evidence_text": "File-System Implementation",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "wiley",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "validated_public_web_toc",
+      "source_id": "source_ac418fab1cce7c4d8461",
+      "toc_path": [
+        "File-System Implementation"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471694663",
+      "book_title": "Operating system concepts",
+      "challenge_categories": [
+        "morphological_lexical"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_cb8be7d46fd0880bc894",
+      "evidence_text": "Threads",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "wiley",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "validated_public_web_toc",
+      "source_id": "source_ac418fab1cce7c4d8461",
+      "toc_path": [
+        "Threads"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9780471725954",
+      "book_title": "Operating system principles",
+      "challenge_categories": [
+        "nested_overlap"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_1db8660733a8c5d2a203",
+      "evidence_text": "pt. 4. Memory management. Ch. 8. Memory-management strategies",
+      "evidence_type": "toc_exact",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_986536519e38c03660e0",
+      "toc_path": [
+        "pt. 4. Memory management. Ch. 8. Memory-management strategies"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781118804926",
+      "book_title": "Operating system concepts essentials",
+      "challenge_categories": [
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_816af96ada12120cee70",
+      "evidence_text": "I/O Systems.",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_e2ee9e81ad15ec9f1126",
+      "toc_path": [
+        "STORAGE MANAGEMENT.",
+        "I/O Systems."
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781118804926",
+      "book_title": "Operating system concepts essentials",
+      "challenge_categories": [
+        "morphological_lexical",
+        "parent_overinheritance_counterexample",
+        "path_context_candidate"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_d89b3839412889b6316a",
+      "evidence_text": "Threads.",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_e2ee9e81ad15ec9f1126",
+      "toc_path": [
+        "PROCESS MANAGEMENT.",
+        "Threads."
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781119800361",
+      "book_title": "Operating System Concepts",
+      "challenge_categories": [
+        "nested_overlap"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_12be6f1db154538fa4ab",
+      "evidence_text": "File-System Implementation",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_9659fd63f9bd46b412ea",
+      "toc_path": [
+        "File System",
+        "File-System Implementation"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781119800361",
+      "book_title": "Operating System Concepts",
+      "challenge_categories": [
+        "virtual_machine_context"
+      ],
+      "edition_relation": "exact",
+      "evidence_id": "evidence_ae1c2c6037fbc7c48adb",
+      "evidence_text": "Virtual Machines",
+      "evidence_type": "toc_public_web_exact",
+      "human_gold_concept_ids": [],
+      "provider": "ecampus",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "exact_edition_toc",
+      "source_id": "source_9659fd63f9bd46b412ea",
+      "toc_path": [
+        "Advanced Topics",
+        "Virtual Machines"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "challenge_categories": [
+        "morphological_lexical"
+      ],
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_55278bbefedf1e916848",
+      "evidence_text": "Processes and Threads in Windows",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "Case Study 2: Windows 8",
+        "Processes and Threads in Windows"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "challenge_categories": [
+        "morphological_lexical"
+      ],
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_68d035604ad4a9d64510",
+      "evidence_text": "Threads",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "Processes and Threads",
+        "Threads"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "challenge_categories": [
+        "nested_overlap"
+      ],
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_8f0d8f05c37472e09571",
+      "evidence_text": "File-System Consistency",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "File Systems",
+        "File-System Management and Optimization",
+        "File-System Consistency"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "challenge_categories": [
+        "path_context_candidate",
+        "virtual_machine_context"
+      ],
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_a975720b5eed991c879d",
+      "evidence_text": "Virtual Machines on Multicore CPUs",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "Virtualization and the Cloud",
+        "Virtual Machines on Multicore CPUs"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "challenge_categories": [
+        "path_context_candidate",
+        "virtual_machine_context"
+      ],
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_f052e7f95bff9ca39d16",
+      "evidence_text": "Virtual Machine Migration",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "Virtualization and the Cloud",
+        "Clouds",
+        "Virtual Machine Migration"
+      ],
+      "topic": "operating-systems"
+    },
+    {
+      "book_id": "isbn13:9781292025773",
+      "book_title": "Modern Operating Systems",
+      "challenge_categories": [
+        "virtual_machine_context"
+      ],
+      "edition_relation": "same_work",
+      "evidence_id": "evidence_f3961e7ebe9a3efd89a2",
+      "evidence_text": "Virtual Machines",
+      "evidence_type": "toc_same_work",
+      "human_gold_concept_ids": [],
+      "provider": "open_library",
+      "review_note": null,
+      "review_outcome": "pending",
+      "review_status": "unreviewed",
+      "source_evidence_tier": "same_work_alternate_edition_toc",
+      "source_id": "source_778018723050fd5b583c",
+      "toc_path": [
+        "Introduction",
+        "Operating System Structure",
+        "Virtual Machines"
+      ],
+      "topic": "operating-systems"
+    }
+  ],
+  "graph_hash": "sha256:a30a726f28b27215df5aa397bca62ecea7badd8dbbdb90e0a46a43ac05cb2245",
+  "graph_version": "concept-graph-v1",
+  "manifest_hash": "sha256:036b412bed0e78af8595c2acbd385fc0ca3b774be82e47228232aa5a56935488",
+  "prediction_artifact_hash": "sha256:b1fa0f289c6d0314f02e9e16e73cdcd379ab2f44bed1a746acfc4a4be1858319",
+  "prediction_visibility": "hidden_during_human_review",
+  "review_version": "evidence-concept-holdout-review-v1"
+}
