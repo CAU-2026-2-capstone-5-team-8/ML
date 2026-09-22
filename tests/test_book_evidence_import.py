@@ -197,6 +197,36 @@ def test_rejects_changed_provenance_hash(tmp_path: Path) -> None:
         load_book_evidence(path)
 
 
+def test_rejects_provenance_type_that_conflicts_with_category(tmp_path: Path) -> None:
+    path = _write_artifact(tmp_path / "evidence.jsonl")
+    lines = path.read_text(encoding="utf-8").splitlines()
+    payload = json.loads(lines[0])
+    payload["evidence"][1]["source_evidence"]["evidence_type"] = "metadata"
+    lines[0] = json.dumps(payload)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    with pytest.raises(BookEvidenceImportError, match="type does not match evidence category"):
+        load_book_evidence(path)
+
+
+@pytest.mark.parametrize("foreign_field", ["toc_path", "document_content_hash"])
+def test_rejects_fields_from_another_evidence_category(
+    tmp_path: Path,
+    foreign_field: str,
+) -> None:
+    path = _write_artifact(tmp_path / "evidence.jsonl")
+    lines = path.read_text(encoding="utf-8").splitlines()
+    payload = json.loads(lines[1])
+    payload["evidence"][1][foreign_field] = (
+        ["Not a subject path"] if foreign_field == "toc_path" else "sha256:" + "f" * 64
+    )
+    lines[1] = json.dumps(payload)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    with pytest.raises(BookEvidenceImportError, match="metadata evidence cannot carry"):
+        load_book_evidence(path)
+
+
 def test_rejects_duplicate_evidence_identity(tmp_path: Path) -> None:
     records = _records()
     duplicate = records[0].evidence[0]
@@ -230,3 +260,11 @@ def test_cli_validates_and_reports_artifact(tmp_path: Path) -> None:
     assert '"total_books": 2' in result.output
     assert '"books_with_toc_evidence": 1' in result.output
     assert '"metadata_fallback_only": 1' in result.output
+
+
+def test_rejects_empty_artifact(tmp_path: Path) -> None:
+    path = tmp_path / "empty.jsonl"
+    path.write_text("\n", encoding="utf-8")
+
+    with pytest.raises(BookEvidenceImportError, match="contains no records"):
+        load_book_evidence(path)

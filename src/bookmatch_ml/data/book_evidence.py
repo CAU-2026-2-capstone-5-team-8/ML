@@ -103,13 +103,41 @@ class ImportedEvidenceItem(StrictModel):
         if self.source_evidence is not None:
             if self.source_evidence_tier != self.source_evidence.tier:
                 raise ValueError("source evidence tier does not match provenance")
+            expected_provenance_type = (
+                "toc"
+                if self.evidence_type.startswith("toc_")
+                else "metadata"
+                if self.evidence_type in {"subject", "metadata_minimal"}
+                else None
+            )
+            if (
+                expected_provenance_type is not None
+                and self.source_evidence.evidence_type != expected_provenance_type
+            ):
+                raise ValueError("source evidence type does not match evidence category")
         elif self.source_evidence_tier is not None:
             raise ValueError("source evidence tier requires source evidence provenance")
 
+        toc_fields = (
+            self.toc_entry_id,
+            self.parent_entry_id,
+            self.level,
+            self.order_index,
+            self.label,
+            self.toc_path,
+        )
+        document_fields = (
+            self.document_id,
+            self.document_type,
+            self.document_content_hash,
+        )
         if self.evidence_type.startswith("toc_"):
             if self.toc_entry_id is None or self.level is None or not self.toc_path:
                 raise ValueError("TOC evidence requires entry identity, level, and path")
-            if self.document_id is not None or self.metadata_field is not None:
+            if (
+                any(value is not None for value in document_fields)
+                or self.metadata_field is not None
+            ):
                 raise ValueError("TOC evidence cannot carry document or metadata identity")
         elif self.evidence_type in {"description", "document"}:
             if (
@@ -118,12 +146,12 @@ class ImportedEvidenceItem(StrictModel):
                 or self.document_content_hash is None
             ):
                 raise ValueError("document evidence requires identity, type, and content hash")
-            if self.toc_entry_id is not None or self.metadata_field is not None:
+            if any(value is not None for value in toc_fields) or self.metadata_field is not None:
                 raise ValueError("document evidence cannot carry TOC or metadata identity")
         else:
             if self.metadata_field is None:
                 raise ValueError("metadata evidence requires its canonical field")
-            if self.toc_entry_id is not None or self.document_id is not None:
+            if any(value is not None for value in (*toc_fields, *document_fields)):
                 raise ValueError("metadata evidence cannot carry TOC or document identity")
             if self.evidence_type == "subject" and self.metadata_field != "topics":
                 raise ValueError("subject evidence must identify topics")
@@ -252,6 +280,8 @@ def load_book_evidence(path: Path) -> list[ImportedBookEvidence]:
                 raise BookEvidenceImportError(
                     f"invalid book evidence line {line_number}: {exc}"
                 ) from exc
+    if not records:
+        raise BookEvidenceImportError("book evidence artifact contains no records")
     errors = _validate_records(records)
     if errors:
         details = "\n".join(f"- {error}" for error in errors)
