@@ -220,7 +220,7 @@ def test_loader_rejects_duplicate_rows_and_prediction_edits(tmp_path: Path) -> N
         load_evidence_concept_gold_review(path, review, GRAPH)
 
 
-def test_partial_metrics_and_policy_presence_deduplicate_row_occurrences(tmp_path: Path) -> None:
+def test_partial_metrics_do_not_claim_policy_comparison(tmp_path: Path) -> None:
     review = _review()
     topic = "operating-systems"
     chosen = [
@@ -252,9 +252,29 @@ def test_partial_metrics_and_policy_presence_deduplicate_row_occurrences(tmp_pat
     assert report.metric_status == "partial"
     assert report.evaluable_entry_count == 3
     assert report.metrics[0].micro_f1 == 1
+    assert report.policy_metrics == []
+
+
+def test_complete_policy_presence_deduplicates_row_occurrences() -> None:
+    review = _review()
+    reviewed_entries = [
+        row.model_copy(
+            update={
+                "human_gold_concept_ids": row.predicted_concept_ids,
+                "review_status": "reviewed",
+                "review_outcome": "labeled" if row.predicted_concept_ids else "no_concept",
+            }
+        )
+        for row in review.entries
+    ]
+    reviewed = review.model_copy(update={"entries": reviewed_entries})
+    report = evaluate_evidence_concept_gold(
+        LoadedEvidenceConceptGoldReview(review=reviewed, content_hash=HASH)
+    )
+
+    assert report.metric_status == "complete"
     combined = next(item for item in report.policy_metrics if item.policy == "combined_unweighted")
-    assert combined.unique_book_concept_assignment_count == 1
-    assert combined.raw_prediction_occurrence_count == 3
+    assert combined.unique_book_concept_assignment_count < combined.raw_prediction_occurrence_count
     assert combined.micro_f1 == 1
 
 

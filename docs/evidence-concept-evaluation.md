@@ -97,7 +97,9 @@ precision/recall/F1 for:
 Book-macro metrics give each represented book equal weight. Empty predicted or gold denominators
 produce zero precision or recall; exact-set match separately credits two empty sets.
 
-The policy diagnostics compare `toc_only`, `metadata_only`, and `combined_unweighted`. Within a
-book, concept IDs are set-unioned before scoring, so twelve matching TOC rows still mean only
-`book covers concept = true`. Raw occurrence count is diagnostic only and is never a score or
-weight. Until reviews exist, policy metrics are unavailable rather than fabricated.
+After the full sample is reviewed, policy diagnostics compare `toc_only`, `metadata_only`, and
+`combined_unweighted`. They remain unavailable during partial review so missing labels cannot
+distort a source comparison. Within a book, concept IDs are set-unioned before scoring, so twelve
+matching TOC rows still mean only `book covers concept = true`. Raw occurrence count is diagnostic
+only and is never a score or weight. Until reviews are complete, policy metrics are unavailable
+rather than fabricated.

@@ -581,7 +581,7 @@ def evaluate_evidence_concept_gold(
         )
         metrics = [calculate_evidence_metrics(rows, scope) for scope, rows in scopes]
     policy_metrics = []
-    if evaluable:
+    if evaluable and status == "complete":
         for policy in ("toc_only", "metadata_only", "combined_unweighted"):
             policy_types = {
                 "toc_only": TOC_EVIDENCE_TYPES,
