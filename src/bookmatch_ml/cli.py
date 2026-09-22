@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Annotated, Literal
 
 import typer
+from pydantic import ValidationError
 
 from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
 from bookmatch_ml.assessment.pool import AssessmentBlueprintError
@@ -25,6 +26,24 @@ from bookmatch_ml.concept_v2.gold_evaluation import (
     load_toc_concept_gold_review,
 )
 from bookmatch_ml.concept_v2.graph import LoadedConceptGraph, load_concept_graph
+from bookmatch_ml.concept_v2.holdout import (
+    EvidenceConceptHoldoutPredictions,
+    EvidenceConceptHoldoutReview,
+    build_holdout_manifests,
+    build_holdout_predictions,
+    build_holdout_review,
+    load_holdout_manifest,
+    load_holdout_review,
+    review_packet,
+    update_holdout_review_entry,
+    validate_manifest_against_source,
+)
+from bookmatch_ml.concept_v2.holdout import (
+    review_summary as holdout_review_summary,
+)
+from bookmatch_ml.concept_v2.holdout import (
+    sha256_file as holdout_sha256_file,
+)
 from bookmatch_ml.concept_v2.matcher_experiment_evaluation import (
     build_matcher_v2_experiment_report,
 )
@@ -380,6 +399,252 @@ def evaluate_matcher_v2_experiments_command(
             sort_keys=True,
         )
     )
+
+
+@app.command("build-evidence-concept-holdout-manifests")
+def build_evidence_concept_holdout_manifests_command(
+    input_path: Annotated[
+        Path, typer.Option("--input", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    frozen_review: Annotated[
+        Path, typer.Option("--frozen-review", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    general_output: Annotated[
+        Path, typer.Option("--general-output", dir_okay=False, resolve_path=True)
+    ],
+    challenge_output: Annotated[
+        Path, typer.Option("--challenge-output", dir_okay=False, resolve_path=True)
+    ],
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+) -> None:
+    """Fix prediction-blind fresh holdout memberships and their hashes."""
+
+    try:
+        input_hash = _sha256_file(input_path)
+        frozen_hash = _sha256_file(frozen_review)
+        records = load_book_evidence(input_path)
+        frozen = EvidenceConceptGoldReview.model_validate_json(frozen_review.read_bytes())
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        general, challenge = build_holdout_manifests(
+            records,
+            graph,
+            frozen,
+            input_hash,
+            frozen_hash,
+        )
+        general_ids = {row.evidence_id for row in general.entries}
+        challenge_ids = {row.evidence_id for row in challenge.entries}
+        frozen_ids = {row.evidence_id for row in frozen.entries}
+        if general_ids & challenge_ids or (general_ids | challenge_ids) & frozen_ids:
+            raise ValueError("fresh holdout memberships overlap each other or frozen gold")
+        for path, manifest in ((general_output, general), (challenge_output, challenge)):
+            if path.exists() and load_holdout_manifest(path) != manifest:
+                raise ValueError(f"refusing to overwrite changed holdout manifest: {path}")
+            write_json(manifest, path)
+        if _sha256_file(input_path) != input_hash or _sha256_file(frozen_review) != frozen_hash:
+            raise ValueError("source evidence or frozen gold changed during manifest generation")
+    except (BookEvidenceImportError, ConfigError, ValidationError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "general_count": len(general.entries),
+                "general_hash": _sha256_file(general_output),
+                "challenge_count": len(challenge.entries),
+                "challenge_hash": _sha256_file(challenge_output),
+                "frozen_overlap": 0,
+                "cross_holdout_overlap": 0,
+            },
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("build-evidence-concept-holdout-reviews")
+def build_evidence_concept_holdout_reviews_command(
+    input_path: Annotated[
+        Path, typer.Option("--input", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    frozen_review: Annotated[
+        Path, typer.Option("--frozen-review", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    general_manifest: Annotated[
+        Path, typer.Option("--general-manifest", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    challenge_manifest: Annotated[
+        Path, typer.Option("--challenge-manifest", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    general_predictions: Annotated[
+        Path, typer.Option("--general-predictions", dir_okay=False, resolve_path=True)
+    ],
+    challenge_predictions: Annotated[
+        Path, typer.Option("--challenge-predictions", dir_okay=False, resolve_path=True)
+    ],
+    general_review: Annotated[
+        Path, typer.Option("--general-review", dir_okay=False, resolve_path=True)
+    ],
+    challenge_review: Annotated[
+        Path, typer.Option("--challenge-review", dir_okay=False, resolve_path=True)
+    ],
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+    experiment_config: Annotated[
+        Path, typer.Option("--experiment-config", exists=True, dir_okay=False)
+    ] = DEFAULT_MATCHER_V2_EXPERIMENT_CONFIG,
+) -> None:
+    """Generate fixed variant predictions, then blinded human-review templates."""
+
+    try:
+        source_hash = _sha256_file(input_path)
+        frozen_hash = _sha256_file(frozen_review)
+        records = load_book_evidence(input_path)
+        frozen = EvidenceConceptGoldReview.model_validate_json(frozen_review.read_bytes())
+        excluded_ids = {row.evidence_id for row in frozen.entries}
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        matching = load_concept_matching_config(matching_config)
+        experiment = load_matcher_v2_experiment_config(experiment_config)
+        paths = (
+            (general_manifest, general_predictions, general_review),
+            (challenge_manifest, challenge_predictions, challenge_review),
+        )
+        outputs: list[dict[str, object]] = []
+        for manifest_path, predictions_path, review_path in paths:
+            manifest_hash = _sha256_file(manifest_path)
+            manifest = load_holdout_manifest(manifest_path)
+            if (
+                manifest.book_evidence_hash != source_hash
+                or manifest.frozen_gold_hash != frozen_hash
+            ):
+                raise ValueError(f"holdout manifest source provenance differs: {manifest_path}")
+            validate_manifest_against_source(manifest, records, graph, excluded_ids)
+            predictions = build_holdout_predictions(
+                manifest,
+                manifest_hash,
+                features,
+                graph,
+                matching,
+                experiment,
+            )
+            if predictions_path.exists():
+                existing = EvidenceConceptHoldoutPredictions.model_validate_json(
+                    predictions_path.read_bytes()
+                )
+                if existing != predictions:
+                    raise ValueError(
+                        f"refusing to overwrite changed holdout predictions: {predictions_path}"
+                    )
+            write_json(predictions, predictions_path)
+            prediction_hash = _sha256_file(predictions_path)
+            blank_review = build_holdout_review(
+                manifest,
+                manifest_hash,
+                prediction_hash,
+                graph,
+            )
+            if review_path.exists():
+                review = load_holdout_review(
+                    review_path, manifest, manifest_hash, prediction_hash, graph
+                )
+            else:
+                review = blank_review
+                write_json(review, review_path)
+            outputs.append(
+                {
+                    "kind": manifest.holdout_kind,
+                    "manifest_hash": manifest_hash,
+                    "prediction_hash": prediction_hash,
+                    "review": str(review_path),
+                    **holdout_review_summary(review),
+                }
+            )
+        if _sha256_file(input_path) != source_hash or _sha256_file(frozen_review) != frozen_hash:
+            raise ValueError("source evidence or frozen gold changed during prediction generation")
+    except (BookEvidenceImportError, ConfigError, ValidationError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps({"holdouts": outputs, "predictions_hidden": True}, sort_keys=True))
+
+
+@app.command("show-evidence-concept-holdout")
+def show_evidence_concept_holdout_command(
+    review_file: Annotated[
+        Path, typer.Option("--review", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    limit: Annotated[int, typer.Option("--limit", min=1, max=100)] = 10,
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+) -> None:
+    """Print a blinded packet: evidence and concept choices, never predictions."""
+
+    try:
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        review = json.loads(review_file.read_text(encoding="utf-8"))
+        parsed = EvidenceConceptHoldoutReview.model_validate(review)
+        packet = review_packet(parsed, graph, limit)
+    except (ConfigError, ValidationError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps(packet, ensure_ascii=False, indent=2, sort_keys=True))
+
+
+@app.command("review-evidence-concept-holdout")
+def review_evidence_concept_holdout_command(
+    manifest_file: Annotated[
+        Path, typer.Option("--manifest", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    predictions_file: Annotated[
+        Path, typer.Option("--predictions", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    review_file: Annotated[
+        Path, typer.Option("--review", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    evidence_id: Annotated[str, typer.Option("--evidence-id")],
+    outcome: Annotated[Literal["labeled", "no_concept", "not_judgable"], typer.Option("--outcome")],
+    gold: Annotated[str, typer.Option("--gold")] = "",
+    note: Annotated[str | None, typer.Option("--note")] = None,
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+) -> None:
+    """Apply one explicit human label without exposing fixed predictions."""
+
+    try:
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        manifest = load_holdout_manifest(manifest_file)
+        manifest_hash = holdout_sha256_file(manifest_file)
+        prediction_hash = holdout_sha256_file(predictions_file)
+        review = load_holdout_review(review_file, manifest, manifest_hash, prediction_hash, graph)
+        gold_ids = [value.strip() for value in gold.split(",") if value.strip()]
+        updated = update_holdout_review_entry(review, graph, evidence_id, outcome, gold_ids, note)
+        write_json(updated, review_file)
+    except (ConfigError, ValidationError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps(holdout_review_summary(updated), sort_keys=True))
 
 
 @app.command("build-book-profiles")
