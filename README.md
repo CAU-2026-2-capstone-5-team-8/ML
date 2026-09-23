@@ -44,11 +44,25 @@ uv run bookmatch-ml inspect-book-evidence \
   --input ../Data-Pipeline/data/experiments/scale-50-bulk-web-20260922/ml-evidence-v1/book-evidence.jsonl
 ```
 
+Map the validated evidence with the production overlap-only matcher-v2 and retain source-aware
+support for each book-level concept presence:
+
+```bash
+uv run bookmatch-ml map-book-evidence-concepts \
+  --input ../Data-Pipeline/data/experiments/scale-50-bulk-web-20260922/ml-evidence-v1/book-evidence.jsonl \
+  --output data/reports/scale-50-concept-presence-v2-overlap.json
+```
+
+The output deduplicates `(book, topic, concept)` presence. Repeated evidence remains available as
+diagnostic provenance and is not converted into a ranking weight.
+
 The strict importer retains exact, reviewed public-web, same-Work alternate, description,
 subject/topic, and title categories together with source and edition provenance. It also exposes
 unweighted concept-candidate text for later experiments. No numeric source weighting has been
 selected. See
 [`docs/data-pipeline-book-evidence-v1.md`](docs/data-pipeline-book-evidence-v1.md).
+Production matcher-v2 scope and the current ranking integration boundary are recorded in
+[`docs/production-matcher-v2-overlap.md`](docs/production-matcher-v2-overlap.md).
 
 The source-aware handoff also has a deterministic human-review evaluation workflow. It samples
 TOC and metadata evidence by source type, keeps the current alias matcher frozen, and reports
