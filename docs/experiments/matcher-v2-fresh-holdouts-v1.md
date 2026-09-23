@@ -88,9 +88,15 @@ Manifest SHA-256:
 | General | `032d4887591fde785297f2b45a360a7d0f14529b8b30942bb55a3a021c0b613e` | 89 |
 | Challenge | `b1fa0f289c6d0314f02e9e16e73cdcd379ab2f44bed1a746acfc4a4be1858319` | 40 |
 
-Both review templates start at 0 reviewed and expose
-`prediction_visibility: hidden_during_human_review`. Human decisions are applied with
-`review-evidence-concept-holdout`; that command validates canonical concept IDs and never reads or
-prints predictions.
+Both review templates expose `prediction_visibility: hidden_during_human_review`. Human decisions
+were applied with `review-evidence-concept-holdout`; that command validates canonical concept IDs
+and never prints predictions. The General review is complete at 89/89 and the Challenge review is
+complete at 40/40. Predictions remained hidden until both reviews were complete.
 
-No precision, recall, F1, exact-match, or policy result is calculated at this stage.
+Final review SHA-256 values are:
+
+- General: `10879c31d896bdf8f9de2ca8a29bb3f4ad1cf75467c9adc1b89cc64c7fe35033`
+- Challenge: `004d636241ae6487a7edd3414f97ba82aca2419c85d8538625e90157a0dc2bfc`
+
+The completed out-of-sample results and production assessment are recorded in
+[`matcher-v2-fresh-holdout-results-v1.md`](matcher-v2-fresh-holdout-results-v1.md).

@@ -44,6 +44,10 @@ from bookmatch_ml.concept_v2.holdout import (
 from bookmatch_ml.concept_v2.holdout import (
     sha256_file as holdout_sha256_file,
 )
+from bookmatch_ml.concept_v2.holdout_evaluation import (
+    build_holdout_evaluation_report,
+    load_holdout_predictions,
+)
 from bookmatch_ml.concept_v2.matcher_experiment_evaluation import (
     build_matcher_v2_experiment_report,
 )
@@ -645,6 +649,95 @@ def review_evidence_concept_holdout_command(
         typer.echo(f"Error: {exc}", err=True)
         raise typer.Exit(code=1) from exc
     typer.echo(json.dumps(holdout_review_summary(updated), sort_keys=True))
+
+
+@app.command("evaluate-evidence-concept-holdout")
+def evaluate_evidence_concept_holdout_command(
+    manifest_file: Annotated[
+        Path, typer.Option("--manifest", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    predictions_file: Annotated[
+        Path, typer.Option("--predictions", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    review_file: Annotated[
+        Path, typer.Option("--review", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)],
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_CONFIG,
+    experiment_config: Annotated[
+        Path, typer.Option("--experiment-config", exists=True, dir_okay=False)
+    ] = DEFAULT_MATCHER_V2_EXPERIMENT_CONFIG,
+) -> None:
+    """Evaluate fixed predictions after a fresh holdout is fully reviewed."""
+
+    try:
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        matching = load_concept_matching_config(matching_config)
+        experiment = load_matcher_v2_experiment_config(experiment_config)
+        manifest_hash = holdout_sha256_file(manifest_file)
+        prediction_hash = holdout_sha256_file(predictions_file)
+        review_hash = holdout_sha256_file(review_file)
+        manifest = load_holdout_manifest(manifest_file)
+        predictions = load_holdout_predictions(predictions_file, manifest, manifest_hash)
+        review = load_holdout_review(
+            review_file,
+            manifest,
+            manifest_hash,
+            prediction_hash,
+            graph,
+        )
+        expected_hashes = (
+            features.content_hash,
+            graph.content_hash,
+            matching.content_hash,
+            experiment.content_hash,
+        )
+        prediction_hashes = (
+            predictions.feature_config_hash,
+            predictions.graph_hash,
+            predictions.matching_v1_config_hash,
+            predictions.matcher_v2_experiment_config_hash,
+        )
+        if prediction_hashes != expected_hashes:
+            raise ValueError("current matcher/config hashes differ from fixed predictions")
+        report = build_holdout_evaluation_report(
+            manifest,
+            predictions,
+            review,
+            manifest_hash,
+            prediction_hash,
+            review_hash,
+        )
+        if (
+            holdout_sha256_file(manifest_file) != manifest_hash
+            or holdout_sha256_file(predictions_file) != prediction_hash
+            or holdout_sha256_file(review_file) != review_hash
+        ):
+            raise ValueError("holdout artifacts changed during evaluation")
+        write_json(report, output)
+    except (ConfigError, ValidationError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "output": str(output),
+                "holdout_kind": report.holdout_kind,
+                "evaluable": report.evaluable_entry_count,
+                "variants": [variant.variant for variant in report.variants],
+            },
+            sort_keys=True,
+        )
+    )
 
 
 @app.command("build-book-profiles")

@@ -82,11 +82,19 @@ uv run bookmatch-ml build-evidence-concept-holdout-manifests \
 uv run bookmatch-ml show-evidence-concept-holdout \
   --review reviews/evidence_concept_holdout_general_v1.json \
   --limit 10
+
+uv run bookmatch-ml evaluate-evidence-concept-holdout \
+  --manifest reviews/evidence_concept_holdout_general_v1_manifest.json \
+  --predictions reviews/evidence_concept_holdout_general_v1_predictions.json \
+  --review reviews/evidence_concept_holdout_general_v1.json \
+  --output data/reports/matcher-v2-general-holdout-v1.json
 ```
 
 The packet command intentionally shows evidence and canonical concept choices but no v1/v2
-predictions. See
-[`docs/experiments/matcher-v2-fresh-holdouts-v1.md`](docs/experiments/matcher-v2-fresh-holdouts-v1.md).
+predictions. Evaluation requires every row to be reviewed and validates the fixed manifest,
+prediction artifact, and matcher/config hashes. See the
+[`holdout design`](docs/experiments/matcher-v2-fresh-holdouts-v1.md) and
+[`completed results`](docs/experiments/matcher-v2-fresh-holdout-results-v1.md).
 
 ## Requirements
 

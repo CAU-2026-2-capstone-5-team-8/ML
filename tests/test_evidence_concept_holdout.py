@@ -11,7 +11,9 @@ from bookmatch_ml.concept_v2.holdout import (
     build_holdout_predictions,
     build_holdout_review,
     review_packet,
+    update_holdout_review_entry,
 )
+from bookmatch_ml.concept_v2.holdout_evaluation import build_holdout_evaluation_report
 from bookmatch_ml.concept_v2.matcher_experiments import load_matcher_v2_experiment_config
 from bookmatch_ml.concept_v2.profile import load_concept_matching_config
 from bookmatch_ml.config import load_feature_config
@@ -181,3 +183,87 @@ def test_challenge_categories_cover_path_and_overlap_without_predictions() -> No
     assert "path_context_candidate" in categories
     assert "parent_overinheritance_counterexample" in categories
     assert all(_challenge_categories(row) == row.challenge_categories for row in rows)
+
+
+def _completed_review(manifest, predictions):
+    review = build_holdout_review(manifest, HASH, HASH, GRAPH)
+    v1_by_id = {
+        row.evidence_id: row.predictions[0].predicted_concept_ids for row in predictions.entries
+    }
+    for row in review.entries:
+        gold = v1_by_id[row.evidence_id]
+        review = update_holdout_review_entry(
+            review,
+            GRAPH,
+            row.evidence_id,
+            "labeled" if gold else "no_concept",
+            gold,
+            "fixture review",
+        )
+    return review
+
+
+def test_holdout_evaluation_requires_complete_review_and_has_general_scopes() -> None:
+    general, _ = build_holdout_manifests(
+        _records(),
+        GRAPH,
+        _frozen(_records()),
+        HASH,
+        HASH,
+        general_sizes={"toc_exact": 4, "description": 4, "subject": 4},
+        per_book_cap=4,
+    )
+    predictions = build_holdout_predictions(general, HASH, FEATURES, GRAPH, MATCHING, EXPERIMENT)
+    incomplete = build_holdout_review(general, HASH, HASH, GRAPH)
+
+    try:
+        build_holdout_evaluation_report(general, predictions, incomplete, HASH, HASH, HASH)
+    except ValueError as exc:
+        assert "complete human review" in str(exc)
+    else:
+        raise AssertionError("incomplete holdout review must be rejected")
+
+    report = build_holdout_evaluation_report(
+        general,
+        predictions,
+        _completed_review(general, predictions),
+        HASH,
+        HASH,
+        HASH,
+    )
+    assert len(report.variants) == 5
+    scopes = {metric.scope for metric in report.variants[0].metrics}
+    assert {"all", "family:toc", "family:metadata"} <= scopes
+    assert any(scope.startswith("topic:") for scope in scopes)
+    assert any(scope.startswith("evidence_type:") for scope in scopes)
+
+
+def test_challenge_category_metrics_allow_overlapping_membership() -> None:
+    records = _records()
+    _, challenge = build_holdout_manifests(
+        records,
+        GRAPH,
+        _frozen(records),
+        HASH,
+        HASH,
+        general_sizes={"subject": 1},
+        per_book_cap=8,
+    )
+    predictions = build_holdout_predictions(challenge, HASH, FEATURES, GRAPH, MATCHING, EXPERIMENT)
+    report = build_holdout_evaluation_report(
+        challenge,
+        predictions,
+        _completed_review(challenge, predictions),
+        HASH,
+        HASH,
+        HASH,
+    )
+
+    assert report.category_membership_is_overlapping is True
+    metrics = {metric.scope: metric for metric in report.variants[0].metrics}
+    category_total = sum(
+        metric.entry_count
+        for scope, metric in metrics.items()
+        if scope.startswith("challenge_category:")
+    )
+    assert category_total > metrics["all"].entry_count
