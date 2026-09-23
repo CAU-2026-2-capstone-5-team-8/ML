@@ -1,0 +1,1413 @@
+{
+  "entries": [
+    {
+      "evidence_id": "evidence_66fed601fed9c9412533",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "linear system"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "systems of equations"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "systems of equations"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "systems of equations"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_4ac4ab98dc6fecad0ed2",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_58b2175c8db8ad10adc8",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "vector",
+            "vector space"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_749f3b385a0bb168cb33",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "linear independence"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear independence"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear independence"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear independence",
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear independence"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_7ef45cf066af90fd0276",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "linear transformation"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear transformation"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear transformation"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear transformation"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear transformation"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_1a33377582dc3cc45719",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "dimension"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "dimension"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "dimension"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "dimension",
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "dimension"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_d5e594e525323d0dfd56",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "linear system"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "systems of equations"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "systems of equations"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "systems of equations"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_1d7f307f003eaea350c0",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector",
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_7078b00ca52a9ca88e17",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "matrix"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "matrix"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "matrix",
+            "systems of equations"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "matrix",
+            "systems of equations"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "matrix",
+            "systems of equations"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_98623db2666a0bd1fa99",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "vector",
+            "vector space"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_5deabf69ebf27950bf77",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "linear system"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "systems of equations"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "systems of equations"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "systems of equations"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_556c900b5e84c3dc5501",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_bcd3d5ad9077f2cc8077",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector",
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_3cdc48a3f400449e96d2",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear transformation"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear transformation"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_8de49c7514eba5e8a1bb",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "systems of equations"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "eigenvalue",
+            "eigenvector",
+            "systems of equations"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "systems of equations"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_04bfbb56a9cb24bd6ce2",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "protection",
+            "security"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_d471cbda71b9c553eaad",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_02c85c4cdf09334725ea",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_70a71b0e71194d68e6fd",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_6736723c0a860339975c",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_fece78baa40e7d4199d4",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_7d0a70559c1a1346a250",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_23fb6a2927097a09125b",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "protection"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "protection"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "protection"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "protection",
+            "security"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "protection"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_797e7139a8e5954b85ff",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "process",
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_e97e46d96216f28dcaa1",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_506dd3a35dc3d1404758",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_59930abd0ffdbdc89081",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_2ab107629c2cc57c33f6",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_cb8be7d46fd0880bc894",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_1db8660733a8c5d2a203",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_816af96ada12120cee70",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "input/output",
+            "storage"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_d89b3839412889b6316a",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_12be6f1db154538fa4ab",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_ae1c2c6037fbc7c48adb",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_55278bbefedf1e916848",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "process",
+            "thread"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "thread"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_68d035604ad4a9d64510",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_8f0d8f05c37472e09571",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_a975720b5eed991c879d",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_f052e7f95bff9ca39d16",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_f3961e7ebe9a3efd89a2",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtualization"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    }
+  ],
+  "feature_config_hash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6",
+  "graph_hash": "sha256:a30a726f28b27215df5aa397bca62ecea7badd8dbbdb90e0a46a43ac05cb2245",
+  "manifest_hash": "sha256:036b412bed0e78af8595c2acbd385fc0ca3b774be82e47228232aa5a56935488",
+  "matcher_v2_experiment_config_hash": "sha256:a5ca12516a9eedd78004a045acb91ce7ca51995b20dd90c225d3c8551ded0651",
+  "matching_v1_config_hash": "sha256:7e2386f1661041ee685f1d2988c8677e053325af932362f258fa3181c97023a0",
+  "prediction_version": "evidence-concept-holdout-predictions-v1"
+}
