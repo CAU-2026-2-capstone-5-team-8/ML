@@ -153,6 +153,28 @@ deadlock, distributed systems, storage, file system, input/output, protection, a
 Use the reported per-book coefficients to select useful diagnostic questions; do not mark
 those concepts mastered automatically.
 
+## Current 25-book revalidation (2026-09-23)
+
+The Data-Pipeline `feat/public-toc-coverage-expansion` sources were collected into a copy of the
+same 25-book snapshot. TOC coverage increased from 7 to 9 books and from 318 to 536 entries.
+Eight books now map to configured concepts; the other 17 remain `no_concept_evidence`. Loading
+this current output also verifies the optional `Source.evidence` canonical provenance contract.
+
+| Book | Intrinsic score | Band | Mapped concepts | Matched / total TOC |
+| --- | ---: | --- | ---: | ---: |
+| The Design of the Unix Operating System | 0.275 | introductory | 4 | 5 / 12 |
+| Schaum's Outline of Operating Systems | 0.390 | intermediate | 9 | 23 / 50 |
+| Distributed Operating Systems | 0.424 | intermediate | 8 | 18 / 168 |
+| Advanced Concepts in Operating Systems | 0.506 | intermediate | 9 | 13 / 27 |
+
+The 0.5-mastery synthetic reader has burden 0.400–0.441 across the eight scored books; zero
+mastery is always challenging and full mastery is always easy. The provided reader still yields
+`assessment_needed` for all eight because important prerequisite coefficient mass is unassessed.
+The low 18/168 match count for *Distributed Operating Systems* is exposed rather than converted
+to a confidence bonus or penalty. It indicates the configured concept vocabulary does not cover
+many distributed-systems headings, so human concept-map review is required before calibration.
+These are rule-consistency and data-flow results, not accuracy measurements.
+
 ## Independent review and accuracy gate
 
 1. Two reviewers independently fill the blind sheet using book evidence and the provided
