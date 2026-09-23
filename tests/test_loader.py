@@ -24,6 +24,36 @@ def test_loads_all_four_canonical_files() -> None:
     assert len(dataset.sources) == 2
 
 
+def test_loads_additive_source_evidence_provenance(tmp_path: Path) -> None:
+    directory = _dataset_copy(tmp_path)
+    path = directory / "sources.jsonl"
+    lines = path.read_text(encoding="utf-8").splitlines()
+    record = json.loads(lines[0])
+    record["evidence"] = {
+        "evidence_type": "toc",
+        "tier": "exact_edition_toc",
+        "target_isbn": None,
+        "target_title": "Fixture Operating Systems",
+        "target_authors": ["Fixture Author"],
+        "source_edition_id": "edition-1",
+        "source_isbns": [],
+        "source_title": "Fixture Operating Systems",
+        "source_author_ids": [],
+        "same_edition": True,
+        "source_document_type": "fixture",
+        "discovery_method": "fixture_import",
+        "match_basis": ["exact_title"],
+        "validation_status": "strong",
+    }
+    lines[0] = json.dumps(record)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    dataset = load_canonical_dataset(directory)
+
+    assert dataset.sources[0].evidence is not None
+    assert dataset.sources[0].evidence.tier == "exact_edition_toc"
+
+
 def test_missing_file_fails_visibly(tmp_path: Path) -> None:
     directory = _dataset_copy(tmp_path)
     (directory / "sources.jsonl").unlink()
