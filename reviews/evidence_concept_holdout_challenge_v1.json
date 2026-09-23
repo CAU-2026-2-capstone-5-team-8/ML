@@ -10,11 +10,14 @@
       "evidence_id": "evidence_66fed601fed9c9412533",
       "evidence_text": "Systems of Linear Equations",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "linear system",
+        "systems of equations"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Systems of Linear Equations` directly describes systems of equations and specifically linear systems, supporting both canonical concepts.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_b3c8d3a9b57fd1bd59d8",
       "toc_path": [
@@ -32,11 +35,13 @@
       "evidence_id": "evidence_4ac4ab98dc6fecad0ed2",
       "evidence_text": "Cross Product in R3",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "vector"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Cross Product in R3` is a vector operation, and the direct TOC context `Applications of Vectors in R2 and R3` clearly supports canonical `vector`. Do not add `vector space` merely because the operation occurs in R3.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_ec3f960582056586a41d",
       "toc_path": [
@@ -55,11 +60,13 @@
       "evidence_id": "evidence_58b2175c8db8ad10adc8",
       "evidence_text": "Vector Spaces",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "vector space"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Vector Spaces` directly supports canonical `vector space`. Do not add canonical `vector` merely because `Vector` appears inside the longer phrase.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_ec3f960582056586a41d",
       "toc_path": [
@@ -80,11 +87,13 @@
       "evidence_id": "evidence_749f3b385a0bb168cb33",
       "evidence_text": "Linear Independence",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "linear independence"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Linear Independence` directly supports canonical `linear independence`. The parent `Real Vector Spaces` provides context but should not cause `vector space` to be automatically inherited into this row's gold labels.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_ec3f960582056586a41d",
       "toc_path": [
@@ -103,11 +112,13 @@
       "evidence_id": "evidence_7ef45cf066af90fd0276",
       "evidence_text": "Properties of Linear Transformations",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "linear transformation"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Properties of Linear Transformations` directly supports canonical `linear transformation`. Do not derive other concepts merely from words contained within the phrase.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_535862efe537f0fb7535",
       "toc_path": [
@@ -126,11 +137,14 @@
       "evidence_id": "evidence_1a33377582dc3cc45719",
       "evidence_text": "Bases and Dimension",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "basis",
+        "dimension"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Bases and Dimension` directly supports canonical `basis` and `dimension`. The parent `Vector Spaces` should not automatically add `vector space`; this row is a parent-overinheritance counterexample.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_59553429de094c6d7826",
       "toc_path": [
@@ -149,11 +163,14 @@
       "evidence_id": "evidence_d5e594e525323d0dfd56",
       "evidence_text": "Systems of Linear Equations",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "linear system",
+        "systems of equations"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Systems of Linear Equations` directly supports canonical `systems of equations` and `linear system`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_59553429de094c6d7826",
       "toc_path": [
@@ -173,11 +190,13 @@
       "evidence_id": "evidence_1d7f307f003eaea350c0",
       "evidence_text": "Vector Products",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "vector"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Vector Products` directly concerns vectors and supports canonical `vector`. Do not automatically add `vector space` merely because the parent path is `The Vector Space R^n`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_50fa3cd4484f158914a8",
       "toc_path": [
@@ -196,11 +215,15 @@
       "evidence_id": "evidence_7078b00ca52a9ca88e17",
       "evidence_text": "Matrices and Systems of Linear Equations",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "linear system",
+        "matrix",
+        "systems of equations"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Matrices and Systems of Linear Equations` directly supports canonical `matrix`, `systems of equations`, and `linear system`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_50fa3cd4484f158914a8",
       "toc_path": [
@@ -219,11 +242,13 @@
       "evidence_id": "evidence_98623db2666a0bd1fa99",
       "evidence_text": "General Vector Spaces",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "vector space"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`General Vector Spaces` directly supports canonical `vector space`. Do not add canonical `vector` merely because the phrase contains `Vector`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_2664a6566759eca34fbd",
       "toc_path": [
