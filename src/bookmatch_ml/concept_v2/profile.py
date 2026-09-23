@@ -94,6 +94,14 @@ class TocConceptMapping(_Strict):
     traversal_position: int
 
 
+class ConceptTextMatch(_Strict):
+    """One concept matched by the existing deterministic alias policy."""
+
+    concept_id: str
+    matching_alias: str
+    match_method: Literal["normalized_alias_phrase_v1"]
+
+
 class UnmappedTocEntry(_Strict):
     toc_entry_id: str
     title: str
@@ -196,12 +204,38 @@ def _map_entry(
     aliases: dict[str, list[str]],
     exclusions: dict[str, list[str]] | None = None,
 ) -> tuple[list[TocConceptMapping], bool]:
-    title = normalize_text(visit.entry.title)
+    text_matches, ambiguous = _match_normalized_text(visit.entry.title, aliases, exclusions)
+    mappings = [
+        TocConceptMapping(
+            toc_entry_id=visit.entry.toc_entry_id,
+            source_id=visit.entry.source_id,
+            toc_title=visit.entry.title,
+            toc_label=visit.entry.label,
+            concept_id=match.concept_id,
+            matching_alias=match.matching_alias,
+            match_method=match.match_method,
+            toc_level=visit.entry.level,
+            order_index=visit.entry.order_index,
+            parent_path=list(visit.parent_path),
+            toc_path=list(visit.path),
+            traversal_position=visit.traversal_position,
+        )
+        for match in text_matches
+    ]
+    return mappings, ambiguous
+
+
+def _match_normalized_text(
+    text: str,
+    aliases: dict[str, list[str]],
+    exclusions: dict[str, list[str]] | None = None,
+) -> tuple[list[ConceptTextMatch], bool]:
+    normalized_text = normalize_text(text)
     excluded = {
         concept
         for concept, phrases in (exclusions or {}).items()
         if any(
-            normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", title)
+            normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", normalized_text)
             for phrase in phrases
             if (normalized := normalize_text(phrase))
         )
@@ -213,29 +247,40 @@ def _map_entry(
             continue
         for form in forms:
             normalized = normalize_text(form)
-            if normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", title):
+            if normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", normalized_text):
                 found[concept].append(form)
                 alias_to_concepts[normalized].add(concept)
     if any(len(concepts) > 1 for concepts in alias_to_concepts.values()):
         return [], True
-    mappings = [
-        TocConceptMapping(
-            toc_entry_id=visit.entry.toc_entry_id,
-            source_id=visit.entry.source_id,
-            toc_title=visit.entry.title,
-            toc_label=visit.entry.label,
-            concept_id=concept,
-            matching_alias=sorted(forms, key=lambda form: (-len(normalize_text(form)), form))[0],
-            match_method="normalized_alias_phrase_v1",
-            toc_level=visit.entry.level,
-            order_index=visit.entry.order_index,
-            parent_path=list(visit.parent_path),
-            toc_path=list(visit.path),
-            traversal_position=visit.traversal_position,
-        )
-        for concept, forms in sorted(found.items())
-    ]
-    return mappings, False
+    return (
+        [
+            ConceptTextMatch(
+                concept_id=concept,
+                matching_alias=sorted(forms, key=lambda form: (-len(normalize_text(form)), form))[
+                    0
+                ],
+                match_method="normalized_alias_phrase_v1",
+            )
+            for concept, forms in sorted(found.items())
+        ],
+        False,
+    )
+
+
+def match_concept_text(
+    text: str,
+    topic: str,
+    features: LoadedFeatureConfig,
+    graph: LoadedConceptGraph,
+    matching: LoadedConceptMatchingConfig,
+) -> tuple[list[ConceptTextMatch], bool]:
+    """Apply the current alias matcher to arbitrary evidence text without tuning it."""
+
+    if topic not in graph.graph.nodes:
+        raise ValueError(f"unsupported graph topic: {topic}")
+    validate_toc_mapping_rules(matching, graph)
+    aliases, exclusions = _mapping_inputs(features, graph, matching, topic)
+    return _match_normalized_text(text, aliases, exclusions)
 
 
 def _ancestor_paths(
