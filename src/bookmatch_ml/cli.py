@@ -11,6 +11,9 @@ from pydantic import ValidationError
 from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
 from bookmatch_ml.assessment.pool import AssessmentBlueprintError
 from bookmatch_ml.book.profile import build_book_profiles
+from bookmatch_ml.concept_v2.book_evidence_mapping import (
+    build_book_evidence_concept_mapping_report,
+)
 from bookmatch_ml.concept_v2.evidence_evaluation import (
     EvidenceConceptGoldReview,
     build_evidence_concept_gold_review,
@@ -106,6 +109,7 @@ DEFAULT_RANKING_POLICY_CONFIG = Path("configs/ranking_policies.yaml")
 DEFAULT_ASSESSMENT_CONFIG = Path("configs/assessment.yaml")
 DEFAULT_CONCEPT_GRAPH_CONFIG = Path("configs/concept_graph.yaml")
 DEFAULT_CONCEPT_MATCHING_CONFIG = Path("configs/concept_matching.yaml")
+DEFAULT_CONCEPT_MATCHING_V2_CONFIG = Path("configs/concept_matching_v2.yaml")
 DEFAULT_CONCEPT_GRAPH_REVIEWS_CONFIG = Path("configs/concept_graph_reviews.yaml")
 DEFAULT_MATCHER_V2_EXPERIMENT_CONFIG = Path("configs/matcher_v2_experiments.yaml")
 
@@ -189,6 +193,59 @@ def inspect_book_evidence(
             summarize_book_evidence(records),
             ensure_ascii=False,
             indent=2,
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("map-book-evidence-concepts")
+def map_book_evidence_concepts_command(
+    input_path: Annotated[
+        Path, typer.Option("--input", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)],
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_V2_CONFIG,
+) -> None:
+    """Map book-evidence-v1 rows to deduplicated production concept presence."""
+
+    try:
+        input_hash = _sha256_file(input_path)
+        records = load_book_evidence(input_path)
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        matching = load_concept_matching_config(matching_config)
+        report = build_book_evidence_concept_mapping_report(
+            records,
+            input_hash,
+            features,
+            graph,
+            matching,
+        )
+        if _sha256_file(input_path) != input_hash:
+            raise ValueError("book evidence changed during concept mapping")
+        write_json(report, output)
+    except (BookEvidenceImportError, ConfigError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "output": str(output),
+                "total_books": report.total_books,
+                "books_with_matched_concepts": report.books_with_matched_concepts,
+                "books_without_matched_concepts": report.books_without_matched_concepts,
+                "unique_book_concept_presence_count": report.unique_book_concept_presence_count,
+                "raw_match_occurrence_count": report.raw_match_occurrence_count,
+                "matcher_version": report.matcher_version,
+            },
             sort_keys=True,
         )
     )
