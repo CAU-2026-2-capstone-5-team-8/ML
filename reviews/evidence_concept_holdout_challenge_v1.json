@@ -266,11 +266,14 @@
       "evidence_id": "evidence_5deabf69ebf27950bf77",
       "evidence_text": "Applications of Systems of Linear Equations",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "linear system",
+        "systems of equations"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Applications of Systems of Linear Equations` directly supports canonical `systems of equations` and `linear system`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_d7af4de9ce5302369fc1",
       "toc_path": [
@@ -288,11 +291,15 @@
       "evidence_id": "evidence_556c900b5e84c3dc5501",
       "evidence_text": "The Nullspace of A: Solving Ax = 0",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "linear system",
+        "systems of equations",
+        "vector space"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`The Nullspace of A` directly concerns a vector space, while `Solving Ax = 0` directly describes a homogeneous linear system of equations. The evidence therefore supports canonical `vector space`, `linear system`, and `systems of equations`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_011d2779b202dde9a547",
       "toc_path": [
@@ -312,11 +319,13 @@
       "evidence_id": "evidence_bcd3d5ad9077f2cc8077",
       "evidence_text": "Spaces of Vectors",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "vector space"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Spaces of Vectors`, directly within `Vector Spaces and Subspaces`, supports canonical `vector space`. Do not separately add canonical `vector` merely because vectors appear as the elements of the space.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_011d2779b202dde9a547",
       "toc_path": [
@@ -335,11 +344,13 @@
       "evidence_id": "evidence_3cdc48a3f400449e96d2",
       "evidence_text": "Applications to Economics",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "linear transformation"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "The generic leaf `Applications to Economics` is not sufficient alone, but its direct TOC context is `Linear Transformations`, clearly supporting canonical `linear transformation`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_1f9b4f7f2026d75997e8",
       "toc_path": [
@@ -359,11 +370,14 @@
       "evidence_id": "evidence_8de49c7514eba5e8a1bb",
       "evidence_text": "Application to Systems of Differential Equations",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "eigenvalue",
+        "eigenvector"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Application to Systems of Differential Equations` occurs directly under `Eigenvectors and Eigenvalues`, providing clear evidence for canonical `eigenvector` and `eigenvalue`. Do not map the differential-equation phrase to `systems of equations` or `linear system` without explicit support that the equations are a linear algebraic system.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_1f9b4f7f2026d75997e8",
       "toc_path": [
@@ -383,11 +397,13 @@
       "evidence_id": "evidence_04bfbb56a9cb24bd6ce2",
       "evidence_text": "Data Security Cryptography",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "security"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Data Security Cryptography` directly supports canonical `security`. The parent `Protection and Security` should not cause `protection` to be automatically inherited; this is a parent-overinheritance counterexample.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_afba77c8e714ab91721e",
       "toc_path": [
@@ -406,11 +422,13 @@
       "evidence_id": "evidence_d471cbda71b9c553eaad",
       "evidence_text": "Distributed Operating Systems",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "distributed systems"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Distributed Operating Systems` directly supports canonical `distributed systems`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_afba77c8e714ab91721e",
       "toc_path": [
@@ -428,11 +446,13 @@
       "evidence_id": "evidence_02c85c4cdf09334725ea",
       "evidence_text": "Threads, SMP, and Microkernels",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "thread"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Threads, SMP, and Microkernels` directly supports canonical `thread`. Do not add `process` merely because the parent TOC section is `PROCESSES`, and do not infer `concurrency` or `computer architecture` solely from SMP.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_42e3b75c249d30ee8d68",
       "toc_path": [
@@ -451,11 +471,13 @@
       "evidence_id": "evidence_70a71b0e71194d68e6fd",
       "evidence_text": "Memory Management",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "memory management"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Memory Management` directly supports canonical `memory management`. Do not add `virtual memory` merely because it is a related memory-management concept.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_42e3b75c249d30ee8d68",
       "toc_path": [
@@ -474,11 +496,13 @@
       "evidence_id": "evidence_6736723c0a860339975c",
       "evidence_text": "Memory Management Policies.",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "memory management"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Memory Management Policies` directly supports canonical `memory management`. Do not infer additional concepts without direct evidence.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_197776fb43d4914224a3",
       "toc_path": [
