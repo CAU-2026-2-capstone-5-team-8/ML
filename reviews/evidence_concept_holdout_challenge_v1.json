@@ -520,11 +520,13 @@
       "evidence_id": "evidence_fece78baa40e7d4199d4",
       "evidence_text": "Distributed UNIX System.",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "distributed systems"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Distributed UNIX System` directly supports canonical `distributed systems`. The domain-specific modifier `UNIX` does not change the underlying distributed-systems concept.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_197776fb43d4914224a3",
       "toc_path": [
@@ -542,11 +544,13 @@
       "evidence_id": "evidence_7d0a70559c1a1346a250",
       "evidence_text": "Distributed operating systems",
       "evidence_type": "metadata_minimal",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "distributed systems"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Distributed operating systems` directly supports canonical `distributed systems`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": null,
       "source_id": "source_70867335ea745f8ae013",
       "toc_path": null,
@@ -563,11 +567,13 @@
       "evidence_id": "evidence_23fb6a2927097a09125b",
       "evidence_text": "8.2.1  Access Control Matrix",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "protection"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Access Control Matrix`, within `Discretionary Access Control Models`, directly concerns operating-system access protection and supports canonical `protection`. Do not automatically inherit `security` or `distributed systems` merely because they appear in higher-level TOC ancestors.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_a8a45ca3f986f09c138a",
       "toc_path": [
@@ -590,11 +596,13 @@
       "evidence_id": "evidence_797e7139a8e5954b85ff",
       "evidence_text": "3.1.2  User Space Thread Implementation",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "thread"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`User Space Thread Implementation` directly supports canonical `thread`. Do not automatically inherit `concurrency`, `process`, `programming`, or `distributed systems` from ancestor TOC headings.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_a8a45ca3f986f09c138a",
       "toc_path": [
@@ -616,11 +624,14 @@
       "evidence_id": "evidence_e97e46d96216f28dcaa1",
       "evidence_text": "Chapter 6  Distributed File Systems",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "distributed systems",
+        "file system"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Distributed File Systems` directly supports canonical `file system` and `distributed systems`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_a8a45ca3f986f09c138a",
       "toc_path": [
@@ -639,11 +650,13 @@
       "evidence_id": "evidence_506dd3a35dc3d1404758",
       "evidence_text": "C Threads",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "thread"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`C Threads` directly supports canonical `thread`. Do not add `programming` merely because C is a programming language; this evidence row is specifically about threads.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_a31ff1fd203b472c0493",
       "toc_path": [
@@ -663,11 +676,13 @@
       "evidence_id": "evidence_59930abd0ffdbdc89081",
       "evidence_text": "A Multithreaded Windows Console Application",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "thread"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`A Multithreaded Windows Console Application` directly supports canonical `thread` through the morphological form `Multithreaded`. Do not infer `programming` or other concepts solely from `Application`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_a31ff1fd203b472c0493",
       "toc_path": [
@@ -687,11 +702,13 @@
       "evidence_id": "evidence_2ab107629c2cc57c33f6",
       "evidence_text": "File-System Implementation",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "file system"
+      ],
       "provider": "wiley",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`File-System Implementation` directly supports canonical `file system`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "validated_public_web_toc",
       "source_id": "source_ac418fab1cce7c4d8461",
       "toc_path": [
@@ -709,11 +726,13 @@
       "evidence_id": "evidence_cb8be7d46fd0880bc894",
       "evidence_text": "Threads",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "thread"
+      ],
       "provider": "wiley",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Threads` directly supports canonical `thread`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "validated_public_web_toc",
       "source_id": "source_ac418fab1cce7c4d8461",
       "toc_path": [
@@ -731,11 +750,13 @@
       "evidence_id": "evidence_1db8660733a8c5d2a203",
       "evidence_text": "pt. 4. Memory management. Ch. 8. Memory-management strategies",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "memory management"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Memory management` and `Memory-management strategies` directly support canonical `memory management`. Do not add `virtual memory` without evidence specific to virtual memory or paging.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
