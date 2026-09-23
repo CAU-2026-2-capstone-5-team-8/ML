@@ -79,6 +79,16 @@ uv run bookmatch-ml build-evidence-concept-holdout-manifests \
   --general-output reviews/evidence_concept_holdout_general_v1_manifest.json \
   --challenge-output reviews/evidence_concept_holdout_challenge_v1_manifest.json
 
+uv run bookmatch-ml build-evidence-concept-holdout-reviews \
+  --input ../Data-Pipeline/data/experiments/scale-50-bulk-web-20260922/ml-evidence-v1/book-evidence.jsonl \
+  --frozen-review reviews/evidence_concept_gold_review_v1.json \
+  --general-manifest reviews/evidence_concept_holdout_general_v1_manifest.json \
+  --challenge-manifest reviews/evidence_concept_holdout_challenge_v1_manifest.json \
+  --general-predictions reviews/evidence_concept_holdout_general_v1_predictions.json \
+  --challenge-predictions reviews/evidence_concept_holdout_challenge_v1_predictions.json \
+  --general-review reviews/evidence_concept_holdout_general_v1.json \
+  --challenge-review reviews/evidence_concept_holdout_challenge_v1.json
+
 uv run bookmatch-ml show-evidence-concept-holdout \
   --review reviews/evidence_concept_holdout_general_v1.json \
   --limit 10

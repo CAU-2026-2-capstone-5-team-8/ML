@@ -242,27 +242,31 @@ def _population(
     rows: list[HoldoutEvidenceRow] = []
     for record in sorted(records, key=lambda item: item.book.book_id):
         topics = sorted(set(record.book.topics) & set(graph.graph.nodes))
-        for topic in topics:
-            for item in sorted(record.evidence, key=lambda evidence: evidence.evidence_id):
-                if item.evidence_type not in SUPPORTED_EVIDENCE_TYPES:
-                    continue
-                if item.evidence_id in excluded_ids:
-                    continue
-                rows.append(
-                    HoldoutEvidenceRow(
-                        topic=topic,
-                        book_id=record.book.book_id,
-                        book_title=record.book.title,
-                        evidence_id=item.evidence_id,
-                        evidence_type=item.evidence_type,
-                        evidence_text=item.text,
-                        toc_path=item.toc_path,
-                        source_id=item.source_id,
-                        provider=item.provider,
-                        edition_relation=item.edition_relation,
-                        source_evidence_tier=item.source_evidence_tier,
-                    )
+        if not topics:
+            continue
+        # Evidence IDs are the stable review/prediction identity. Select one deterministic
+        # supported topic so a multi-topic book cannot emit duplicate artifact identities.
+        topic = topics[0]
+        for item in sorted(record.evidence, key=lambda evidence: evidence.evidence_id):
+            if item.evidence_type not in SUPPORTED_EVIDENCE_TYPES:
+                continue
+            if item.evidence_id in excluded_ids:
+                continue
+            rows.append(
+                HoldoutEvidenceRow(
+                    topic=topic,
+                    book_id=record.book.book_id,
+                    book_title=record.book.title,
+                    evidence_id=item.evidence_id,
+                    evidence_type=item.evidence_type,
+                    evidence_text=item.text,
+                    toc_path=item.toc_path,
+                    source_id=item.source_id,
+                    provider=item.provider,
+                    edition_relation=item.edition_relation,
+                    source_evidence_tier=item.source_evidence_tier,
                 )
+            )
     return rows
 
 
@@ -549,9 +553,11 @@ def validate_manifest_against_source(
     graph: LoadedConceptGraph,
     excluded_ids: set[str],
 ) -> None:
-    population = {row.evidence_id: row for row in _population(records, graph, excluded_ids)}
+    population = {
+        (row.topic, row.evidence_id): row for row in _population(records, graph, excluded_ids)
+    }
     for row in manifest.entries:
-        source = population.get(row.evidence_id)
+        source = population.get((row.topic, row.evidence_id))
         if source is None:
             raise ValueError(f"holdout evidence is absent or excluded: {row.evidence_id}")
         if source.model_dump(exclude={"challenge_categories"}) != row.model_dump(
@@ -635,6 +641,9 @@ def load_holdout_review(
         ):
             raise ValueError("holdout review provenance differs from fixed artifacts")
         expected = {row.evidence_id: row for row in manifest.entries}
+        actual_ids = [row.evidence_id for row in review.entries]
+        if len(actual_ids) != len(set(actual_ids)):
+            raise ValueError("duplicate holdout review evidence ID")
         actual = {row.evidence_id: row for row in review.entries}
         if set(expected) != set(actual):
             raise ValueError("holdout review membership differs from manifest")

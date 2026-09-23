@@ -3,13 +3,17 @@
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
+
 from bookmatch_ml.concept_v2.evidence_evaluation import build_evidence_concept_gold_review
 from bookmatch_ml.concept_v2.graph import load_concept_graph
 from bookmatch_ml.concept_v2.holdout import (
     _challenge_categories,
+    _population,
     build_holdout_manifests,
     build_holdout_predictions,
     build_holdout_review,
+    load_holdout_review,
     review_packet,
     update_holdout_review_entry,
 )
@@ -183,6 +187,43 @@ def test_challenge_categories_cover_path_and_overlap_without_predictions() -> No
     assert "path_context_candidate" in categories
     assert "parent_overinheritance_counterexample" in categories
     assert all(_challenge_categories(row) == row.challenge_categories for row in rows)
+
+
+def test_multi_topic_evidence_uses_one_deterministic_artifact_identity() -> None:
+    record = _records()[0]
+    multi_topic = record.model_copy(
+        update={
+            "book": record.book.model_copy(
+                update={"topics": ["operating-systems", "linear-algebra"]}
+            )
+        }
+    )
+
+    rows = _population([multi_topic], GRAPH, set())
+
+    assert len(rows) == len(record.evidence)
+    assert len({row.evidence_id for row in rows}) == len(rows)
+    assert {row.topic for row in rows} == {"linear-algebra"}
+
+
+def test_holdout_review_rejects_duplicate_evidence_ids(tmp_path: Path) -> None:
+    records = _records()
+    general, _ = build_holdout_manifests(
+        records,
+        GRAPH,
+        _frozen(records),
+        HASH,
+        HASH,
+        general_sizes={"subject": 2},
+        per_book_cap=2,
+    )
+    review = build_holdout_review(general, HASH, HASH, GRAPH)
+    duplicate = review.model_copy(update={"entries": [*review.entries, review.entries[0]]})
+    path = tmp_path / "duplicate-review.json"
+    path.write_text(duplicate.model_dump_json(), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="duplicate holdout review evidence ID"):
+        load_holdout_review(path, general, HASH, HASH, GRAPH)
 
 
 def _completed_review(manifest, predictions):
