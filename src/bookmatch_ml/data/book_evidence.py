@@ -9,15 +9,15 @@ from typing import Any, Literal
 
 from pydantic import Field, ValidationError, field_validator, model_validator
 
-from bookmatch_ml.schemas import Book, DocumentType, SourceType, StrictModel
+from bookmatch_ml.schemas import (
+    Book,
+    DocumentType,
+    EvidenceTier,
+    SourceEvidenceProvenance,
+    SourceType,
+    StrictModel,
+)
 
-EvidenceTier = Literal[
-    "exact_edition_toc",
-    "same_work_alternate_edition_toc",
-    "validated_public_structured_toc",
-    "validated_public_web_toc",
-    "metadata_fallback",
-]
 EvidenceType = Literal[
     "toc_exact",
     "toc_same_work",
@@ -31,27 +31,20 @@ EvidenceType = Literal[
 EditionRelation = Literal["exact", "same_work", "canonical_record", "unspecified"]
 
 
+# EvidenceTier and SourceEvidenceProvenance now live in schemas.py so the canonical
+# four-file loader and this handoff loader cannot drift apart. They stay importable
+# from here for existing callers.
+__all__ = [
+    "EvidenceTier",
+    "EvidenceType",
+    "EditionRelation",
+    "SourceEvidenceProvenance",
+    "BookEvidenceImportError",
+]
+
+
 class BookEvidenceImportError(ValueError):
     """The book-evidence handoff is malformed or internally inconsistent."""
-
-
-class SourceEvidenceProvenance(StrictModel):
-    """Canonical source-edition relationship copied by Data-Pipeline."""
-
-    evidence_type: Literal["toc", "metadata"]
-    tier: EvidenceTier
-    target_isbn: str | None = None
-    target_title: str = Field(min_length=1)
-    target_authors: list[str]
-    source_edition_id: str | None = None
-    source_isbns: list[str] = Field(default_factory=list)
-    source_title: str | None = None
-    source_author_ids: list[str] = Field(default_factory=list)
-    same_edition: bool | None = None
-    source_document_type: str | None = None
-    discovery_method: str = Field(min_length=1)
-    match_basis: list[str] = Field(min_length=1)
-    validation_status: Literal["strong", "acceptable"]
 
 
 class ImportedEvidenceItem(StrictModel):
