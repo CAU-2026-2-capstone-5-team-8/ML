@@ -774,11 +774,13 @@
       "evidence_id": "evidence_816af96ada12120cee70",
       "evidence_text": "I/O Systems.",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "input/output"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`I/O Systems` directly supports canonical `input/output`. Do not automatically add `storage` merely because the parent TOC section is `STORAGE MANAGEMENT`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_e2ee9e81ad15ec9f1126",
       "toc_path": [
@@ -799,11 +801,13 @@
       "evidence_id": "evidence_d89b3839412889b6316a",
       "evidence_text": "Threads.",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "thread"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Threads` directly supports canonical `thread`. Do not automatically inherit `process` from the parent `PROCESS MANAGEMENT`; this is a parent-overinheritance counterexample.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_e2ee9e81ad15ec9f1126",
       "toc_path": [
@@ -822,11 +826,13 @@
       "evidence_id": "evidence_12be6f1db154538fa4ab",
       "evidence_text": "File-System Implementation",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "file system"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`File-System Implementation` directly supports canonical `file system`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_9659fd63f9bd46b412ea",
       "toc_path": [
@@ -845,11 +851,13 @@
       "evidence_id": "evidence_ae1c2c6037fbc7c48adb",
       "evidence_text": "Virtual Machines",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "virtualization"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Virtual Machines` is itself the subject of this TOC row, directly supporting canonical `virtualization`. This differs from cases where a virtual machine is mentioned only as a supplied exercise environment.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_9659fd63f9bd46b412ea",
       "toc_path": [
@@ -868,11 +876,14 @@
       "evidence_id": "evidence_55278bbefedf1e916848",
       "evidence_text": "Processes and Threads in Windows",
       "evidence_type": "toc_same_work",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "process",
+        "thread"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Processes and Threads in Windows` directly supports canonical `process` and `thread`. Do not infer additional concepts merely from the Windows case-study context.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -891,11 +902,13 @@
       "evidence_id": "evidence_68d035604ad4a9d64510",
       "evidence_text": "Threads",
       "evidence_type": "toc_same_work",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "thread"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Threads` directly supports canonical `thread`. Do not automatically inherit `process` merely because the parent path is `Processes and Threads`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -914,11 +927,13 @@
       "evidence_id": "evidence_8f0d8f05c37472e09571",
       "evidence_text": "File-System Consistency",
       "evidence_type": "toc_same_work",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "file system"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`File-System Consistency` directly supports canonical `file system`. Do not infer unrelated synchronization or storage concepts without direct support.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -939,11 +954,13 @@
       "evidence_id": "evidence_a975720b5eed991c879d",
       "evidence_text": "Virtual Machines on Multicore CPUs",
       "evidence_type": "toc_same_work",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "virtualization"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Virtual Machines on Multicore CPUs`, under `Virtualization and the Cloud`, directly supports canonical `virtualization`. Do not add `computer architecture` merely from the reference to multicore CPUs.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -963,11 +980,13 @@
       "evidence_id": "evidence_f052e7f95bff9ca39d16",
       "evidence_text": "Virtual Machine Migration",
       "evidence_type": "toc_same_work",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "virtualization"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Virtual Machine Migration`, within `Virtualization and the Cloud`, directly supports canonical `virtualization`. Do not map this to `process` merely because migration is also a term used for processes.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
@@ -987,11 +1006,13 @@
       "evidence_id": "evidence_f3961e7ebe9a3efd89a2",
       "evidence_text": "Virtual Machines",
       "evidence_type": "toc_same_work",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "virtualization"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Virtual Machines`, within operating-system structure, directly supports canonical `virtualization`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "same_work_alternate_edition_toc",
       "source_id": "source_778018723050fd5b583c",
       "toc_path": [
