@@ -58,6 +58,9 @@ class ConceptMatchingConfig(_Strict):
     config_version: str
     profile_version: str
     model_version: str
+    matcher_version: Literal["normalized_alias_phrase_v1", "normalized_alias_span_v2"] = (
+        "normalized_alias_phrase_v1"
+    )
     coverage_weight_rule: Literal["min_occurrences_over_three_v1"]
     toc_mapping: TocMappingRules = Field(default_factory=TocMappingRules)
     policy: ConceptMatchingPolicy
@@ -86,7 +89,7 @@ class TocConceptMapping(_Strict):
     toc_label: str | None
     concept_id: str
     matching_alias: str
-    match_method: Literal["normalized_alias_phrase_v1"]
+    match_method: Literal["normalized_alias_phrase_v1", "normalized_alias_span_v2"]
     toc_level: int
     order_index: int
     parent_path: list[str]
@@ -99,7 +102,17 @@ class ConceptTextMatch(_Strict):
 
     concept_id: str
     matching_alias: str
-    match_method: Literal["normalized_alias_phrase_v1"]
+    match_method: Literal["normalized_alias_phrase_v1", "normalized_alias_span_v2"]
+
+
+class AliasSpanMatch(_Strict):
+    """One normalized alias occurrence retained for overlap-aware matching."""
+
+    concept_id: str
+    matching_alias: str
+    match_method: Literal["normalized_alias_span_v2"]
+    span_start: int = Field(ge=0)
+    span_end: int = Field(gt=0)
 
 
 class UnmappedTocEntry(_Strict):
@@ -155,6 +168,7 @@ class BookConceptProfileV2(_Strict):
     feature_config_hash: str
     matching_config_version: str
     matching_config_hash: str
+    matcher_version: Literal["normalized_alias_phrase_v1", "normalized_alias_span_v2"]
     toc_file_hash: str
 
 
@@ -203,8 +217,14 @@ def _map_entry(
     visit: TocVisit,
     aliases: dict[str, list[str]],
     exclusions: dict[str, list[str]] | None = None,
+    matcher_version: Literal[
+        "normalized_alias_phrase_v1", "normalized_alias_span_v2"
+    ] = "normalized_alias_phrase_v1",
 ) -> tuple[list[TocConceptMapping], bool]:
-    text_matches, ambiguous = _match_normalized_text(visit.entry.title, aliases, exclusions)
+    if matcher_version == "normalized_alias_span_v2":
+        text_matches, ambiguous = _match_normalized_text_v2(visit.entry.title, aliases, exclusions)
+    else:
+        text_matches, ambiguous = _match_normalized_text(visit.entry.title, aliases, exclusions)
     mappings = [
         TocConceptMapping(
             toc_entry_id=visit.entry.toc_entry_id,
@@ -267,6 +287,119 @@ def _match_normalized_text(
     )
 
 
+def _contains_phrase(text: str, phrase: str) -> bool:
+    normalized = normalize_text(phrase)
+    return bool(normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", text))
+
+
+def match_alias_spans_v2(
+    text: str,
+    aliases: dict[str, list[str]],
+    exclusions: dict[str, list[str]] | None = None,
+) -> tuple[list[AliasSpanMatch], bool]:
+    """Return one overlap-suppressed span per concept using only v1 aliases."""
+
+    normalized_text = normalize_text(text)
+    excluded = {
+        concept
+        for concept, phrases in (exclusions or {}).items()
+        if any(
+            normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", normalized_text)
+            for phrase in phrases
+            if (normalized := normalize_text(phrase))
+        )
+    }
+    matches: list[AliasSpanMatch] = []
+    alias_to_concepts: dict[str, set[str]] = defaultdict(set)
+    seen: set[tuple[str, str, int, int]] = set()
+    for concept, forms in aliases.items():
+        if concept in excluded:
+            continue
+        for form in forms:
+            normalized_alias = normalize_text(form)
+            if not normalized_alias:
+                continue
+            for occurrence in re.finditer(
+                rf"(?<!\w){re.escape(normalized_alias)}(?!\w)", normalized_text
+            ):
+                key = (concept, normalized_alias, occurrence.start(), occurrence.end())
+                if key in seen:
+                    continue
+                seen.add(key)
+                alias_to_concepts[normalized_alias].add(concept)
+                matches.append(
+                    AliasSpanMatch(
+                        concept_id=concept,
+                        matching_alias=form,
+                        match_method="normalized_alias_span_v2",
+                        span_start=occurrence.start(),
+                        span_end=occurrence.end(),
+                    )
+                )
+    if any(len(concepts) > 1 for concepts in alias_to_concepts.values()):
+        return [], True
+
+    ordered = sorted(
+        matches,
+        key=lambda match: (
+            -(match.span_end - match.span_start),
+            match.span_start,
+            match.concept_id,
+            normalize_text(match.matching_alias),
+        ),
+    )
+    kept: list[AliasSpanMatch] = []
+    for candidate in ordered:
+        nested = any(
+            existing.concept_id != candidate.concept_id
+            and existing.span_start <= candidate.span_start
+            and candidate.span_end <= existing.span_end
+            and (existing.span_end - existing.span_start)
+            > (candidate.span_end - candidate.span_start)
+            and _contains_phrase(normalize_text(existing.concept_id), candidate.concept_id)
+            for existing in kept
+        )
+        if not nested:
+            kept.append(candidate)
+
+    by_concept: dict[str, list[AliasSpanMatch]] = defaultdict(list)
+    for match in kept:
+        by_concept[match.concept_id].append(match)
+    return (
+        [
+            sorted(
+                concept_matches,
+                key=lambda match: (
+                    -(match.span_end - match.span_start),
+                    match.span_start,
+                    normalize_text(match.matching_alias),
+                ),
+            )[0]
+            for _, concept_matches in sorted(by_concept.items())
+        ],
+        False,
+    )
+
+
+def _match_normalized_text_v2(
+    text: str,
+    aliases: dict[str, list[str]],
+    exclusions: dict[str, list[str]] | None = None,
+) -> tuple[list[ConceptTextMatch], bool]:
+    matches, ambiguous = match_alias_spans_v2(text, aliases, exclusions)
+    return (
+        [
+            ConceptTextMatch(
+                concept_id=match.concept_id,
+                matching_alias=match.matching_alias,
+                match_method=match.match_method,
+            )
+            for match in matches
+        ],
+        ambiguous,
+    )
+
+
 def match_concept_text(
     text: str,
     topic: str,
@@ -281,6 +414,36 @@ def match_concept_text(
     validate_toc_mapping_rules(matching, graph)
     aliases, exclusions = _mapping_inputs(features, graph, matching, topic)
     return _match_normalized_text(text, aliases, exclusions)
+
+
+def match_concept_text_v2(
+    text: str,
+    topic: str,
+    features: LoadedFeatureConfig,
+    graph: LoadedConceptGraph,
+    matching: LoadedConceptMatchingConfig,
+) -> tuple[list[ConceptTextMatch], bool]:
+    """Apply production overlap suppression while retaining the v1 alias set."""
+
+    if topic not in graph.graph.nodes:
+        raise ValueError(f"unsupported graph topic: {topic}")
+    validate_toc_mapping_rules(matching, graph)
+    aliases, exclusions = _mapping_inputs(features, graph, matching, topic)
+    return _match_normalized_text_v2(text, aliases, exclusions)
+
+
+def match_concept_text_production(
+    text: str,
+    topic: str,
+    features: LoadedFeatureConfig,
+    graph: LoadedConceptGraph,
+    matching: LoadedConceptMatchingConfig,
+) -> tuple[list[ConceptTextMatch], bool]:
+    """Dispatch to the version declared by the production matching config."""
+
+    if matching.config.matcher_version == "normalized_alias_span_v2":
+        return match_concept_text_v2(text, topic, features, graph, matching)
+    return match_concept_text(text, topic, features, graph, matching)
 
 
 def _ancestor_paths(
@@ -319,7 +482,12 @@ def build_book_concept_profile_v2(
     unmapped: list[UnmappedTocEntry] = []
     matched_entry_ids: set[str] = set()
     for visit in tree.traversal:
-        entry_mappings, ambiguous = _map_entry(visit, aliases, exclusions)
+        entry_mappings, ambiguous = _map_entry(
+            visit,
+            aliases,
+            exclusions,
+            matching.config.matcher_version,
+        )
         mappings.extend(entry_mappings)
         if entry_mappings:
             matched_entry_ids.add(visit.entry.toc_entry_id)
@@ -418,5 +586,6 @@ def build_book_concept_profile_v2(
         feature_config_hash=features.content_hash,
         matching_config_version=matching.config.config_version,
         matching_config_hash=matching.content_hash,
+        matcher_version=matching.config.matcher_version,
         toc_file_hash=toc_file_hash,
     )
