@@ -1,0 +1,34 @@
+config_version: matcher-v2-experiment-config-v1
+
+# Reviewed canonical synonyms and conservative compound forms. These rules are
+# isolated from the production v1 matcher and evaluated only as ablations.
+alias_additions:
+  linear-algebra:
+    linear transformation: [linear map, linear maps]
+  operating-systems:
+    thread: [multithreaded]
+    programming: [programming exercises, multithreaded programming]
+    storage: [multimedia storage]
+    distributed systems: [distributed algorithms, distributed computation]
+
+# Token order must be preserved. Each pattern permits only the configured
+# number of intervening tokens between adjacent phrase tokens.
+modifier_tolerant_patterns:
+  linear-algebra:
+    systems of equations:
+      - {phrase: systems of equations, max_gap_tokens: 3}
+    linear system:
+      - {phrase: systems of linear equations, max_gap_tokens: 2}
+  operating-systems:
+    distributed systems:
+      - {phrase: distributed systems, max_gap_tokens: 1}
+
+# A virtual machine can be course content or merely a supplied exercise tool.
+# Suppress only description matches with tool/exercise cues and no teaching cue.
+context_exclusions:
+  operating-systems:
+    virtualization:
+      aliases: [virtual machine, virtual machines]
+      evidence_types: [description]
+      usage_cues: [programming exercise, programming exercises, development tools, source code]
+      learning_cues: [virtualization, hypervisor, virtual machine monitor, guest operating system]

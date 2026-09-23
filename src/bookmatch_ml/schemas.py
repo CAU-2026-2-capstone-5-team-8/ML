@@ -35,6 +35,13 @@ SourceType = Literal[
     "sample_page",
     "other",
 ]
+EvidenceTier = Literal[
+    "exact_edition_toc",
+    "same_work_alternate_edition_toc",
+    "validated_public_structured_toc",
+    "validated_public_web_toc",
+    "metadata_fallback",
+]
 QuestionType = Literal["vocabulary", "background_knowledge", "comprehension"]
 RankingComponentName = Literal[
     "topic_fit",
@@ -168,6 +175,29 @@ class TocEntry(StrictModel):
     source_id: str = Field(min_length=1)
 
 
+class SourceEvidenceProvenance(StrictModel):
+    """How Data-Pipeline related this source's edition to the target book.
+
+    Emitted by Data-Pipeline since `book-evidence-v1`. It records provenance only and
+    carries no ML confidence or ranking weight.
+    """
+
+    evidence_type: Literal["toc", "metadata"]
+    tier: EvidenceTier
+    target_isbn: str | None = None
+    target_title: str = Field(min_length=1)
+    target_authors: list[str]
+    source_edition_id: str | None = None
+    source_isbns: list[str] = Field(default_factory=list)
+    source_title: str | None = None
+    source_author_ids: list[str] = Field(default_factory=list)
+    same_edition: bool | None = None
+    source_document_type: str | None = None
+    discovery_method: str = Field(min_length=1)
+    match_basis: list[str] = Field(min_length=1)
+    validation_status: Literal["strong", "acceptable"]
+
+
 class Source(StrictModel):
     source_id: str = Field(min_length=1)
     book_id: str = Field(min_length=1)
@@ -179,6 +209,9 @@ class Source(StrictModel):
     license: str | None = None
     rights_note: str | None = None
     content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    # Absent on datasets produced before book-evidence-v1; absence means the tier was
+    # never recorded, not that the source is an exact-edition match.
+    evidence: SourceEvidenceProvenance | None = None
 
     @field_validator("retrieved_at")
     @classmethod
