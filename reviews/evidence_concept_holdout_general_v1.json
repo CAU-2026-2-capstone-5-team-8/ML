@@ -1214,11 +1214,13 @@
       "evidence_id": "evidence_40b7af2e8b552edcb237",
       "evidence_text": "I/O Optimization",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "input/output"
+      ],
       "provider": "ecampus",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`I/O Optimization` directly supports canonical `input/output`. Do not infer additional concepts merely from the parent device-management path.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_a31ff1fd203b472c0493",
       "toc_path": [
@@ -1236,11 +1238,13 @@
       "evidence_id": "evidence_afca89bff8b4aa0310cb",
       "evidence_text": "Protection",
       "evidence_type": "toc_public_web_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "protection"
+      ],
       "provider": "wiley",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Protection` directly supports canonical `protection`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "validated_public_web_toc",
       "source_id": "source_ac418fab1cce7c4d8461",
       "toc_path": [
@@ -1258,9 +1262,9 @@
       "evidence_type": "toc_exact",
       "human_gold_concept_ids": [],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Influential operating systems` refers broadly to historical or notable operating systems and does not directly identify a configured specific concept.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1276,11 +1280,14 @@
       "evidence_id": "evidence_218c99d461a5704e98d0",
       "evidence_text": "Ch. 9. Virtual-memory management",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "memory management",
+        "virtual memory"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Virtual-memory management` directly supports both canonical `virtual memory` and `memory management`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1298,9 +1305,9 @@
       "evidence_type": "toc_exact",
       "human_gold_concept_ids": [],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`The Linux system` identifies a specific operating system case study but does not directly identify one of the configured canonical concepts.",
+      "review_outcome": "no_concept",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1316,11 +1323,13 @@
       "evidence_id": "evidence_393c1866d68e3f8cd79e",
       "evidence_text": "Ch. 13. I/O systems",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "input/output"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`I/O systems` directly supports canonical `input/output`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1336,11 +1345,13 @@
       "evidence_id": "evidence_3a03fbdaba5739d9148a",
       "evidence_text": "Ch. 12. Secondary-storage structure",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "storage"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Secondary-storage structure` directly supports canonical `storage`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1356,11 +1367,13 @@
       "evidence_id": "evidence_54443afaadc41ba191fb",
       "evidence_text": "pt. 2. Process management. Ch. 3. Process-concept",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "process"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Process management` and `Process-concept` directly support canonical `process`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1376,11 +1389,14 @@
       "evidence_id": "evidence_5cc5869c7c10dd3bdab0",
       "evidence_text": "Ch. 15. Distributed file systems",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "distributed systems",
+        "file system"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Distributed file systems` directly supports canonical `file system` and places the topic explicitly in the distributed-systems context, supporting canonical `distributed systems`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
@@ -1396,11 +1412,14 @@
       "evidence_id": "evidence_9c0e62bdc40a53910aac",
       "evidence_text": "pt. 5. Storage management. Ch. 10. File system",
       "evidence_type": "toc_exact",
-      "human_gold_concept_ids": [],
+      "human_gold_concept_ids": [
+        "file system",
+        "storage"
+      ],
       "provider": "open_library",
-      "review_note": null,
-      "review_outcome": "pending",
-      "review_status": "unreviewed",
+      "review_note": "`Storage management` and `File system` directly support canonical `storage` and `file system`.",
+      "review_outcome": "labeled",
+      "review_status": "reviewed",
       "source_evidence_tier": "exact_edition_toc",
       "source_id": "source_986536519e38c03660e0",
       "toc_path": [
