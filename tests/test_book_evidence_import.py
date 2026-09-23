@@ -7,6 +7,12 @@ import pytest
 from typer.testing import CliRunner
 
 from bookmatch_ml.cli import app
+from bookmatch_ml.concept_v2.book_evidence_mapping import (
+    build_book_evidence_concept_mapping_report,
+)
+from bookmatch_ml.concept_v2.graph import load_concept_graph
+from bookmatch_ml.concept_v2.profile import load_concept_matching_config
+from bookmatch_ml.config import load_feature_config
 from bookmatch_ml.data.book_evidence import (
     BookEvidenceImportError,
     ImportedBookEvidence,
@@ -16,6 +22,11 @@ from bookmatch_ml.data.book_evidence import (
     summarize_book_evidence,
 )
 from bookmatch_ml.schemas import Book
+
+ROOT = Path(__file__).resolve().parents[1]
+FEATURES = load_feature_config(ROOT / "configs/features.yaml")
+GRAPH = load_concept_graph(ROOT / "configs/concept_graph.yaml", FEATURES)
+MATCHING_V2 = load_concept_matching_config(ROOT / "configs/concept_matching_v2.yaml")
 
 
 def _sha256_json(value: object) -> str:
@@ -280,6 +291,60 @@ def test_cli_validates_and_reports_artifact(tmp_path: Path) -> None:
     assert '"total_books": 2' in result.output
     assert '"books_with_toc_evidence": 1' in result.output
     assert '"metadata_fallback_only": 1' in result.output
+
+
+def test_book_evidence_mapping_deduplicates_presence_and_retains_support() -> None:
+    records = _records()
+    repeated = _item(
+        "evidence_66666666666666666666",
+        evidence_type="description",
+        text="Virtual memory complements virtual memory paging.",
+        source_id="source_metadata_repeat",
+        edition_relation="unspecified",
+        document_id="doc_repeat_description",
+        document_type="description",
+        document_content_hash="sha256:" + "d" * 64,
+    )
+    records[0] = records[0].model_copy(update={"evidence": [*records[0].evidence, repeated]})
+
+    report = build_book_evidence_concept_mapping_report(
+        records,
+        "sha256:" + "e" * 64,
+        FEATURES,
+        GRAPH,
+        MATCHING_V2,
+    )
+    book = next(item for item in report.books if item.title == "TOC Book")
+    concept = next(item for item in book.concepts if item.concept_id == "virtual memory")
+
+    assert concept.support_count == 2
+    assert {support.evidence_id for support in concept.supporting_evidence} == {
+        "evidence_22222222222222222222",
+        "evidence_66666666666666666666",
+    }
+    assert book.concept_presence_count < book.raw_match_occurrence_count
+    assert book.matcher_version == "normalized_alias_span_v2"
+    assert {support.edition_relation for support in concept.supporting_evidence} == {
+        "exact",
+        "unspecified",
+    }
+
+
+def test_book_evidence_mapping_cli_is_deterministic(tmp_path: Path) -> None:
+    source = _write_artifact(tmp_path / "evidence.jsonl")
+    first = tmp_path / "first.json"
+    second = tmp_path / "second.json"
+    args = ["map-book-evidence-concepts", "--input", str(source), "--output"]
+
+    first_result = CliRunner().invoke(app, [*args, str(first)])
+    second_result = CliRunner().invoke(app, [*args, str(second)])
+
+    assert first_result.exit_code == 0, first_result.output
+    assert second_result.exit_code == 0, second_result.output
+    assert first.read_bytes() == second.read_bytes()
+    payload = json.loads(first.read_text(encoding="utf-8"))
+    assert payload["total_books"] == 2
+    assert payload["matcher_version"] == "normalized_alias_span_v2"
 
 
 def test_rejects_empty_artifact(tmp_path: Path) -> None:
