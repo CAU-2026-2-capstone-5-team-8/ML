@@ -97,6 +97,12 @@ from bookmatch_ml.ranking.loader import (
     load_reader_profile,
 )
 from bookmatch_ml.ranking.matching import RankingError, rank_books, score_book_fit
+from bookmatch_ml.ranking.source_aware_adapter import (
+    SourceAwareAdapterError,
+    build_source_aware_adapter_report,
+    build_source_aware_matching_book_profiles,
+    load_concept_mapping_report,
+)
 from bookmatch_ml.reader.profile import AssessmentError, build_reader_profile, load_assessment
 from bookmatch_ml.schemas import BookCoverageSummary, CoverageReport, RankingResponse
 
@@ -245,6 +251,63 @@ def map_book_evidence_concepts_command(
                 "unique_book_concept_presence_count": report.unique_book_concept_presence_count,
                 "raw_match_occurrence_count": report.raw_match_occurrence_count,
                 "matcher_version": report.matcher_version,
+            },
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("build-matching-book-candidates")
+def build_matching_book_candidates_command(
+    concept_mapping: Annotated[
+        Path, typer.Option("--concept-mapping", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    book_profiles: Annotated[
+        Path, typer.Option("--book-profiles", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)],
+    report_output: Annotated[Path, typer.Option("--report", dir_okay=False, resolve_path=True)],
+) -> None:
+    """Build API-compatible ranking candidates from source-aware concept presence."""
+
+    paths = (concept_mapping, book_profiles, output, report_output)
+    if len(set(paths)) != len(paths):
+        typer.echo("Error: adapter input and output paths must be distinct", err=True)
+        raise typer.Exit(code=1)
+    try:
+        mapping_hash = _sha256_file(concept_mapping)
+        profiles_hash = _sha256_file(book_profiles)
+        mapping = load_concept_mapping_report(concept_mapping)
+        profiles = load_book_profiles(book_profiles)
+        candidates = build_source_aware_matching_book_profiles(mapping, profiles)
+        if (
+            _sha256_file(concept_mapping) != mapping_hash
+            or _sha256_file(book_profiles) != profiles_hash
+        ):
+            raise ValueError("adapter input changed during candidate generation")
+        write_jsonl(candidates, output)
+        candidate_hash = _sha256_file(output)
+        report = build_source_aware_adapter_report(
+            mapping,
+            profiles,
+            candidates,
+            mapping_hash,
+            profiles_hash,
+            candidate_hash,
+        )
+        write_json(report, report_output)
+    except (SourceAwareAdapterError, RankingInputError, ValueError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "adapter_version": report.adapter_version,
+                "candidate_count": report.joined_book_count,
+                "with_covered_concepts": report.candidates_with_covered_concepts,
+                "with_prerequisite_concepts": report.candidates_with_prerequisite_concepts,
+                "output": str(output),
+                "report": str(report_output),
             },
             sort_keys=True,
         )

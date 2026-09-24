@@ -60,6 +60,20 @@ uv run bookmatch-ml map-book-evidence-concepts \
 The output deduplicates `(book, topic, concept)` presence. Repeated evidence remains available as
 diagnostic provenance and is not converted into a ranking weight.
 
+Join that report to deterministically rebuilt legacy `BookProfile` values and emit candidates for
+the existing ranking/API contract:
+
+```bash
+uv run bookmatch-ml build-matching-book-candidates \
+  --concept-mapping data/reports/scale-50-concept-presence-v2-overlap.json \
+  --book-profiles data/output/scale-50-book-profiles.jsonl \
+  --output data/output/scale-50-matching-candidates.jsonl \
+  --report data/reports/scale-50-matching-candidates-report.json
+```
+
+See [`docs/source-aware-matching-profile-adapter.md`](docs/source-aware-matching-profile-adapter.md)
+for the field policy and integration boundary.
+
 The strict importer retains exact, reviewed public-web, same-Work alternate, description,
 subject/topic, and title categories together with source and edition provenance. It also exposes
 unweighted concept-candidate text for later experiments. No numeric source weighting has been
