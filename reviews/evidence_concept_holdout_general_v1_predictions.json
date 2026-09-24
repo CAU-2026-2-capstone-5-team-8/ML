@@ -1,0 +1,2692 @@
+{
+  "entries": [
+    {
+      "evidence_id": "evidence_bfec2e533b2609413411",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_24f51c95ec0702421b54",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_8b35b8f81c6a4e785ae3",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_b85a6df2c407146689c8",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_a220247e87aef147bae5",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_e0a0262b0da36619d680",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_217ce798e1ae5097ef8f",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_921d428eb60296308481",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_8208d569c239fa0c9356",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_210d9884bd8c0477669e",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_37ff87c88b317475a2a6",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_c6f683183ef8eeb6e0ad",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_97ee108566185bd3986f",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "basis"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_e42e4f61bc0f45206f10",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_c71a5dd0c350b9bd756a",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_30db20c789dd726ca1cc",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_9a300ffbf32f6bc086a1",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_662699aff42d78fe8ffe",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "determinant",
+            "inner product",
+            "linear transformation",
+            "vector",
+            "vector space"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "determinant",
+            "inner product",
+            "linear transformation",
+            "vector space"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "determinant",
+            "inner product",
+            "linear transformation",
+            "vector space"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "determinant",
+            "inner product",
+            "linear transformation",
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "determinant",
+            "inner product",
+            "linear transformation",
+            "vector space"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_b2d2b2d4ef36f1be7381",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_82faa6f88c4b526c6471",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_59943400baac9a13899d",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_ae77ea71be803ef23771",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_f87bd492316f042df3fd",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_0abcb1bbc71d2281257f",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_5a0eac840fc1e3e52d40",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "vector",
+            "vector space"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_9d9e497428b19256c41a",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_ae345add14b621fa0f6e",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector",
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_ed23e2f6312bec9d9993",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_87a71ae424369df59821",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_667ed4f1ad578f5259d6",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_f374ca8d63289f3a4835",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_1a2a3b0c981bfc6d0239",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "linear transformation",
+            "matrix"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear transformation",
+            "matrix"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear transformation",
+            "matrix"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear transformation",
+            "matrix"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear transformation",
+            "matrix"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_4fa14715280c93175b00",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "matrix",
+            "rank"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix",
+            "rank"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix",
+            "rank"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix",
+            "rank"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix",
+            "rank"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_0fda97c66a1edf96894e",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_5db8689e434cb52ab570",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "matrix",
+            "rank"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "matrix",
+            "rank"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "matrix",
+            "rank",
+            "systems of equations"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "matrix",
+            "rank",
+            "systems of equations"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "linear system",
+            "matrix",
+            "rank",
+            "systems of equations"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_a31ce44593598c0a6b8a",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "vector",
+            "vector space"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "vector space"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_48ac3dad209e1884c3b4",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_599836b140cc7c243a78",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "singular value decomposition"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "singular value decomposition"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "singular value decomposition"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "eigenvalue",
+            "eigenvector",
+            "singular value decomposition"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "singular value decomposition"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_755419a98a7c49904824",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "matrix"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_ec9a8902de131f892ddd",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "dimension"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "dimension"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "dimension"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "dimension",
+            "vector space"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "basis",
+            "dimension"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_259edcd452a62065f995",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_55120c29c30e5102a628",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "determinant"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "determinant"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "determinant"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "determinant"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "determinant"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_3043b03f6d6a5038dd9f",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_dc7a6ed26e67a870b967",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_499db768aa8b972d30b5",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_7f41600ed653b99f0233",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "programming"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "programming"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "programming"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "programming"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "programming"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_ab0934eec104bb1ad10e",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_6955c29bb566482697d1",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "process",
+            "scheduling",
+            "security",
+            "thread"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "process",
+            "scheduling",
+            "security",
+            "thread"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "process",
+            "scheduling",
+            "security",
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "process",
+            "scheduling",
+            "security",
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "process",
+            "scheduling",
+            "security",
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_97e566bd01e3d12b0b6f",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtual memory"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtual memory"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_08bea0ae80e3975921a4",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_b54747adfd4ae688da1c",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "process",
+            "scheduling"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "scheduling"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "scheduling"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "scheduling"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "scheduling"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_6f2e2c73c33a89181c63",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system",
+            "process",
+            "synchronization"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system",
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system",
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system",
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system",
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_cf7336cff29f2737eb5c",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system",
+            "process",
+            "synchronization"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system",
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system",
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system",
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system",
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_a90f81fced995c5fc22a",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_627cac4a658b00c6cc2a",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_4ce2fea6fcf6004663d0",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_9535287cd86dd183c6a2",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_abe9f9a349ed1c6f5d3f",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "synchronization",
+            "thread"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "synchronization",
+            "thread"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "synchronization",
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "synchronization",
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "synchronization",
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_e55303ca1fc6fa4024a3",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_e22ffd86b15c44a3912d",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_40b7af2e8b552edcb237",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_afca89bff8b4aa0310cb",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "protection"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "protection"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "protection"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "protection"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "protection"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_02fae2c8f57ad05cbcd2",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_218c99d461a5704e98d0",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "memory management",
+            "virtual memory"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management",
+            "virtual memory"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management",
+            "virtual memory"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management",
+            "virtual memory"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management",
+            "virtual memory"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_24a75cff13bc12764f1d",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_393c1866d68e3f8cd79e",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "input/output"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_3a03fbdaba5739d9148a",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_54443afaadc41ba191fb",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "process"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "process"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "process"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "process"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "process"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_5cc5869c7c10dd3bdab0",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems",
+            "file system"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_9c0e62bdc40a53910aac",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "file system",
+            "storage"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system",
+            "storage"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system",
+            "storage"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system",
+            "storage"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "file system",
+            "storage"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_a870be56ca893df3ff31",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_95e82b7c79d3aec7d449",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "distributed systems"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_7650978271535312681b",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_1506ebe0cdaed855cc17",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_5405324420a6cd051d47",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "process",
+            "synchronization"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "process",
+            "synchronization"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_8806f4474e9d40af529b",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_744befa02a373360232a",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "concurrency",
+            "thread"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "concurrency",
+            "thread"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "concurrency",
+            "thread"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "concurrency",
+            "process",
+            "thread"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "concurrency",
+            "thread"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_26f6f42246932d56f810",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_530925033709b52db3a3",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_7d9bb8825b2508c9eabe",
+      "predictions": [
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_a6d08721bb5db8f163d5",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "security"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_d3f64da6663d3990f2cc",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_e931a7546c0e6a96f0bb",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "deadlock"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "deadlock"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_f17d74e00534e6ddef07",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [
+            "memory management",
+            "virtual memory"
+          ],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [
+            "virtual memory"
+          ],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_f8a4e4ead96cb3f334b1",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_73b501c70202b298455c",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_cba232b0e44e21f25593",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_d3b424aedbfdaa2541e2",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    },
+    {
+      "evidence_id": "evidence_535afb4d7626e2ca9d16",
+      "predictions": [
+        {
+          "predicted_concept_ids": [],
+          "variant": "v1"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_a_overlap"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_b_forms"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c1_naive_path_union"
+        },
+        {
+          "predicted_concept_ids": [],
+          "variant": "v2_c2_context_assisted"
+        }
+      ]
+    }
+  ],
+  "feature_config_hash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6",
+  "graph_hash": "sha256:a30a726f28b27215df5aa397bca62ecea7badd8dbbdb90e0a46a43ac05cb2245",
+  "manifest_hash": "sha256:3bc2504787e12ac6da2e66e1c49c23a07153b4aaf59f78a9154a78b49c7f2c02",
+  "matcher_v2_experiment_config_hash": "sha256:a5ca12516a9eedd78004a045acb91ce7ca51995b20dd90c225d3c8551ded0651",
+  "matching_v1_config_hash": "sha256:7e2386f1661041ee685f1d2988c8677e053325af932362f258fa3181c97023a0",
+  "prediction_version": "evidence-concept-holdout-predictions-v1"
+}

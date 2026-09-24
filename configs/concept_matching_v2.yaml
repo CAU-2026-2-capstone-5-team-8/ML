@@ -1,0 +1,19 @@
+config_version: concept-matching-config-v3
+profile_version: toc-concept-profile-v3
+model_version: concept-matching-v2-overlap
+matcher_version: normalized_alias_span_v2
+coverage_weight_rule: min_occurrences_over_three_v1
+toc_mapping:
+  alias_additions:
+    linear-algebra:
+      linear system: [systems of linear equations]
+  exclusions:
+    operating-systems:
+      process: [compilation process]
+      scheduling: [disk scheduling]
+policy:
+  minimum_readiness_assessment_coverage: 0.5
+  minimum_opportunity_assessment_coverage: 0.5
+  minimum_readiness_score: 0.6
+  known_mastery_threshold: 0.8
+  learning_mastery_threshold: 0.6

@@ -64,9 +64,20 @@ and TOC path when present. Consequently:
 - later experiments can compare TOC-only, metadata-only, combined unweighted, and source-aware
   weighting without changing or reconstructing the handoff.
 
-The adapter deliberately stops at candidate text. It does not call the current matcher or change
-ranking v1. Choosing aliases, embeddings, source weights, thresholds, and ranking effects belongs
-to a separate measured ML experiment.
+The original candidate adapter still stops at candidate text. The separate
+`map-book-evidence-concepts` command now applies the production overlap-only matcher-v2 and emits
+deduplicated book-level concept presence with every supporting evidence row and provenance field.
+It does not assign source weights or feed occurrence counts into ranking.
+
+```bash
+uv run bookmatch-ml map-book-evidence-concepts \
+  --input ../Data-Pipeline/data/experiments/scale-50-bulk-web-20260922/ml-evidence-v1/book-evidence.jsonl \
+  --output data/reports/scale-50-concept-presence-v2-overlap.json
+```
+
+This source-aware concept-presence report is intentionally not yet converted into the existing
+`MatchingBookProfile` API DTO. Ranking remains unchanged until that adapter and its semantics are
+defined and evaluated.
 
 ## Verified Scale-50 handoff
 

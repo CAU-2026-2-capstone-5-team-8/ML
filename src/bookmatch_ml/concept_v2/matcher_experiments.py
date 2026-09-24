@@ -12,6 +12,7 @@ from bookmatch_ml.concept_v2.graph import LoadedConceptGraph
 from bookmatch_ml.concept_v2.profile import (
     LoadedConceptMatchingConfig,
     _mapping_inputs,
+    match_alias_spans_v2,
     validate_toc_mapping_rules,
 )
 from bookmatch_ml.config import ConfigError, LoadedFeatureConfig, _load_unique_key_yaml
@@ -331,15 +332,22 @@ def match_concept_text_v2_a(
         raise ValueError(f"unsupported graph topic: {topic}")
     validate_toc_mapping_rules(matching, graph)
     aliases, exclusions = _mapping_inputs(features, graph, matching, topic)
-    matches, ambiguous = _span_matches(
-        text,
-        aliases,
-        exclusions,
-        "normalized_alias_span_v2_a",
-    )
+    matches, ambiguous = match_alias_spans_v2(text, aliases, exclusions)
     if ambiguous:
         return [], True
-    return _one_match_per_concept(_suppress_nested_overlaps(matches)), False
+    return (
+        [
+            ExperimentalConceptMatch(
+                concept_id=match.concept_id,
+                matching_alias=match.matching_alias,
+                match_method="normalized_alias_span_v2_a",
+                span_start=match.span_start,
+                span_end=match.span_end,
+            )
+            for match in matches
+        ],
+        False,
+    )
 
 
 def match_concept_text_v2_b(
