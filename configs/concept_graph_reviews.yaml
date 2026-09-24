@@ -1,14 +1,14 @@
 config_version: concept-graph-reviews-v1
 graph_version: concept-graph-v1
 reviews:
-  - {topic: operating-systems, prerequisite: programming, dependent: process, review_status: unreviewed, review_note: null}
-  - {topic: operating-systems, prerequisite: computer architecture, dependent: memory management, review_status: unreviewed, review_note: null}
-  - {topic: operating-systems, prerequisite: process, dependent: thread, review_status: unreviewed, review_note: null}
-  - {topic: operating-systems, prerequisite: process, dependent: scheduling, review_status: unreviewed, review_note: null}
-  - {topic: operating-systems, prerequisite: process, dependent: concurrency, review_status: unreviewed, review_note: null}
-  - {topic: operating-systems, prerequisite: thread, dependent: concurrency, review_status: unreviewed, review_note: null}
-  - {topic: operating-systems, prerequisite: concurrency, dependent: synchronization, review_status: unreviewed, review_note: null}
-  - {topic: operating-systems, prerequisite: synchronization, dependent: deadlock, review_status: unreviewed, review_note: null}
+  - {topic: operating-systems, prerequisite: programming, dependent: process, review_status: rejected, review_note: "Programming experience is useful background, but programming is too broad to treat as a direct prerequisite for understanding the operating-system process concept."}
+  - {topic: operating-systems, prerequisite: computer architecture, dependent: memory management, review_status: accepted, review_note: "Understanding hardware memory, addressing, and the CPU-memory interface provides direct prerequisite knowledge for operating-system memory management."}
+  - {topic: operating-systems, prerequisite: process, dependent: thread, review_status: accepted, review_note: "A thread is understood in relation to a process and its shared address space and resources, so process knowledge is a direct prerequisite for learning threads."}
+  - {topic: operating-systems, prerequisite: process, dependent: scheduling, review_status: accepted, review_note: "Operating-system scheduling selects among executable processes or related execution units, so understanding processes is direct prerequisite knowledge for scheduling."}
+  - {topic: operating-systems, prerequisite: process, dependent: concurrency, review_status: accepted, review_note: "In operating-systems context, understanding independently progressing processes provides direct background for reasoning about concurrent execution."}
+  - {topic: operating-systems, prerequisite: thread, dependent: concurrency, review_status: accepted, review_note: "Threads are a primary operating-system execution unit used to explain concurrent execution and shared-state interaction, making thread knowledge a direct prerequisite candidate for concurrency."}
+  - {topic: operating-systems, prerequisite: concurrency, dependent: synchronization, review_status: accepted, review_note: "Synchronization exists to coordinate concurrent execution and shared-state access, so concurrency is direct prerequisite knowledge for understanding synchronization."}
+  - {topic: operating-systems, prerequisite: synchronization, dependent: deadlock, review_status: accepted, review_note: "Understanding synchronization and coordinated resource access provides direct background for reasoning about waiting cycles and deadlock conditions."}
   - {topic: operating-systems, prerequisite: memory management, dependent: virtual memory, review_status: unreviewed, review_note: null}
   - {topic: operating-systems, prerequisite: storage, dependent: file system, review_status: unreviewed, review_note: null}
   - {topic: linear-algebra, prerequisite: high school algebra, dependent: linear system, review_status: unreviewed, review_note: null}
