@@ -162,3 +162,78 @@ def test_isbn_book_id_requires_its_canonical_field(
 
     with pytest.raises(CanonicalDataError, match=message):
         load_canonical_dataset(directory)
+
+
+def _source_provenance() -> dict[str, object]:
+    return {
+        "evidence_type": "toc",
+        "tier": "exact_edition_toc",
+        "target_title": "Operating System Concepts",
+        "target_authors": ["Abraham Silberschatz"],
+        "discovery_method": "reviewed_public_page_registry",
+        "match_basis": ["isbn_13", "edition"],
+        "validation_status": "strong",
+    }
+
+
+def _rewrite_first_source(directory: Path, mutate) -> None:
+    path = directory / "sources.jsonl"
+    lines = path.read_text(encoding="utf-8").splitlines()
+    record = json.loads(lines[0])
+    mutate(record)
+    lines[0] = json.dumps(record)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def test_source_accepts_data_pipeline_evidence_provenance(tmp_path: Path) -> None:
+    """Data-Pipeline emits Source.evidence since book-evidence-v1; loading must not fail."""
+    directory = _dataset_copy(tmp_path)
+    _rewrite_first_source(directory, lambda record: record.update(evidence=_source_provenance()))
+
+    dataset = load_canonical_dataset(directory)
+
+    provenance = dataset.sources[0].evidence
+    assert provenance is not None
+    assert provenance.tier == "exact_edition_toc"
+    assert provenance.validation_status == "strong"
+    assert provenance.match_basis == ["isbn_13", "edition"]
+
+
+def test_source_evidence_is_optional_for_older_datasets(tmp_path: Path) -> None:
+    """A dataset collected before the field existed stays loadable and unpromoted."""
+    directory = _dataset_copy(tmp_path)
+    _rewrite_first_source(directory, lambda record: record.pop("evidence", None))
+
+    dataset = load_canonical_dataset(directory)
+
+    assert dataset.sources[0].evidence is None
+
+
+def test_null_source_evidence_is_accepted_without_inventing_a_tier(tmp_path: Path) -> None:
+    """Data-Pipeline writes an explicit null when no provenance was recorded."""
+    directory = _dataset_copy(tmp_path)
+    _rewrite_first_source(directory, lambda record: record.update(evidence=None))
+
+    dataset = load_canonical_dataset(directory)
+
+    assert dataset.sources[0].evidence is None
+
+
+def test_unknown_evidence_tier_is_rejected(tmp_path: Path) -> None:
+    """An unrecognized tier must fail loudly instead of being treated as exact."""
+    directory = _dataset_copy(tmp_path)
+    provenance = _source_provenance() | {"tier": "scraped_guess"}
+    _rewrite_first_source(directory, lambda record: record.update(evidence=provenance))
+
+    with pytest.raises(CanonicalDataError, match=r"sources\.jsonl line 1"):
+        load_canonical_dataset(directory)
+
+
+def test_evidence_without_match_basis_is_rejected(tmp_path: Path) -> None:
+    """Provenance with no stated match basis is not usable evidence."""
+    directory = _dataset_copy(tmp_path)
+    provenance = _source_provenance() | {"match_basis": []}
+    _rewrite_first_source(directory, lambda record: record.update(evidence=provenance))
+
+    with pytest.raises(CanonicalDataError, match=r"sources\.jsonl line 1"):
+        load_canonical_dataset(directory)

@@ -35,7 +35,7 @@ SourceType = Literal[
     "sample_page",
     "other",
 ]
-SourceEvidenceTier = Literal[
+EvidenceTier = Literal[
     "exact_edition_toc",
     "same_work_alternate_edition_toc",
     "validated_public_structured_toc",
@@ -176,10 +176,14 @@ class TocEntry(StrictModel):
 
 
 class SourceEvidenceProvenance(StrictModel):
-    """Additive Data-Pipeline provenance retained at the canonical boundary."""
+    """How Data-Pipeline related this source's edition to the target book.
+
+    Emitted by Data-Pipeline since `book-evidence-v1`. It records provenance only and
+    carries no ML confidence or ranking weight.
+    """
 
     evidence_type: Literal["toc", "metadata"]
-    tier: SourceEvidenceTier
+    tier: EvidenceTier
     target_isbn: str | None = None
     target_title: str = Field(min_length=1)
     target_authors: list[str]
@@ -205,6 +209,8 @@ class Source(StrictModel):
     license: str | None = None
     rights_note: str | None = None
     content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    # Absent on datasets produced before book-evidence-v1; absence means the tier was
+    # never recorded, not that the source is an exact-edition match.
     evidence: SourceEvidenceProvenance | None = None
 
     @field_validator("retrieved_at")

@@ -1,5 +1,9 @@
 # BookMatch ML
 
+For a reproducible canonical-data → local HTTP verification workflow and the 25-book
+integration findings, see [Canonical HTTP verification](docs/canonical-http-verification-v1.md).
+The check verifies API consistency, not recommendation accuracy.
+
 Evidence-first ML and recommendation logic for the CAU Capstone Team 8 personalized
 technical-book recommendation project.
 

@@ -1,0 +1,2 @@
+# Config hashes identify exact bytes; checkout must preserve the same bytes on Windows/Linux.
+*.yaml text eol=lf
