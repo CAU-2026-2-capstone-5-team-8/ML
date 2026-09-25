@@ -178,6 +178,19 @@ See the
 [prerequisite-first candidate report](docs/experiments/prerequisite-first-ranking-v2-candidate-v1.md)
 for the policy, Scale-50 results, human-pair agreement, and remaining production decisions.
 
+To exercise the production-v2 implementation with an actual generated `ReaderProfile` rather
+than a named scenario, run:
+
+```bash
+uv run bookmatch-ml demo-production-ranking-v2 \
+  --reader data/output/reader_profile.json \
+  --limit 5
+```
+
+Use `data/output/concept_matching_la_reader.json` for the fixed Linear Algebra reader. This
+command consumes the same Scale-50 matching candidates and server-owned accepted prerequisite
+projection used by the explicit v2 API path.
+
 ## Requirements
 
 - Python 3.12 or newer
@@ -392,8 +405,9 @@ limitations.
 
 ## Experimental concept matching v2
 
-The existing `rank` CLI and `/ml/rank` API remain `absolute_gap_v1`. A separate batch command
-compares their v1 result with TOC-based book concept coverage and the existing
+The existing `rank` CLI and default `/ml/rank` behavior remain `absolute_gap_v1`; v2 requires an
+explicit request selector. A separate batch command compares the v1 result with TOC-based book
+concept coverage and the existing
 `ReaderProfile.concept_readiness` values. It reports **prerequisite readiness** and **learning
 opportunity** separately, each with its own mastery-assessment coverage. Missing concept mastery
 is unknown, never zero. Prose difficulty remains in the report only as a v1 comparison and
@@ -550,8 +564,8 @@ Interactive OpenAPI documentation is available at `http://127.0.0.1:8000/docs` w
 is running.
 
 The factory loads packaged defaults without reading repository-relative files at import time.
-Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml` and `ranking.yaml` to select
-an externally mounted, versioned configuration in deployment.
+Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml`, `ranking.yaml`, and
+`ranking_v2.yaml` to select externally mounted, versioned configurations in deployment.
 
 `POST /ml/reader-profile` accepts the same assessment content as `examples/assessment.json`, with
 camelCase keys and an optional `userId` correlation value. It returns the three readiness
@@ -603,6 +617,14 @@ providers and does not own authentication or recommendation history. Its candida
 small matching projection rather than the complete internal `BookProfile`, so internal analysis
 details are not coupled to Spring DTOs.
 
+Ranking-v2 is available on the same route only when the request explicitly sets
+`"rankingModel": "rank-prerequisite-first-v2"`. Omitting the selector preserves `rank-v1`.
+V2 returns rank plus separate prerequisite-readiness and direct-opportunity axes, never a fake
+scalar score, and returns at most the requested limit without filling shortages from fallback
+pools. The complete request/response, error semantics, Scale-50 smoke commands, and Backend
+migration checklist are in
+[`docs/rank-v2-production-integration.md`](docs/rank-v2-production-integration.md).
+
 ## Evaluate the baseline
 
 After generating the current ten-book profile artifact, run the combined evaluation report:
@@ -647,8 +669,9 @@ limitations and next decision gates, is recorded in
 
 ## Compare ranking evidence policies
 
-The existing `rank` CLI and `/ml/rank` API retain renormalized scoring. A separate batch experiment
-compares that baseline with a configurable minimum coverage rule and a two-stage presentation:
+The existing `rank` CLI and default `/ml/rank` behavior retain renormalized scoring. A separate
+batch experiment compares that baseline with a configurable minimum coverage rule and a two-stage
+presentation:
 
 ```bash
 uv run bookmatch-ml evaluate-ranking-policies \
@@ -673,8 +696,9 @@ uv run ruff check .
 uv run ruff format --check .
 ```
 
-The tests use only small synthetic fixtures under `tests/fixtures/`; they require no network,
-database, external LLM, Spring service, or live Data-Pipeline collection.
+The tests use small versioned fixtures under `tests/fixtures/`, including a compact Scale-50
+ranking snapshot; they require no network, database, external LLM, Spring service, or live
+Data-Pipeline collection.
 
 ## Package layout
 
