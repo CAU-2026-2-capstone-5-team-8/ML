@@ -1,6 +1,7 @@
 review_version: assessment-concept-review-v1
 
-# Human decisions only. Generated evidence packets belong under ignored data/reviews/.
+# Human decisions and explicit unreviewed queue rows only.
+# Generated evidence packets belong under ignored data/reviews/.
 # Key: topic_id + concept_id + concept_role.
 reviews:
   - topic_id: operating-systems
@@ -99,3 +100,81 @@ reviews:
     status: ineligible
     reason_code: low_diagnostic_value
     review_note: General data-structure knowledge is broad background knowledge with limited operating-systems-specific diagnostic value.
+  - topic_id: linear-algebra
+    concept_id: matrix
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Foundational linear-algebra concept with high diagnostic value across matrix operations and representations.
+  - topic_id: linear-algebra
+    concept_id: vector
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Foundational linear-algebra concept that is necessary for understanding vector spaces and linear operations.
+  - topic_id: linear-algebra
+    concept_id: linear system
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core linear-algebra concept with strong diagnostic value for equation solving and matrix-based reasoning.
+  - topic_id: linear-algebra
+    concept_id: orthogonality
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core linear-algebra concept that meaningfully distinguishes knowledge of inner-product and geometric structure.
+  - topic_id: linear-algebra
+    concept_id: dimension
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core vector-space concept with meaningful diagnostic value in the linear-algebra context.
+  - topic_id: linear-algebra
+    concept_id: determinant
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Canonical linear-algebra concept with strong diagnostic value for matrix properties and invertibility.
+  - topic_id: linear-algebra
+    concept_id: gaussian elimination
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Canonical linear-algebra procedure with strong diagnostic value for solving linear systems.
+  - topic_id: linear-algebra
+    concept_id: basis
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core vector-space concept that meaningfully distinguishes structural understanding of linear algebra.
+  - topic_id: linear-algebra
+    concept_id: eigenvalue
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Canonical linear-algebra concept with strong diagnostic value for transformations and matrix behavior.
+  - topic_id: linear-algebra
+    concept_id: vector space
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Foundational abstract linear-algebra concept with high diagnostic value.
+  - topic_id: linear-algebra
+    concept_id: diagonalization
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Important linear-algebra concept that distinguishes understanding of eigenstructure and matrix transformations.
+  - topic_id: linear-algebra
+    concept_id: high school algebra
+    concept_role: prerequisite
+    status: ineligible
+    reason_code: too_general
+    review_note: High school algebra is a broad curricular area rather than a sufficiently specific diagnostic concept for linear-algebra readiness.
+  - topic_id: linear-algebra
+    concept_id: systems of equations
+    concept_role: prerequisite
+    status: eligible
+    reason_code: null
+    review_note: Specific and meaningful prerequisite knowledge for beginning linear algebra and understanding linear systems.
