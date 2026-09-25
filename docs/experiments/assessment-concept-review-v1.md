@@ -102,7 +102,9 @@ The default reserve is 3 per role. The first OS queue contains:
 
 The generated packet includes priority, coverage, mean book weight, evidence types, prerequisite
 methods, supporting books, compact evidence references, legacy selection/QuestionSpec status, rank,
-and empty human-decision fields. It contains no automatic eligibility suggestion.
+and the authoritative human-decision fields from the review artifact. Before review those fields
+were empty; after review they contain the decisions documented below. The packet contains no
+automatic eligibility suggestion.
 
 ### `programming / prerequisite`
 
@@ -115,7 +117,7 @@ and empty human-decision fields. It contains no automatic eligibility suggestion
 - prerequisite method: `explicit_and_early_prose_proxy`
 - legacy self-assessment selected: yes
 - legacy QuestionSpec target: yes
-- review status: `unreviewed`
+- review status: `ineligible / too_general`
 
 ### `process / covered`
 
@@ -128,7 +130,33 @@ and empty human-decision fields. It contains no automatic eligibility suggestion
   `book_7d22aef622717f0ad24b`, `isbn13:9780130319999`, `isbn13:9781985086593`
 - legacy self-assessment selected: yes
 - legacy QuestionSpec target: yes
-- review status: `unreviewed`
+- review status: `eligible`
+
+## User-approved Operating Systems decisions
+
+The human decision set reviews all 16 rows in the first OS queue. These are user-approved human
+review decisions, not automatic labels or heuristic suggestions.
+
+- reviewed: `16/16`
+- eligible: `11`
+- ineligible: `5`
+- unreviewed: `0`
+- covered eligible (`9`): process, thread, scheduling, synchronization, concurrency, virtual
+  memory, file system, deadlock, virtualization
+- covered ineligible (`2`): security (`low_diagnostic_value`), protection (`too_ambiguous`)
+- prerequisite eligible (`2`): computer architecture, assembly language
+- prerequisite ineligible (`3`): programming (`too_general`), algorithms
+  (`low_diagnostic_value`), data structures (`low_diagnostic_value`)
+
+`programming` is excluded only as an assessment primary target. Its book evidence and inferred
+prerequisite feature remain unchanged for recommendation-side use. The human rationale is that
+general programming knowledge is too broad to distinguish operating-systems readiness.
+
+The exact decision artifact hash is
+`sha256:e816f92b81138851e048f40ef879cabd0439053f3a901e8064e1710c25005383`.
+Combined with `configs/assessment_reviewed.yaml` and the schema version, it produces effective
+reviewed config hash
+`sha256:3d94b26001746192b43e227253746e77e9c1d3ccd17f5871b1c87e61779b6d77`.
 
 ## Reviewed selection and shortages
 
@@ -137,9 +165,34 @@ rows, and then applies the existing role limits. `ineligible`, `unreviewed`, and
 are never fallback candidates. If too few eligible concepts remain, the existing
 `QuestionSpecShortage` mechanism records requested and produced counts.
 
-With the current empty human decision file, the real OS reviewed-mode diagnostic selects zero
-concepts, emits zero QuestionSpecs, and reports five quota shortages. This is expected fail-closed
-behavior, not a production selection change.
+With the completed OS decision set, the reviewed blueprint selects:
+
+- covered (`8`): process, thread, scheduling, synchronization, concurrency, virtual memory, file
+  system, deadlock
+- prerequisite (`2`): computer architecture, assembly language
+
+Nine covered concepts are eligible, but the existing covered self-assessment limit is eight, so
+lower-priority `virtualization` remains eligible without entering this blueprint. Both eligible
+prerequisites enter the selected set. The background recall quota requests three targets, so the
+blueprint records one explicit shortage (`requested=3`, `produced=2`) rather than backfilling an
+ineligible prerequisite.
+
+The reviewed blueprint contains 13 QuestionSpecs:
+
+- vocabulary: `6` — four recognition targets (process, thread, scheduling, synchronization) and
+  two comparison targets (process with thread, synchronization with concurrency)
+- background knowledge: `2` — computer architecture and assembly language
+- comprehension: `5` — unchanged quota fulfillment over the eligible covered selection
+
+`programming`, `security`, `protection`, `algorithms`, and `data structures` do not appear as
+QuestionSpec primary targets. The legacy `assessment-config-v1` artifact remains byte-identical at
+SHA-256 `3822916d24b155b50ee3efb2581b43aa5587926eb36b3f7e958bb1f740d47f9c`.
+
+Question-Generation compatibility was checked read-only using its existing `render-prompt` CLI.
+The reviewed `process` vocabulary/recognize/level-1 spec and `computer architecture` background
+knowledge/recall/level-1 spec both preserve `question-spec-v1`, concept identity, difficulty,
+reviewed config provenance, and `ko-KR` output policy. Live Gemini generation was not run because
+the process environment did not contain `GEMINI_API_KEY`.
 
 ## Adding a topic
 

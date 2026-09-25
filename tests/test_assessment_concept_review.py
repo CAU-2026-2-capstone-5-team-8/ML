@@ -379,10 +379,49 @@ def test_review_packet_cli_writes_identical_outputs(tmp_path: Path) -> None:
         "--reviewed-assessment-config",
         str(ROOT / "configs" / "assessment_reviewed.yaml"),
         "--concept-reviews",
-        str(ROOT / "configs" / "assessment_concept_reviews.yaml"),
+        str(ROOT / "tests" / "fixtures" / "assessment_concept_reviews.yaml"),
     ]
     for output in outputs:
         result = CliRunner().invoke(app, [*args, "--output", str(output)])
         assert result.exit_code == 0, result.output
         assert "process" in result.output
     assert outputs[0].read_bytes() == outputs[1].read_bytes()
+
+
+def test_current_os_human_review_is_complete_and_exact() -> None:
+    reviews = load_assessment_concept_reviews(ROOT / "configs" / "assessment_concept_reviews.yaml")
+    decisions = {
+        (item.concept_role, item.concept_id): (item.status, item.reason_code)
+        for item in reviews.artifact.reviews
+    }
+
+    assert len(reviews.artifact.reviews) == 16
+    assert all(item.status != "unreviewed" for item in reviews.artifact.reviews)
+    assert sum(item.status == "eligible" for item in reviews.artifact.reviews) == 11
+    assert sum(item.status == "ineligible" for item in reviews.artifact.reviews) == 5
+    assert decisions == {
+        ("covered", "process"): ("eligible", None),
+        ("covered", "thread"): ("eligible", None),
+        ("covered", "scheduling"): ("eligible", None),
+        ("covered", "synchronization"): ("eligible", None),
+        ("covered", "concurrency"): ("eligible", None),
+        ("covered", "virtual memory"): ("eligible", None),
+        ("covered", "file system"): ("eligible", None),
+        ("covered", "deadlock"): ("eligible", None),
+        ("covered", "virtualization"): ("eligible", None),
+        ("covered", "security"): ("ineligible", "low_diagnostic_value"),
+        ("covered", "protection"): ("ineligible", "too_ambiguous"),
+        ("prerequisite", "computer architecture"): ("eligible", None),
+        ("prerequisite", "assembly language"): ("eligible", None),
+        ("prerequisite", "programming"): ("ineligible", "too_general"),
+        ("prerequisite", "algorithms"): ("ineligible", "low_diagnostic_value"),
+        ("prerequisite", "data structures"): ("ineligible", "low_diagnostic_value"),
+    }
+
+
+def test_current_os_reviewed_config_hash_is_deterministic() -> None:
+    path = ROOT / "configs" / "assessment_concept_reviews.yaml"
+    first = reviewed_assessment_config(REVIEWED, load_assessment_concept_reviews(path))
+    second = reviewed_assessment_config(REVIEWED, load_assessment_concept_reviews(path))
+
+    assert first.content_hash == second.content_hash

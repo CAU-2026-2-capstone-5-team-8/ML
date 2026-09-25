@@ -2,4 +2,100 @@ review_version: assessment-concept-review-v1
 
 # Human decisions only. Generated evidence packets belong under ignored data/reviews/.
 # Key: topic_id + concept_id + concept_role.
-reviews: []
+reviews:
+  - topic_id: operating-systems
+    concept_id: process
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core operating-systems concept with high diagnostic value.
+  - topic_id: operating-systems
+    concept_id: thread
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core operating-systems concept that distinguishes process and execution-model understanding.
+  - topic_id: operating-systems
+    concept_id: scheduling
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core operating-systems concept with strong diagnostic value for CPU and process-management knowledge.
+  - topic_id: operating-systems
+    concept_id: synchronization
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core operating-systems concept that meaningfully distinguishes concurrency knowledge.
+  - topic_id: operating-systems
+    concept_id: concurrency
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core operating-systems concept with high diagnostic value for concurrent execution knowledge.
+  - topic_id: operating-systems
+    concept_id: virtual memory
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core operating-systems memory-management concept that is difficult to answer from general computer knowledge alone.
+  - topic_id: operating-systems
+    concept_id: file system
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Core operating-systems storage abstraction with meaningful diagnostic value.
+  - topic_id: operating-systems
+    concept_id: deadlock
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Canonical operating-systems concept with strong diagnostic value for synchronization and resource-management knowledge.
+  - topic_id: operating-systems
+    concept_id: virtualization
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Domain-relevant systems concept with sufficient specificity to distinguish operating-systems knowledge.
+  - topic_id: operating-systems
+    concept_id: security
+    concept_role: covered
+    status: ineligible
+    reason_code: low_diagnostic_value
+    review_note: Security is too broad at this concept granularity to reliably distinguish operating-systems knowledge from general computer-security knowledge.
+  - topic_id: operating-systems
+    concept_id: protection
+    concept_role: covered
+    status: ineligible
+    reason_code: too_ambiguous
+    review_note: Protection is too broad as a standalone assessment target; a more specific operating-systems protection concept would be needed.
+  - topic_id: operating-systems
+    concept_id: computer architecture
+    concept_role: prerequisite
+    status: eligible
+    reason_code: null
+    review_note: Meaningful prerequisite knowledge for understanding operating-system execution, memory management, and hardware interaction.
+  - topic_id: operating-systems
+    concept_id: assembly language
+    concept_role: prerequisite
+    status: eligible
+    reason_code: null
+    review_note: Useful low-level prerequisite knowledge for understanding operating-system execution and machine interaction.
+  - topic_id: operating-systems
+    concept_id: programming
+    concept_role: prerequisite
+    status: ineligible
+    reason_code: too_general
+    review_note: General programming knowledge is too broad and does not meaningfully distinguish operating-systems readiness.
+  - topic_id: operating-systems
+    concept_id: algorithms
+    concept_role: prerequisite
+    status: ineligible
+    reason_code: low_diagnostic_value
+    review_note: General algorithm knowledge is useful computer-science background but too broad for operating-systems-specific diagnostic assessment.
+  - topic_id: operating-systems
+    concept_id: data structures
+    concept_role: prerequisite
+    status: ineligible
+    reason_code: low_diagnostic_value
+    review_note: General data-structure knowledge is broad background knowledge with limited operating-systems-specific diagnostic value.
