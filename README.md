@@ -1,5 +1,10 @@
 # BookMatch ML
 
+An experimental [concept difficulty and reader-fit rubric](docs/concept-difficulty-v1.md)
+extends the existing TOC/graph baseline with explicit concept levels, prerequisite gaps,
+learning burden, and a blind human-review export. Run it separately from the unchanged v1 API
+until independent recommendation-quality evaluation is complete.
+
 For a reproducible canonical-data → local HTTP verification workflow and the 25-book
 integration findings, see [Canonical HTTP verification](docs/canonical-http-verification-v1.md).
 The check verifies API consistency, not recommendation accuracy.
@@ -403,15 +408,20 @@ change the existing reader-profile scoring or ranking API. See
 [Question Difficulty v1](docs/assessment-difficulty-v1.md) for rules, real-data findings, and
 limitations.
 
-## Experimental concept matching v2
+## Experimental concept matching v3 and difficulty v2
 
-The existing `rank` CLI and default `/ml/rank` behavior remain `absolute_gap_v1`; v2 requires an
-explicit request selector. A separate batch command compares the v1 result with TOC-based book
-concept coverage and the existing
+The existing `rank` CLI and default `/ml/rank` behavior remain `absolute_gap_v1`; ranking v2 and
+the experimental difficulty strategy each require an explicit request selector. A separate batch
+command compares the v1 result with TOC-based book concept coverage and the existing
 `ReaderProfile.concept_readiness` values. It reports **prerequisite readiness** and **learning
 opportunity** separately, each with its own mastery-assessment coverage. Missing concept mastery
 is unknown, never zero. Prose difficulty remains in the report only as a v1 comparison and
 optional diagnostic.
+
+`configs/concept_difficulty.yaml` also defines an experimental intrinsic book score and a separate
+reader learning-burden interval. The exact formulas, bands, evidence rules, real-data snapshot,
+and review workflow are documented in
+[`docs/concept-difficulty-v1.md`](docs/concept-difficulty-v1.md).
 
 ```bash
 uv run bookmatch-ml build-book-profiles \
@@ -566,7 +576,9 @@ is running.
 The factory loads packaged defaults without reading repository-relative files at import time.
 Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml` and `ranking.yaml` to select
 externally mounted, versioned configurations in deployment. Add `ranking_v2.yaml` when that
-deployment should accept explicit ranking-v2 requests; v1-only operation does not require it.
+deployment should accept explicit ranking-v2 requests, and `concept_difficulty.yaml` when it should
+accept the experimental concept-difficulty strategy; v1-only operation requires neither, and a
+strategy whose config is missing returns a validation error.
 
 `POST /ml/reader-profile` accepts the same assessment content as `examples/assessment.json`, with
 camelCase keys and an optional `userId` correlation value. It returns the three readiness
@@ -611,6 +623,15 @@ Set the optional top-level `bookId` to score one supplied candidate even when it
 the selected topic. Otherwise the endpoint returns the configured topic-filtered top K. Each item
 contains flat `topicFit`, `vocabularyFit`, `knowledgeFit`, and `comprehensionFit` fields plus the
 subcomponents, active weights, evidence diagnostics, deterministic reasons, and version hashes.
+
+The optional top-level `rankingStrategy=concept_difficulty_v2_experimental` selects the new
+concept-aware comparison. Every candidate must then include the batch-produced
+`conceptProfile`; the response adds `conceptDifficulty` containing the reader-independent book
+score/band, reader burden interval, TOC matches, prerequisite graph paths, and hashes. Omitting the
+strategy preserves the existing request and response behavior. The nested `conceptProfile` is
+the versioned ML batch artifact and therefore retains its canonical snake_case field names. New
+artifacts use `toc-concept-profile-v3`; v2 artifacts remain readable with empty exclusion-audit
+fields for compatibility.
 
 Spring remains responsible for loading persisted assessments and candidate profiles, calling
 these endpoints, and storing results. The API does not connect to PostgreSQL or upstream book

@@ -5,6 +5,7 @@ from typing import Literal, Self
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from pydantic.alias_generators import to_camel
 
+from bookmatch_ml.concept_v2.profile import BookConceptProfileV2
 from bookmatch_ml.ranking.prerequisite_first_v2 import (
     RankingV2Response as InternalRankingV2Response,
 )
@@ -147,6 +148,7 @@ class BookCandidateDto(ApiModel):
     feature_version: str = Field(min_length=1)
     config_version: str = Field(min_length=1)
     config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    concept_profile: BookConceptProfileV2 | None = None
 
     def to_internal(self) -> MatchingBookProfile:
         return MatchingBookProfile(
@@ -175,6 +177,7 @@ class RankRequest(ApiModel):
     candidate_books: list[BookCandidateDto] = Field(min_length=1)
     limit: int = Field(default=5, ge=1, le=100)
     book_id: str | None = Field(default=None, min_length=1)
+    ranking_strategy: Literal["baseline_v1", "concept_difficulty_v2_experimental"] = "baseline_v1"
 
     @field_validator("candidate_books")
     @classmethod
@@ -263,10 +266,38 @@ class RankedBookDto(ApiModel):
         )
 
 
+class ExperimentalRankedBookDto(RankedBookDto):
+    concept_difficulty: dict[str, object]
+
+
+# Maps keyed by concept ID. Their keys are data, so they must stay joinable with the
+# raw concept IDs used elsewhere in the response and in the concept graph.
+_CONCEPT_KEYED_MAPS = frozenset(
+    {"concept_levels", "concept_evidence", "prerequisite_evidence", "burden_contributions"}
+)
+
+
+def camelize_payload(value):
+    """Recursively convert experimental evidence field names without changing their values."""
+
+    if isinstance(value, dict):
+        return {
+            to_camel(str(key)): (
+                {concept: camelize_payload(entry) for concept, entry in item.items()}
+                if key in _CONCEPT_KEYED_MAPS and isinstance(item, dict)
+                else camelize_payload(item)
+            )
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [camelize_payload(item) for item in value]
+    return value
+
+
 class RankResponse(ApiModel):
     user_id: int | None = Field(default=None, ge=1)
     topic_id: str
-    items: list[RankedBookDto]
+    items: list[ExperimentalRankedBookDto | RankedBookDto]
     model_version: str
     config_version: str
     config_hash: str

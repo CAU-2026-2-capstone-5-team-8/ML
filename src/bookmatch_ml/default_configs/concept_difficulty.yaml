@@ -1,0 +1,58 @@
+# Proposed curriculum rubric, not human-validated labels. Review before deployment.
+model_version: concept-difficulty-v2-experimental
+config_version: concept-difficulty-config-v2
+# Initial, uncalibrated assumptions. Human review is required before deployment.
+# Intrinsic content maps levels 1/2/3 to 0.0/0.5/1.0. External-or-late
+# prerequisite demand maps the same levels to 1/3, 2/3, and 1 because even
+# a foundational prerequisite adds prior-knowledge demand.
+book_prerequisite_weight: 0.3
+introductory_max: 0.33
+intermediate_max: 0.66
+# Personal burden combines covered learning with missing external prerequisites.
+# Active weights are renormalized when a book has no external prerequisites.
+prerequisite_weight: 0.6
+easy_max: 0.15
+manageable_max: 0.45
+target_burden: 0.3
+minimum_assessment_coverage: 0.5
+# 1: foundational, 2: intermediate, 3: advanced within this topic.
+levels:
+  operating-systems:
+    programming: 1
+    computer architecture: 1
+    process: 1
+    thread: 1
+    scheduling: 2
+    concurrency: 2
+    synchronization: 2
+    deadlock: 3
+    memory management: 1
+    virtual memory: 2
+    storage: 1
+    file system: 2
+    input/output: 1
+    protection: 2
+    security: 2
+    virtualization: 3
+    distributed systems: 3
+  linear-algebra:
+    high school algebra: 1
+    systems of equations: 1
+    linear system: 1
+    gaussian elimination: 1
+    matrix: 1
+    vector: 1
+    vector space: 2
+    linear independence: 2
+    basis: 2
+    dimension: 2
+    rank: 2
+    determinant: 2
+    eigenvalue: 2
+    eigenvector: 2
+    orthogonality: 2
+    inner product: 2
+    linear transformation: 2
+    diagonalization: 3
+    least squares: 3
+    singular value decomposition: 3

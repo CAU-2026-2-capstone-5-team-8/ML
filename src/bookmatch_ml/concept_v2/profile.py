@@ -119,7 +119,16 @@ class UnmappedTocEntry(_Strict):
     toc_entry_id: str
     title: str
     toc_path: list[str]
-    reason: Literal["unmatched", "ambiguous_alias"]
+    reason: Literal["unmatched", "ambiguous_alias", "excluded_alias"]
+    excluded_concepts: list[str] = Field(default_factory=list)
+
+
+class ExcludedAliasMatch(_Strict):
+    toc_entry_id: str
+    toc_title: str
+    toc_path: list[str]
+    concept_id: str
+    exclusion_phrase: str
 
 
 class CoveredTocConcept(_Strict):
@@ -148,6 +157,7 @@ class TocCoverageDiagnostics(_Strict):
     unmatched_toc_entries: int
     ambiguous_toc_entries: int
     concept_count: int
+    excluded_toc_entries: int = 0
 
 
 class BookConceptProfileV2(_Strict):
@@ -170,6 +180,7 @@ class BookConceptProfileV2(_Strict):
     matching_config_hash: str
     matcher_version: Literal["normalized_alias_phrase_v1", "normalized_alias_span_v2"]
     toc_file_hash: str
+    excluded_alias_matches: list[ExcludedAliasMatch] = Field(default_factory=list)
 
 
 def _mapping_inputs(
@@ -220,11 +231,12 @@ def _map_entry(
     matcher_version: Literal[
         "normalized_alias_phrase_v1", "normalized_alias_span_v2"
     ] = "normalized_alias_phrase_v1",
-) -> tuple[list[TocConceptMapping], bool]:
+) -> tuple[list[TocConceptMapping], bool, list[tuple[str, str]]]:
     if matcher_version == "normalized_alias_span_v2":
         text_matches, ambiguous = _match_normalized_text_v2(visit.entry.title, aliases, exclusions)
     else:
         text_matches, ambiguous = _match_normalized_text(visit.entry.title, aliases, exclusions)
+    excluded_matches = _excluded_alias_matches(visit.entry.title, exclusions)
     mappings = [
         TocConceptMapping(
             toc_entry_id=visit.entry.toc_entry_id,
@@ -242,7 +254,20 @@ def _map_entry(
         )
         for match in text_matches
     ]
-    return mappings, ambiguous
+    return mappings, ambiguous, excluded_matches
+
+
+def _excluded_alias_matches(
+    text: str, exclusions: dict[str, list[str]] | None
+) -> list[tuple[str, str]]:
+    normalized_text = normalize_text(text)
+    return [
+        (concept, phrase)
+        for concept, phrases in (exclusions or {}).items()
+        for phrase in phrases
+        if (normalized := normalize_text(phrase))
+        and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", normalized_text)
+    ]
 
 
 def _match_normalized_text(
@@ -251,15 +276,7 @@ def _match_normalized_text(
     exclusions: dict[str, list[str]] | None = None,
 ) -> tuple[list[ConceptTextMatch], bool]:
     normalized_text = normalize_text(text)
-    excluded = {
-        concept
-        for concept, phrases in (exclusions or {}).items()
-        if any(
-            normalized and re.search(rf"(?<!\w){re.escape(normalized)}(?!\w)", normalized_text)
-            for phrase in phrases
-            if (normalized := normalize_text(phrase))
-        )
-    }
+    excluded = {concept for concept, _ in _excluded_alias_matches(text, exclusions)}
     found: dict[str, list[str]] = defaultdict(list)
     alias_to_concepts: dict[str, set[str]] = defaultdict(set)
     for concept, forms in aliases.items():
@@ -480,13 +497,22 @@ def build_book_concept_profile_v2(
     aliases, exclusions = _mapping_inputs(features, graph, matching, topic)
     mappings: list[TocConceptMapping] = []
     unmapped: list[UnmappedTocEntry] = []
+    excluded_alias_matches: list[ExcludedAliasMatch] = []
     matched_entry_ids: set[str] = set()
     for visit in tree.traversal:
-        entry_mappings, ambiguous = _map_entry(
-            visit,
-            aliases,
-            exclusions,
-            matching.config.matcher_version,
+        entry_mappings, ambiguous, excluded_matches = _map_entry(
+            visit, aliases, exclusions, matching.config.matcher_version
+        )
+        excluded = {concept for concept, _ in excluded_matches}
+        excluded_alias_matches.extend(
+            ExcludedAliasMatch(
+                toc_entry_id=visit.entry.toc_entry_id,
+                toc_title=visit.entry.title,
+                toc_path=list(visit.path),
+                concept_id=concept,
+                exclusion_phrase=phrase,
+            )
+            for concept, phrase in excluded_matches
         )
         mappings.extend(entry_mappings)
         if entry_mappings:
@@ -497,7 +523,14 @@ def build_book_concept_profile_v2(
                     toc_entry_id=visit.entry.toc_entry_id,
                     title=visit.entry.title,
                     toc_path=list(visit.path),
-                    reason="ambiguous_alias" if ambiguous else "unmatched",
+                    reason=(
+                        "ambiguous_alias"
+                        if ambiguous
+                        else "excluded_alias"
+                        if excluded
+                        else "unmatched"
+                    ),
+                    excluded_concepts=sorted(excluded),
                 )
             )
     by_concept: dict[str, list[TocConceptMapping]] = defaultdict(list)
@@ -577,6 +610,7 @@ def build_book_concept_profile_v2(
             unmatched_toc_entries=sum(item.reason == "unmatched" for item in unmapped),
             ambiguous_toc_entries=sum(item.reason == "ambiguous_alias" for item in unmapped),
             concept_count=len(covered),
+            excluded_toc_entries=len({item.toc_entry_id for item in excluded_alias_matches}),
         ),
         profile_version=matching.config.profile_version,
         graph_version=graph.graph.graph_version,
@@ -588,4 +622,5 @@ def build_book_concept_profile_v2(
         matching_config_hash=matching.content_hash,
         matcher_version=matching.config.matcher_version,
         toc_file_hash=toc_file_hash,
+        excluded_alias_matches=excluded_alias_matches,
     )

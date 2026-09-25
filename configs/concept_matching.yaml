@@ -1,6 +1,6 @@
-config_version: concept-matching-config-v2
-profile_version: toc-concept-profile-v2
-model_version: concept-matching-v2-experimental
+config_version: concept-matching-config-v3
+profile_version: toc-concept-profile-v3
+model_version: concept-matching-v3-experimental
 coverage_weight_rule: min_occurrences_over_three_v1
 toc_mapping:
   alias_additions:
