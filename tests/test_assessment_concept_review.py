@@ -640,7 +640,7 @@ def test_current_os_human_review_is_complete_and_exact() -> None:
     }
 
 
-def test_current_la_review_queue_is_explicitly_unreviewed() -> None:
+def test_current_la_human_review_is_complete_and_exact() -> None:
     reviews = load_assessment_concept_reviews(ROOT / "configs" / "assessment_concept_reviews.yaml")
     la_reviews = [item for item in reviews.artifact.reviews if item.topic_id == "linear-algebra"]
 
@@ -659,8 +659,29 @@ def test_current_la_review_queue_is_explicitly_unreviewed() -> None:
         ("prerequisite", "high school algebra"),
         ("prerequisite", "systems of equations"),
     ]
-    assert all(item.status == "unreviewed" for item in la_reviews)
-    assert all(item.reason_code is None and item.review_note == "" for item in la_reviews)
+    decisions = {
+        (item.concept_role, item.concept_id): (item.status, item.reason_code) for item in la_reviews
+    }
+    assert len(la_reviews) == 13
+    assert all(item.status != "unreviewed" for item in la_reviews)
+    assert sum(item.status == "eligible" for item in la_reviews) == 12
+    assert sum(item.status == "ineligible" for item in la_reviews) == 1
+    assert all(item.review_note for item in la_reviews)
+    assert decisions == {
+        ("covered", "matrix"): ("eligible", None),
+        ("covered", "vector"): ("eligible", None),
+        ("covered", "linear system"): ("eligible", None),
+        ("covered", "orthogonality"): ("eligible", None),
+        ("covered", "dimension"): ("eligible", None),
+        ("covered", "determinant"): ("eligible", None),
+        ("covered", "gaussian elimination"): ("eligible", None),
+        ("covered", "basis"): ("eligible", None),
+        ("covered", "eigenvalue"): ("eligible", None),
+        ("covered", "vector space"): ("eligible", None),
+        ("covered", "diagonalization"): ("eligible", None),
+        ("prerequisite", "high school algebra"): ("ineligible", "too_general"),
+        ("prerequisite", "systems of equations"): ("eligible", None),
+    }
 
 
 def test_current_os_reviewed_config_hash_is_deterministic() -> None:

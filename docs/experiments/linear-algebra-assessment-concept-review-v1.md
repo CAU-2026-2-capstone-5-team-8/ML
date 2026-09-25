@@ -9,12 +9,16 @@ ranking behavior.
 
 The source-controlled artifact remains `configs/assessment_concept_reviews.yaml`. Its review key is
 `topic_id + concept_id + concept_role`, so the 16 completed Operating Systems decisions coexist with
-13 Linear Algebra rows. Every new Linear Algebra row is explicitly `unreviewed`; no human decision
-or AI recommendation has been supplied.
+13 completed Linear Algebra decisions. These are user-supplied human decisions, not automatic
+labels or AI recommendations.
 
 The generated packet is ignored local data:
 
 `data/reviews/assessment_concept_review_linear_algebra_v1.json`
+
+The distinct reviewed blueprint is generated at
+`data/output/linear_algebra_assessment_blueprint_reviewed.json`; it never overwrites the legacy
+artifact.
 
 ## Real-data baseline
 
@@ -49,11 +53,13 @@ the pool is not padded.
 - covered candidates: `11`
 - prerequisite candidates: `2`
 - total candidates: `13`
-- packet SHA-256: `40b4e6c862b716799cc408626c1cf4742d0c9bf3d11d5f339706e88245bb7bfe`
+- packet SHA-256: `ad347b40eb10f96fbb0d12e8473d7117964c524883a3e1c9ce1715c733742e21`
 - review artifact SHA-256:
-  `a903b6b6cd4e693c294144682b0df37de78066de1957d41821c1e2a028c9dc8c`
+  `750f6bc77e01c6e677eebf20d269148b4b22755fa6afcd82c28e3064e32e43f6`
 - effective reviewed config SHA-256:
-  `71bc89d82cfe19da2bb62265d96f4bd00c8cc138ad0f7d45a49298895aba9591`
+  `f64278102de445682861948fe47e01407f52306dbbf0d9e55bc8b6fb278ca063`
+- reviewed blueprint SHA-256:
+  `cce198d545d6f092c14ec8a1f34efcf9c43b6f81c61a89202fe32e218b45916a`
 
 Two independent CLI generations were byte-identical.
 
@@ -63,23 +69,23 @@ Two independent CLI generations were byte-identical.
 recommendation. The generated JSON packet retains up to six exact compact evidence references for
 each row.
 
-| Role | Rank | Concept | Priority | Coverage | Mean weight | Evidence / method | Legacy selected | Legacy QuestionSpec |
-|---|---:|---|---:|---:|---:|---|---|---|
-| covered | 1 | matrix | 1.000000 | 5/5 | 1.000000 | preface, preview, sample_chapter, toc | yes | yes |
-| covered | 2 | vector | 1.000000 | 5/5 | 1.000000 | description, preface, sample_chapter, toc | yes | yes |
-| covered | 3 | linear system | 0.940000 | 4/5 | 1.000000 | preface, preview, sample_chapter, toc | yes | yes |
-| covered | 4 | orthogonality | 0.896250 | 4/5 | 0.937500 | preface, sample_chapter, toc | yes | yes |
-| covered | 5 | dimension | 0.852500 | 4/5 | 0.875000 | preface, preview, sample_chapter, toc | yes | no |
-| covered | 6 | determinant | 0.849500 | 5/5 | 0.785000 | preface, sample_chapter, toc | yes | yes |
-| covered | 7 | gaussian elimination | 0.793500 | 5/5 | 0.705000 | preface, preview, sample_chapter, toc | yes | no |
-| covered | 8 | basis | 0.784750 | 5/5 | 0.692500 | preface, sample_chapter, toc | yes | no |
-| covered | 9 | eigenvalue | 0.751875 | 4/5 | 0.731250 | preface, toc | no | no |
-| covered | 10 | vector space | 0.745313 | 4/5 | 0.721875 | description, preface, toc | no | no |
-| covered | 11 | diagonalization | 0.677500 | 4/5 | 0.625000 | preface, toc | no | no |
-| prerequisite | 1 | high school algebra | 0.760000 | 1/5 | 1.000000 | preface; explicit_and_early_prose_proxy | yes | yes |
-| prerequisite | 2 | systems of equations | 0.165000 | 1/5 | 0.150000 | preview; early_prose_proxy | yes | yes |
+| Role | Rank | Concept | Priority | Coverage | Evidence / method | Status |
+|---|---:|---|---:|---:|---|---|
+| covered | 1 | matrix | 1.000000 | 5/5 | preface, preview, sample_chapter, toc | eligible |
+| covered | 2 | vector | 1.000000 | 5/5 | description, preface, sample_chapter, toc | eligible |
+| covered | 3 | linear system | 0.940000 | 4/5 | preface, preview, sample_chapter, toc | eligible |
+| covered | 4 | orthogonality | 0.896250 | 4/5 | preface, sample_chapter, toc | eligible |
+| covered | 5 | dimension | 0.852500 | 4/5 | preface, preview, sample_chapter, toc | eligible |
+| covered | 6 | determinant | 0.849500 | 5/5 | preface, sample_chapter, toc | eligible |
+| covered | 7 | gaussian elimination | 0.793500 | 5/5 | preface, preview, sample_chapter, toc | eligible |
+| covered | 8 | basis | 0.784750 | 5/5 | preface, sample_chapter, toc | eligible |
+| covered | 9 | eigenvalue | 0.751875 | 4/5 | preface, toc | eligible |
+| covered | 10 | vector space | 0.745313 | 4/5 | description, preface, toc | eligible |
+| covered | 11 | diagonalization | 0.677500 | 4/5 | preface, toc | eligible |
+| prerequisite | 1 | high school algebra | 0.760000 | 1/5 | preface; explicit_and_early_prose_proxy | ineligible / too_general |
+| prerequisite | 2 | systems of equations | 0.165000 | 1/5 | preview; early_prose_proxy | eligible |
 
-All 13 rows have `status=unreviewed`, `reason_code=null`, and an empty `review_note`.
+The review is complete: `13/13` reviewed, `12` eligible, `1` ineligible, and `0` unreviewed.
 
 ## Relation-pair coverage
 
@@ -114,15 +120,21 @@ Only two prerequisite concepts exist in the current pool:
   (`book_a1364d52179f6fca0403`), preview `doc_54beabfd6f11ba8a5504`, one mention,
   `early_prose_proxy`, priority `0.165`.
 
-Neither has been judged eligible or ineligible. The example broad concepts `algebra`, `arithmetic`,
+`systems of equations` is eligible as specific prerequisite knowledge. `high school algebra` is
+ineligible with reason `too_general`: it remains in prerequisite inference and BookProfile evidence
+but cannot be an assessment primary target. The example broad concepts `algebra`, `arithmetic`,
 `equation`, `mathematics`, `functions`, `geometry`, `calculus`, and `programming` do not appear as
 separate prerequisite candidates in this pool.
 
-## Fail-closed and regression results
+## Reviewed selection and regression results
 
-With all LA rows unreviewed, reviewed mode selects zero concepts and produces zero QuestionSpecs.
-It records five explicit shortages: vocabulary recognize, vocabulary compare, background recall,
-comprehension apply, and comprehension integrate. It does not fall back to legacy concepts.
+The covered limit selects matrix, vector, linear system, orthogonality, dimension, determinant,
+gaussian elimination, and basis. Eigenvalue, vector space, and diagonalization remain eligible but
+outside the existing limit. The prerequisite selection contains only systems of equations;
+ineligible high school algebra is not used as a fallback.
+
+The reviewed blueprint contains 12 QuestionSpecs: vocabulary `6`, background knowledge `1`, and
+comprehension `5`. Background recall records the only shortage (`requested=3`, `produced=1`).
 
 The 16 Operating Systems decisions remain 11 eligible and 5 ineligible. Its reviewed selection,
 QuestionSpec target semantics, and shortage are identical before and after adding the LA rows;
@@ -131,12 +143,14 @@ their normalized semantic artifact SHA-256 is
 excluded. Only review/config provenance and derived IDs change because the exact combined review
 artifact hash changed.
 
-Question-Generation main accepts the legacy LA `matrix` vocabulary/recognize/Level-1 and `high
-school algebra` background-knowledge/recall/Level-1 specs. It continues to reject the LA
-vocabulary/compare/Level-2 spec as unsupported. No Question-Generation code or policy changed.
+Question-Generation main accepts all four reviewed vocabulary/recognize/Level-1 targets (matrix,
+vector, linear system, orthogonality) and the reviewed systems of equations
+background-knowledge/recall/Level-1 target. It continues to reject vocabulary/compare and
+comprehension specs as unsupported. No Question-Generation code or policy changed. Live Gemini
+generation was skipped because `GEMINI_API_KEY` was absent from the process environment.
 
 ## Next step
 
-A human reviewer should label each of the 13 rows as `eligible` or `ineligible`, including a review
-note and an ineligible reason code where required. Only after those decisions are recorded should a
-reviewed Linear Algebra blueprint and new production QuestionSpecs be considered.
+When a Gemini API key is intentionally present in the process environment, generate one Korean
+question for each of the five supported reviewed targets and conduct human QA before merging the
+milestone.
