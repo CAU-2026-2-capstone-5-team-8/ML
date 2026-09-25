@@ -270,11 +270,25 @@ class ExperimentalRankedBookDto(RankedBookDto):
     concept_difficulty: dict[str, object]
 
 
+# Maps keyed by concept ID. Their keys are data, so they must stay joinable with the
+# raw concept IDs used elsewhere in the response and in the concept graph.
+_CONCEPT_KEYED_MAPS = frozenset(
+    {"concept_levels", "concept_evidence", "prerequisite_evidence", "burden_contributions"}
+)
+
+
 def camelize_payload(value):
-    """Recursively convert experimental evidence keys without changing their values."""
+    """Recursively convert experimental evidence field names without changing their values."""
 
     if isinstance(value, dict):
-        return {to_camel(str(key)): camelize_payload(item) for key, item in value.items()}
+        return {
+            to_camel(str(key)): (
+                {concept: camelize_payload(entry) for concept, entry in item.items()}
+                if key in _CONCEPT_KEYED_MAPS and isinstance(item, dict)
+                else camelize_payload(item)
+            )
+            for key, item in value.items()
+        }
     if isinstance(value, list):
         return [camelize_payload(item) for item in value]
     return value

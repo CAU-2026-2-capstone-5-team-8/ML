@@ -24,6 +24,7 @@ from bookmatch_ml.integration.schemas import (
     BookCandidateDto,
     MatchingReaderProfileDto,
     ReaderProfileRequest,
+    camelize_payload,
 )
 from bookmatch_ml.ranking.matching import to_matching_book_profile, to_matching_reader_profile
 from bookmatch_ml.reader.profile import build_reader_profile, load_assessment
@@ -167,6 +168,27 @@ def test_rank_endpoint_opt_in_concept_difficulty_keeps_book_score_reader_indepen
     )
     assert novice_item["score"] == novice_item["conceptDifficulty"]["recommendationScore"]
     assert novice_item["conceptDifficulty"]["conceptEvidence"]
+    graph = load_concept_graph(ROOT / "configs" / "concept_graph.yaml", FEATURE_CONFIG)
+    node_ids = {node for nodes in graph.graph.nodes.values() for node in nodes}
+    difficulty = novice_item["conceptDifficulty"]
+    for field in ("conceptLevels", "conceptEvidence", "burdenContributions"):
+        assert set(difficulty[field]) <= node_ids, field
+
+
+def test_camelize_payload_keeps_concept_id_keys() -> None:
+    payload = camelize_payload(
+        {
+            "concept_levels": {"virtual memory": 0.5},
+            "burden_contributions": {"input/output": {"weight": 1.0, "mastery": None}},
+            "toc_diagnostics": {"mapped_entry_count": 2},
+        }
+    )
+
+    assert payload == {
+        "conceptLevels": {"virtual memory": 0.5},
+        "burdenContributions": {"input/output": {"weight": 1.0, "mastery": None}},
+        "tocDiagnostics": {"mappedEntryCount": 2},
+    }
 
 
 def test_experimental_rank_filters_unrelated_candidates_before_profile_validation() -> None:
