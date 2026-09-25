@@ -32,6 +32,7 @@ from bookmatch_ml.ranking.multi_reader_concept_experiments import (
 )
 from bookmatch_ml.ranking.prerequisite_first_candidate import (
     CANDIDATE_VERSION,
+    _candidate_prediction,
     build_candidate_ranking,
     evaluate_candidate_human_pairs,
 )
@@ -183,7 +184,7 @@ def _mapping(books: list[BookEvidenceConceptMapping]) -> BookEvidenceConceptMapp
 def _snapshot(
     book_id: str,
     prerequisite: float,
-    opportunity: float,
+    opportunity: float | None,
 ) -> DiagnosticSnapshot:
     """Build the fixed fields used by exact human-pair prediction."""
 
@@ -199,7 +200,9 @@ def _snapshot(
         prerequisite_coverage=1,
         prerequisite_readiness=prerequisite,
         two_stage_status="eligible",
-        unweighted_combination=(prerequisite + opportunity) / 2,
+        unweighted_combination=(
+            (prerequisite + opportunity) / 2 if opportunity is not None else None
+        ),
     )
 
 
@@ -448,6 +451,17 @@ def test_frozen_pair_labels_are_unchanged_and_exact_candidate_agrees_nine_of_ten
 
     assert [item.human_preference for item in evaluations] == original_labels
     assert by_topic == {"linear-algebra": 5, "operating-systems": 4, None: 9}
+
+
+def test_pair_prediction_matches_missing_secondary_ordering() -> None:
+    """Known opportunity ranks ahead of missing opportunity at equal readiness."""
+
+    known = _snapshot("known", 0.8, 0.4)
+    unknown = _snapshot("unknown", 0.8, None)
+
+    assert _candidate_prediction(known, unknown) == "A"
+    assert _candidate_prediction(unknown, known) == "B"
+    assert _candidate_prediction(unknown, unknown) == "tie"
 
 
 def test_demo_cli_smoke_uses_mapping_artifact_and_prints_fallback_counts(

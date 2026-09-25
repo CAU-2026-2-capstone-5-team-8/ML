@@ -330,10 +330,10 @@ def _candidate_prediction(
         return "not_comparable"
     if left.prerequisite_readiness != right.prerequisite_readiness:
         return "A" if left.prerequisite_readiness > right.prerequisite_readiness else "B"
-    if left.direct_learning_opportunity is None or right.direct_learning_opportunity is None:
-        if left.direct_learning_opportunity is right.direct_learning_opportunity:
-            return "tie"
-        return "not_comparable"
+    if left.direct_learning_opportunity is None:
+        return "tie" if right.direct_learning_opportunity is None else "B"
+    if right.direct_learning_opportunity is None:
+        return "A"
     if left.direct_learning_opportunity != right.direct_learning_opportunity:
         return "A" if left.direct_learning_opportunity > right.direct_learning_opportunity else "B"
     return "tie"
