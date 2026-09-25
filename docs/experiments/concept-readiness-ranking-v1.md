@@ -142,8 +142,9 @@ prerequisites.
 
 ## Blinded human pair-review packet
 
-No preference or gold label is generated. The deterministic report selects at most
-five informative pairs per topic:
+The experiment generator does not create a preference or gold label. It selects at
+most five informative pairs per topic with blank review fields. The packet was shown
+to the reviewer without the selection reason, diagnostic values, or variant ordering:
 
 | Topic | Pair | Reason | Left | Right |
 | --- | --- | --- | --- | --- |
@@ -158,10 +159,166 @@ five informative pairs per topic:
 | Operating Systems | 4 | D1/D2 ordering disagreement | Advanced concepts in operating systems | The Design of the Unix Operating System |
 | Operating Systems | 5 | D1/D2 ordering disagreement | Distributed operating systems & algorithms | Operating Systems |
 
-For each pair a reviewer should answer: “For this fixed ReaderProfile, which book is
-more appropriate to read first?” The JSON report includes covered concepts, inferred
-prerequisites, assessed mastery, both coverage ratios, both diagnostic values, and
-blank `human_preference`/`review_note` fields.
+For each pair the reviewer answered: “For this fixed ReaderProfile, which book is more
+appropriate to read first?” The blinded view included only concept readiness, covered
+concepts, accepted direct and transitive prerequisites, and coverage. The generated
+JSON starts with blank `human_preference`/`review_note` fields; the decisions below
+were added only after both topic packets had been reviewed.
+
+## Frozen human pair review
+
+All ten pairs are reviewed: Linear Algebra 5/5 and Operating Systems 5/5. There are no
+`tie` or `not_judgable` labels. The reviewed local report is intentionally still under
+the existing ignored `data/reports/` directory and was not force-added to Git.
+
+Reviewed report SHA-256:
+
+```text
+a5f3a77c65ce4ef0d838ff97b7a620a2927ab466d6eb01ad3e1c06024b0f3c47
+```
+
+The following frozen values make the manual review update auditable without adding a
+second review artifact:
+
+1. `linear-algebra:pair-1` — `A` — `Book A has complete prerequisite coverage with very strong readiness on matrix and vector, while still containing several concepts with substantial learning opportunity. Book B covers a much broader concept set and has weaker prerequisite readiness for this reader, so A is the more appropriate book to read first.`
+2. `linear-algebra:pair-2` — `A` — `Both books have complete prerequisite assessment coverage, but Book A has slightly stronger prerequisite readiness and more room for learning among its assessed covered concepts. It is the more suitable first step for this reader.`
+3. `linear-algebra:pair-3` — `A` — `Book B offers more new material, but its prerequisite readiness is lower and its direct concept assessment coverage is also lower. Book A provides a better-prepared and more conservative first step before moving to the broader Book B.`
+4. `linear-algebra:pair-4` — `A` — `Book A has stronger prerequisite readiness and substantially higher direct concept assessment coverage. Book B contains more unassessed and lower-readiness material, so A is the safer and more appropriate book to read first.`
+5. `linear-algebra:pair-5` — `B` — `Book B has stronger prerequisite readiness and higher direct assessment coverage for this reader. Although Book A contains more learning opportunities, B provides the better-supported first step before progressing to the broader material in A.`
+6. `operating-systems:pair-1` — `A` — `Book A has strong assessed prerequisite readiness for concurrency and process. Book B has broader evidence coverage, but its prerequisite set includes computer architecture at readiness 0.0 and memory management at only 0.5. For reading order, Book A provides the safer prerequisite fit.`
+7. `operating-systems:pair-2` — `A` — `Book A has broader prerequisite assessment coverage and contains a meaningful mix of already-known and lower-readiness concepts, giving this reader room to learn while retaining sufficient prerequisite support. Book B has strong assessed prerequisites but much of its assessed direct content is already well known.`
+8. `operating-systems:pair-3` — `A` — `Book A has consistently strong assessed prerequisite readiness across concurrency, process, and synchronization. Book B offers somewhat more learning opportunity, but its prerequisite evidence includes computer architecture at readiness 0.0, making Book A the better-supported first step.`
+9. `operating-systems:pair-4` — `A` — `This pair is relatively close because Book B has substantially higher direct concept assessment coverage. However, Book A has much stronger assessed prerequisite readiness, while Book B depends on computer architecture at readiness 0.0 and memory management at 0.5. For the question of which book should be read first, prerequisite preparedness favors Book A.`
+10. `operating-systems:pair-5` — `B` — `Both books contain an assessed computer-architecture weakness, but Book B has greater prerequisite assessment coverage, slightly stronger overall assessed prerequisite readiness, and more assessed material that still provides learning opportunity. Book B is therefore the better first choice for this reader.`
+
+## Pairwise agreement with the frozen variants
+
+The comparison was run only after all labels were frozen. D1 predicts by its existing
+status priority, then direct learning opportunity, then transitive-prerequisite
+readiness. D2 predicts the higher existing unweighted combination. Direct-only uses
+higher direct learning opportunity; prerequisite-only uses higher transitive-
+prerequisite readiness. Book ID fallback ordering is not treated as evidence.
+
+`not_judgable` human labels would be excluded from the comparable denominator. A human
+`tie` would agree only with an evidence-value tie. An algorithmic tie against an `A` or
+`B` label would be a disagreement. The present ten labels and all four compared signals
+have no ties or unavailable pair values, so all ten pairs are comparable.
+
+### Linear Algebra
+
+| Pair | Human | D1 | D2 | Direct only | Prerequisite only |
+| --- | --- | --- | --- | --- | --- |
+| 1 | A | A | A | A | A |
+| 2 | A | A | A | A | A |
+| 3 | A | B | A | B | A |
+| 4 | A | B | A | B | A |
+| 5 | B | A | B | A | B |
+
+D1 human pair agreement is 2/5 (40%); D2 is 5/5 (100%). Direct-only is
+2/5 (40%), and prerequisite-only is 5/5 (100%).
+
+### Operating Systems
+
+| Pair | Human | D1 | D2 | Direct only | Prerequisite only |
+| --- | --- | --- | --- | --- | --- |
+| 1 | A | A | A | B | A |
+| 2 | A | B | B | A | B |
+| 3 | A | B | A | B | A |
+| 4 | A | B | A | B | A |
+| 5 | B | A | B | B | B |
+
+D1 human pair agreement is 1/5 (20%); D2 is 4/5 (80%). Direct-only is
+2/5 (40%), and prerequisite-only is 4/5 (80%).
+
+### Combined
+
+| Signal | Agreement | Rate |
+| --- | ---: | ---: |
+| D1 | 3/10 | 30% |
+| D2 | 9/10 | 90% |
+| Direct only | 4/10 | 40% |
+| Prerequisite only | 9/10 | 90% |
+
+These are diagnostic human pair-agreement results on ten deliberately informative
+pairs, not an accuracy claim or a representative ranking benchmark.
+
+## Disagreement analysis
+
+- **Linear Algebra pair 3:** D1 follows Book B's larger direct opportunity (0.455 vs
+  0.357). Human and D2 favor Book A's higher prerequisite readiness (0.90 vs 0.743),
+  higher direct coverage (0.778 vs 0.625), and fewer unknown covered concepts. Both
+  books have complete prerequisite coverage, and direct/transitive sets are identical.
+- **Linear Algebra pair 4:** D1 again follows Book B's larger direct opportunity
+  (0.455 vs 0.377). Human and D2 favor Book A's prerequisite readiness (0.88 vs 0.743)
+  and direct coverage (0.846 vs 0.625). Book B has six unknown covered concepts versus
+  two for Book A. Direct and transitive prerequisites are unchanged.
+- **Linear Algebra pair 5:** D1 and direct-only favor Book A's larger opportunity
+  (0.417 vs 0.357). Human, D2, and prerequisite-only favor Book B's readiness
+  (0.90 vs 0.733), coverage (0.778 vs 0.706), and smaller unknown set. Both prerequisite
+  sets have complete coverage and no transitive-only addition.
+- **Operating Systems pair 2:** D1 promotes eligible Book B over insufficient-evidence
+  Book A, and D2 is narrowly higher for B (0.500 vs 0.481). Human favors Book A's much
+  larger direct opportunity (0.343 vs 0.100) and higher prerequisite coverage
+  (0.714 vs 0.500). D2 does not include coverage. Transitive expansion adds assessed
+  `process` and unknown `thread` to Book B, raising its readiness from 0.80 to 0.90
+  while leaving coverage at 0.50.
+- **Operating Systems pair 3:** D1 promotes Book B because its direct coverage reaches
+  the 0.50 gate while Book A is at 0.444. Human, D2, and prerequisite-only favor Book
+  A's readiness (0.867 vs 0.60), despite Book B's larger opportunity (0.18 vs 0.10).
+  The selected books have identical direct and transitive prerequisite sets.
+- **Operating Systems pair 4:** D1 prioritizes challenge-candidate Book B over
+  insufficient-evidence Book A. Book B has much higher direct coverage (0.833 vs
+  0.444), but human, D2, and prerequisite-only favor Book A's readiness (0.867 vs
+  0.575). Book B gains unknown `thread` only through transitive expansion, reducing
+  prerequisite coverage from 0.80 direct to 0.667 transitive without changing its
+  assessed readiness mean.
+- **Operating Systems pair 5:** D1 promotes eligible Book A because Book B's direct
+  coverage is 0.462, below the 0.50 gate. Human, D2, direct-only, and
+  prerequisite-only all favor Book B: its opportunity is 0.233 vs 0.18, readiness is
+  0.62 vs 0.60, and prerequisite coverage is 0.714 vs 0.60. Direct and transitive
+  prerequisite sets are identical for both books.
+
+Coverage materially affects LA pairs 3-5 and OS pairs 2-5, but in different ways. It
+helps the human reviewer discount means based on narrower evidence, while D1 turns the
+configured minimums into categorical status boundaries. D2 and the two single-axis
+comparisons retain coverage only as accompanying evidence, not as an ordering term.
+
+All reviewed Linear Algebra books have identical direct and transitive prerequisite
+sets. In the selected OS books, transitive expansion affects `Distributed operating
+systems`, `Operating system concepts essentials`, and `The Design of the Unix
+Operating System`; elsewhere it does not change the selected sets. The changes can
+raise an assessed mean, reduce coverage by adding unknown prerequisites, or leave the
+mean unchanged. This supports continuing to report both projections separately.
+
+The 9/10 D2 and prerequisite-only agreement is not sufficient for production
+promotion. The pairs were intentionally selected for contrast, only two fixed reader
+profiles are represented, and the large unknown-concept groups remain. No formula,
+threshold, graph, matcher, adapter, or production ranking change follows from this
+review.
+
+## Additional deterministic ReaderProfile scenarios
+
+The next evaluation should use four interpretable scenarios per topic over the same
+accepted canonical concept vocabulary. The score groups below fully specify proposed
+fixtures; they are a design only and are not implemented by this experiment.
+
+### Linear Algebra scenarios
+
+| Scenario | User state | Proposed readiness values grouped by score |
+| --- | --- | --- |
+| Beginner | Comfortable with school algebra but only beginning formal linear algebra. | 0.8: high school algebra; 0.6: systems of equations; 0.5: linear system; 0.4: matrix, vector; 0.3: gaussian elimination, determinant; 0.2: vector space, linear independence; 0.1: basis, dimension, rank, inner product, orthogonality, linear transformation; 0.0: eigenvalue, eigenvector, diagonalization, least squares, singular value decomposition. |
+| Intermediate | Strong fundamentals with partial abstract and spectral knowledge. | 1.0: high school algebra; 0.9: systems of equations, linear system, matrix, vector; 0.8: gaussian elimination; 0.7: determinant, vector space; 0.6: linear independence, basis, dimension, rank, linear transformation; 0.5: inner product, orthogonality, eigenvalue, eigenvector; 0.4: diagonalization, least squares; 0.3: singular value decomposition. |
+| Advanced | Broad, consistently high readiness with a small remaining SVD gap. | 1.0: high school algebra, systems of equations, linear system, matrix, vector; 0.95: gaussian elimination, determinant, vector space, linear independence, basis, dimension, rank, linear transformation; 0.9: inner product, orthogonality, eigenvalue, eigenvector, diagonalization, least squares; 0.85: singular value decomposition. |
+| Uneven | Computationally strong but weak on abstract vector-space and geometric foundations. | 1.0: high school algebra, systems of equations, matrix; 0.95: linear system, gaussian elimination; 0.9: determinant; 0.85: rank; 0.6: vector; 0.5: eigenvalue, eigenvector; 0.45: diagonalization; 0.4: linear transformation; 0.3: vector space; 0.25: linear independence; 0.2: basis, dimension, inner product, least squares; 0.15: orthogonality; 0.1: singular value decomposition. |
+
+### Operating Systems scenarios
+
+| Scenario | User state | Proposed readiness values grouped by score |
+| --- | --- | --- |
+| Beginner | Has programming experience but limited operating-system mechanisms. | 0.8: programming; 0.5: computer architecture; 0.4: process; 0.3: memory management, storage, input/output; 0.2: thread, scheduling, concurrency, file system; 0.1: synchronization, virtual memory, protection; 0.0: deadlock, distributed systems, security, virtualization. |
+| Intermediate | Understands core execution and memory concepts but has weaker advanced systems knowledge. | 0.9: programming; 0.85: process; 0.7: computer architecture, thread, scheduling, concurrency, memory management; 0.6: synchronization, file system, storage, input/output; 0.5: virtual memory; 0.4: deadlock, protection, security, virtualization; 0.3: distributed systems. |
+| Advanced | Broad systems readiness with no major prerequisite gap. | 0.95: programming, process, thread, scheduling, concurrency, synchronization, memory management, file system, storage, input/output; 0.9: computer architecture, deadlock, virtual memory, protection, security, virtualization, distributed systems. |
+| Uneven | Strong in processes and concurrency but weak in architecture, memory, and storage. | 1.0: programming; 0.95: process, concurrency; 0.9: thread, scheduling, synchronization; 0.8: deadlock; 0.6: distributed systems; 0.5: protection; 0.4: file system; 0.3: storage, input/output, security; 0.25: memory management; 0.2: computer architecture, virtualization; 0.15: virtual memory. |
 
 ## Reproduction
 
@@ -173,14 +330,16 @@ uv run bookmatch-ml evaluate-concept-readiness-ranking \
   --output data/reports/concept-readiness-ranking-v1.json
 ```
 
-The output is deterministic and records all input hashes, graph/review hashes,
-thresholds, per-book diagnostics, summaries, sanity cases, and the unlabeled pair
-packet.
+The generated output is deterministic and records all input hashes, graph/review
+hashes, thresholds, per-book diagnostics, summaries, sanity cases, and the initially
+unlabeled pair packet. Re-running the command intentionally recreates blank human
+fields; apply only the frozen decisions above when reconstructing the reviewed local
+artifact.
 
 ## Required validation before production promotion
 
-1. Human pair review must establish whether either diagnostic ordering corresponds to
-   a sensible reading order.
+1. Repeat the completed human pair comparison across the additional deterministic
+   ReaderProfile scenarios and eventually independent reviewers.
 2. Coverage policy must be evaluated explicitly; the present large unavailable groups
    cannot be silently assigned zero readiness or renormalized into confident scores.
 3. D1 and D2 need ranking-quality evaluation on more readers, not only the two
