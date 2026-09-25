@@ -93,6 +93,7 @@ from bookmatch_ml.evaluation.report import build_evaluation_report
 from bookmatch_ml.io import write_json, write_jsonl
 from bookmatch_ml.ranking.concept_readiness_experiments import (
     ConceptReadinessExperimentError,
+    build_accepted_graph_projection,
     evaluate_concept_readiness_ranking,
 )
 from bookmatch_ml.ranking.loader import (
@@ -103,8 +104,15 @@ from bookmatch_ml.ranking.loader import (
 from bookmatch_ml.ranking.matching import RankingError, rank_books, score_book_fit
 from bookmatch_ml.ranking.multi_reader_concept_experiments import (
     MultiReaderConceptExperimentError,
+    build_scenario_profiles,
     evaluate_multi_reader_concept_ranking,
     load_multi_reader_concept_experiment_config,
+)
+from bookmatch_ml.ranking.prerequisite_first_candidate import (
+    CANDIDATE_VERSION,
+    PrerequisiteFirstCandidateError,
+    evaluate_candidate_scenario,
+    evaluate_prerequisite_first_candidate,
 )
 from bookmatch_ml.ranking.source_aware_adapter import (
     SourceAwareAdapterError,
@@ -130,6 +138,9 @@ DEFAULT_MATCHER_V2_EXPERIMENT_CONFIG = Path("configs/matcher_v2_experiments.yaml
 DEFAULT_MULTI_READER_CONCEPT_EXPERIMENT_CONFIG = Path(
     "configs/multi_reader_concept_ranking_v1.yaml"
 )
+DEFAULT_SCALE_50_CONCEPT_MAPPING = Path("data/reports/scale-50-concept-presence-v2-overlap.json")
+DEFAULT_FIXED_OS_READER = Path("data/output/reader_profile.json")
+DEFAULT_FIXED_LA_READER = Path("data/output/concept_matching_la_reader.json")
 
 
 def _sha256_file(path: Path) -> str:
@@ -518,6 +529,220 @@ def evaluate_multi_reader_concept_ranking_command(
             sort_keys=True,
         )
     )
+
+
+@app.command("evaluate-prerequisite-first-candidate")
+def evaluate_prerequisite_first_candidate_command(
+    concept_mapping: Annotated[
+        Path, typer.Option("--concept-mapping", exists=True, dir_okay=False, resolve_path=True)
+    ] = DEFAULT_SCALE_50_CONCEPT_MAPPING,
+    os_reader: Annotated[
+        Path, typer.Option("--os-reader", exists=True, dir_okay=False, resolve_path=True)
+    ] = DEFAULT_FIXED_OS_READER,
+    la_reader: Annotated[
+        Path, typer.Option("--la-reader", exists=True, dir_okay=False, resolve_path=True)
+    ] = DEFAULT_FIXED_LA_READER,
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)] = Path(
+        "data/reports/prerequisite-first-ranking-v2-candidate-v1.json"
+    ),
+    experiment_config: Annotated[
+        Path, typer.Option("--experiment-config", exists=True, dir_okay=False)
+    ] = DEFAULT_MULTI_READER_CONCEPT_EXPERIMENT_CONFIG,
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    review_config: Annotated[
+        Path, typer.Option("--review-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_REVIEWS_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_V2_CONFIG,
+) -> None:
+    """Validate the exact prerequisite-first candidate on Scale-50."""
+
+    input_paths = {
+        "concept_mapping": concept_mapping,
+        "os_reader": os_reader,
+        "la_reader": la_reader,
+        "experiment_config": experiment_config,
+        "feature_config": feature_config,
+        "graph_config": graph_config,
+        "review_config": review_config,
+        "matching_config": matching_config,
+    }
+    try:
+        if output.resolve() in {path.resolve() for path in input_paths.values()}:
+            raise PrerequisiteFirstCandidateError("--output must not overwrite a candidate input")
+        input_hashes = {name: _sha256_file(path) for name, path in input_paths.items()}
+        mapping = load_concept_mapping_report(concept_mapping)
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        reviews = load_concept_graph_reviews(review_config, graph)
+        matching = load_concept_matching_config(matching_config)
+        experiment = load_multi_reader_concept_experiment_config(experiment_config)
+        fixed_readers = [load_reader_profile(os_reader), load_reader_profile(la_reader)]
+        fixed_hashes = {
+            profile.topic_id: _sha256_file(path)
+            for profile, path in zip(fixed_readers, (os_reader, la_reader), strict=True)
+        }
+        if set(fixed_hashes) != set(experiment.config.scenarios):
+            raise PrerequisiteFirstCandidateError(
+                "fixed readers must cover exactly the configured topics"
+            )
+        report = evaluate_prerequisite_first_candidate(
+            mapping,
+            fixed_readers,
+            graph,
+            reviews,
+            matching,
+            experiment,
+            mapping_report_hash=_sha256_file(concept_mapping),
+            fixed_reader_hashes=fixed_hashes,
+            input_hashes=input_hashes,
+        )
+        if input_hashes != {name: _sha256_file(path) for name, path in input_paths.items()}:
+            raise PrerequisiteFirstCandidateError("candidate input changed during evaluation")
+        write_json(report, output)
+    except (
+        PrerequisiteFirstCandidateError,
+        MultiReaderConceptExperimentError,
+        ConceptReadinessExperimentError,
+        ConfigError,
+        RankingInputError,
+        SourceAwareAdapterError,
+        ValueError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    combined = next(item for item in report.human_pair_agreement if item.topic_id is None)
+    typer.echo(
+        json.dumps(
+            {
+                "ranking_candidate_version": report.ranking_candidate_version,
+                "output": str(output),
+                "scenario_count": len(report.scenarios),
+                "human_pair_agreement": (
+                    f"{combined.agreement_count}/{combined.comparable_pair_count}"
+                ),
+            },
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("demo-concept-recommendation")
+def demo_concept_recommendation_command(
+    topic: Annotated[
+        Literal["operating-systems", "linear-algebra"],
+        typer.Option("--topic"),
+    ],
+    scenario: Annotated[
+        Literal["beginner", "intermediate", "advanced", "uneven"],
+        typer.Option("--scenario"),
+    ],
+    limit: Annotated[int, typer.Option("--limit", min=1, max=25)] = 5,
+    concept_mapping: Annotated[
+        Path, typer.Option("--concept-mapping", exists=True, dir_okay=False, resolve_path=True)
+    ] = DEFAULT_SCALE_50_CONCEPT_MAPPING,
+    experiment_config: Annotated[
+        Path, typer.Option("--experiment-config", exists=True, dir_okay=False)
+    ] = DEFAULT_MULTI_READER_CONCEPT_EXPERIMENT_CONFIG,
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    review_config: Annotated[
+        Path, typer.Option("--review-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_REVIEWS_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_V2_CONFIG,
+) -> None:
+    """Print a meeting-friendly candidate ranking from real Scale-50 artifacts."""
+
+    input_paths = {
+        "concept_mapping": concept_mapping,
+        "experiment_config": experiment_config,
+        "feature_config": feature_config,
+        "graph_config": graph_config,
+        "review_config": review_config,
+        "matching_config": matching_config,
+    }
+    try:
+        input_hashes = {name: _sha256_file(path) for name, path in input_paths.items()}
+        mapping = load_concept_mapping_report(concept_mapping)
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        reviews = load_concept_graph_reviews(review_config, graph)
+        matching = load_concept_matching_config(matching_config)
+        experiment = load_multi_reader_concept_experiment_config(experiment_config)
+        projection = build_accepted_graph_projection(graph, reviews)
+        profiles = build_scenario_profiles(experiment, projection)
+        selected = next(
+            (
+                profile
+                for profile in profiles
+                if profile.reader_profile.topic_id == topic and profile.scenario_id == scenario
+            ),
+            None,
+        )
+        if selected is None:
+            raise PrerequisiteFirstCandidateError(
+                f"configured scenario not found: {topic}/{scenario}"
+            )
+        ranking = evaluate_candidate_scenario(
+            mapping,
+            selected,
+            graph,
+            reviews,
+            matching,
+            mapping_report_hash=_sha256_file(concept_mapping),
+            input_hashes=input_hashes,
+        )
+    except (
+        PrerequisiteFirstCandidateError,
+        MultiReaderConceptExperimentError,
+        ConceptReadinessExperimentError,
+        ConfigError,
+        RankingInputError,
+        SourceAwareAdapterError,
+        ValueError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    statistics = ranking.statistics
+    typer.echo(f"Candidate: {CANDIDATE_VERSION}")
+    typer.echo(f"Topic: {topic}")
+    typer.echo(f"Scenario: {scenario} — {ranking.scenario_description}")
+    typer.echo(
+        "Personalized ranking available: "
+        f"{statistics.personalizable_count}/{statistics.total_candidate_count}"
+    )
+    typer.echo(
+        "Fallback / unavailable: "
+        f"{statistics.fallback_count}/{statistics.total_candidate_count} "
+        f"(concept-only {statistics.concept_only_count}, "
+        f"no concept evidence {statistics.evidence_unavailable_count})"
+    )
+    typer.echo("")
+    typer.echo("Rank | Title | Prereq | P-cov | Opportunity | D-cov")
+    typer.echo("-----|-------|--------|-------|-------------|------")
+    personalized = [book for book in ranking.books if book.availability_status == "personalizable"]
+    for book in personalized[:limit]:
+        typer.echo(
+            f"{book.rank:>4} | {book.title} | {book.prerequisite_readiness:.3f} | "
+            f"{book.prerequisite_coverage:.3f} | "
+            f"{book.direct_learning_opportunity:.3f} | {book.direct_coverage:.3f}"
+        )
+        typer.echo(f"     이유: {' '.join(book.explanation_reasons)}")
 
 
 def _build_expected_evidence_review(
