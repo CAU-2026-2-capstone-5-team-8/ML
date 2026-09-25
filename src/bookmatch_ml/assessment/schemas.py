@@ -13,6 +13,15 @@ CognitiveOperation = Literal[
 ]
 TargetDifficulty = Literal[1, 2, 3]
 PrerequisiteMethod = Literal["explicit", "early_prose_proxy", "explicit_and_early_prose_proxy"]
+AssessmentConceptReviewStatus = Literal["eligible", "ineligible", "unreviewed"]
+AssessmentConceptReviewReason = Literal[
+    "too_general",
+    "too_ambiguous",
+    "low_diagnostic_value",
+    "incidental_or_contextual",
+    "misclassified_prerequisite",
+    "other",
+]
 
 
 def _canonical_identifier(value: str) -> str:
@@ -140,6 +149,70 @@ class TopicConceptPool(StrictModel):
         return self
 
 
+class AssessmentConceptReviewRow(StrictModel):
+    topic_id: str
+    concept_id: str
+    concept_role: ConceptRole
+    status: AssessmentConceptReviewStatus
+    reason_code: AssessmentConceptReviewReason | None = None
+    review_note: str = ""
+
+    _validate_identity = field_validator("topic_id", "concept_id")(_canonical_identifier)
+
+    @model_validator(mode="after")
+    def decision_fields_must_match_status(self) -> "AssessmentConceptReviewRow":
+        note = self.review_note.strip()
+        if self.review_note != note:
+            raise ValueError("review_note must be trimmed")
+        if self.status == "unreviewed":
+            if self.reason_code is not None or self.review_note:
+                raise ValueError("unreviewed rows must not claim a reason or review note")
+        elif not self.review_note:
+            raise ValueError("decided review rows require a nonblank review_note")
+        elif self.status == "eligible" and self.reason_code is not None:
+            raise ValueError("eligible rows must not have an ineligible reason_code")
+        elif self.status == "ineligible" and self.reason_code is None:
+            raise ValueError("ineligible rows require a reason_code")
+        return self
+
+
+class AssessmentConceptReviewArtifact(StrictModel):
+    review_version: Literal["assessment-concept-review-v1"]
+    reviews: list[AssessmentConceptReviewRow]
+
+    @model_validator(mode="after")
+    def review_keys_must_be_unique(self) -> "AssessmentConceptReviewArtifact":
+        keys = [(item.topic_id, item.concept_id, item.concept_role) for item in self.reviews]
+        if len(keys) != len(set(keys)):
+            raise ValueError("assessment concept review contains duplicate review keys")
+        return self
+
+
+class LoadedAssessmentConceptReviews(StrictModel):
+    artifact: AssessmentConceptReviewArtifact
+    content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+
+class AssessmentConceptReviewCandidate(StrictModel):
+    topic_id: str
+    concept_id: str
+    concept_role: ConceptRole
+    assessment_priority: float = Field(ge=0, le=1)
+    book_coverage_count: int = Field(ge=1)
+    book_coverage_rate: float = Field(gt=0, le=1)
+    mean_book_weight: float = Field(ge=0, le=1)
+    evidence_types: list[ConceptEvidenceType] = Field(min_length=1)
+    prerequisite_methods: list[PrerequisiteMethod]
+    supporting_book_ids: list[str] = Field(min_length=1)
+    compact_evidence_references: list[AssessmentEvidenceRef] = Field(min_length=1)
+    current_self_assessment_selected: bool
+    current_question_spec_target: bool
+    priority_rank_within_role: int = Field(ge=1)
+    status: AssessmentConceptReviewStatus
+    reason_code: AssessmentConceptReviewReason | None = None
+    review_note: str = ""
+
+
 class SelectedAssessmentConcept(StrictModel):
     concept_id: str
     role: ConceptRole
@@ -234,6 +307,42 @@ class QuestionSpecShortage(StrictModel):
     requested: int = Field(ge=0)
     produced: int = Field(ge=0)
     reason: str = Field(min_length=1)
+
+
+class LegacyAssessmentDiagnostics(StrictModel):
+    selected_covered_concepts: list[str]
+    selected_prerequisite_concepts: list[str]
+    question_spec_count_by_type: dict[QuestionType, int]
+    shortages: list[QuestionSpecShortage]
+
+
+class AssessmentConceptReviewPacket(StrictModel):
+    packet_version: Literal["assessment-concept-review-packet-v1"]
+    review_version: Literal["assessment-concept-review-v1"]
+    topic_id: str
+    reserve: dict[ConceptRole, int]
+    candidate_count: int = Field(ge=0)
+    covered_candidate_count: int = Field(ge=0)
+    prerequisite_candidate_count: int = Field(ge=0)
+    feature_config_version: str
+    feature_config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    assessment_config_version: str
+    assessment_config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    review_artifact_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    legacy_diagnostics: LegacyAssessmentDiagnostics
+    candidates: list[AssessmentConceptReviewCandidate]
+
+    @model_validator(mode="after")
+    def candidate_counts_must_match(self) -> "AssessmentConceptReviewPacket":
+        covered = sum(item.concept_role == "covered" for item in self.candidates)
+        prerequisites = sum(item.concept_role == "prerequisite" for item in self.candidates)
+        if (
+            covered != self.covered_candidate_count
+            or prerequisites != self.prerequisite_candidate_count
+            or len(self.candidates) != self.candidate_count
+        ):
+            raise ValueError("review packet candidate counts do not match candidates")
+        return self
 
 
 class AssessmentBlueprint(StrictModel):

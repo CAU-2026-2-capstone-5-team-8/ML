@@ -9,7 +9,14 @@ import typer
 from pydantic import ValidationError
 
 from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
-from bookmatch_ml.assessment.pool import AssessmentBlueprintError
+from bookmatch_ml.assessment.pool import AssessmentBlueprintError, build_topic_concept_pool
+from bookmatch_ml.assessment.review import (
+    AssessmentConceptReviewError,
+    build_assessment_concept_review_packet,
+    load_assessment_concept_reviews,
+    reviewed_assessment_config,
+    validate_assessment_concept_reviews,
+)
 from bookmatch_ml.book.profile import build_book_profiles
 from bookmatch_ml.concept_v2.book_evidence_mapping import (
     build_book_evidence_concept_mapping_report,
@@ -147,6 +154,8 @@ DEFAULT_RANKING_CONFIG = Path("configs/ranking.yaml")
 DEFAULT_EVALUATION_CONFIG = Path("configs/evaluation.yaml")
 DEFAULT_RANKING_POLICY_CONFIG = Path("configs/ranking_policies.yaml")
 DEFAULT_ASSESSMENT_CONFIG = Path("configs/assessment.yaml")
+DEFAULT_REVIEWED_ASSESSMENT_CONFIG = Path("configs/assessment_reviewed.yaml")
+DEFAULT_ASSESSMENT_CONCEPT_REVIEWS = Path("configs/assessment_concept_reviews.yaml")
 DEFAULT_CONCEPT_GRAPH_CONFIG = Path("configs/concept_graph.yaml")
 DEFAULT_CONCEPT_MATCHING_CONFIG = Path("configs/concept_matching.yaml")
 DEFAULT_CONCEPT_MATCHING_V2_CONFIG = Path("configs/concept_matching_v2.yaml")
@@ -1489,6 +1498,10 @@ def build_assessment_blueprint_command(
         Path,
         typer.Option("--assessment-config", exists=True, dir_okay=False, readable=True),
     ] = DEFAULT_ASSESSMENT_CONFIG,
+    concept_reviews: Annotated[
+        Path | None,
+        typer.Option("--concept-reviews", exists=True, dir_okay=False, readable=True),
+    ] = None,
 ) -> None:
     """Build an auditable concept pool and question targets from canonical evidence."""
 
@@ -1500,6 +1513,11 @@ def build_assessment_blueprint_command(
         profiles = load_book_profiles(books)
         features = load_feature_config(feature_config)
         assessment = load_assessment_config(assessment_config)
+        reviews = (
+            load_assessment_concept_reviews(concept_reviews)
+            if concept_reviews is not None
+            else None
+        )
         if canonical_hashes != {
             name: _sha256_file(data_dir / name) for name in canonical_files
         } or book_profiles_hash != _sha256_file(books):
@@ -1514,6 +1532,7 @@ def build_assessment_blueprint_command(
             assessment,
             canonical_file_hashes=canonical_hashes,
             book_profiles_hash=book_profiles_hash,
+            concept_reviews=reviews,
         )
         write_json(blueprint, output)
     except (
@@ -1521,6 +1540,7 @@ def build_assessment_blueprint_command(
         RankingInputError,
         ConfigError,
         AssessmentBlueprintError,
+        AssessmentConceptReviewError,
         OSError,
     ) as exc:
         typer.echo(f"Error: {exc}", err=True)
@@ -1543,6 +1563,166 @@ def build_assessment_blueprint_command(
             sort_keys=True,
         )
     )
+
+
+@app.command("prepare-assessment-concept-review")
+def prepare_assessment_concept_review_command(
+    data_dir: Annotated[
+        Path,
+        typer.Option("--data-dir", file_okay=False, resolve_path=True),
+    ],
+    books: Annotated[
+        Path,
+        typer.Option("--books", exists=True, dir_okay=False, readable=True, resolve_path=True),
+    ],
+    topic: Annotated[str, typer.Option("--topic", help="Canonical topic ID.")],
+    output: Annotated[
+        Path,
+        typer.Option("--output", dir_okay=False, resolve_path=True),
+    ],
+    feature_config: Annotated[
+        Path,
+        typer.Option("--feature-config", exists=True, dir_okay=False, readable=True),
+    ] = DEFAULT_FEATURE_CONFIG,
+    legacy_assessment_config: Annotated[
+        Path,
+        typer.Option(
+            "--legacy-assessment-config",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+        ),
+    ] = DEFAULT_ASSESSMENT_CONFIG,
+    reviewed_assessment_config_path: Annotated[
+        Path,
+        typer.Option(
+            "--reviewed-assessment-config",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+        ),
+    ] = DEFAULT_REVIEWED_ASSESSMENT_CONFIG,
+    concept_reviews: Annotated[
+        Path,
+        typer.Option("--concept-reviews", exists=True, dir_okay=False, readable=True),
+    ] = DEFAULT_ASSESSMENT_CONCEPT_REVIEWS,
+    covered_reserve: Annotated[
+        int | None,
+        typer.Option("--covered-reserve", min=0),
+    ] = None,
+    prerequisite_reserve: Annotated[
+        int | None,
+        typer.Option("--prerequisite-reserve", min=0),
+    ] = None,
+) -> None:
+    """Prepare a deterministic, evidence-rich queue for authoritative human review."""
+
+    try:
+        canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        canonical_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        book_profiles_hash = _sha256_file(books)
+        dataset = load_canonical_dataset(data_dir)
+        profiles = load_book_profiles(books)
+        features = load_feature_config(feature_config)
+        legacy_config = load_assessment_config(legacy_assessment_config)
+        reviewed_base = load_assessment_config(reviewed_assessment_config_path)
+        reviews = load_assessment_concept_reviews(concept_reviews)
+        reviewed_config = reviewed_assessment_config(reviewed_base, reviews)
+        known_topics = set(features.config.concept.topics) & set(
+            features.config.prerequisite.topics
+        )
+        review_topics = {item.topic_id for item in reviews.artifact.reviews}
+        unknown_topics = sorted(review_topics - known_topics)
+        if unknown_topics:
+            raise AssessmentConceptReviewError(
+                "unknown review topics: " + ", ".join(unknown_topics)
+            )
+        pools = [
+            build_topic_concept_pool(
+                review_topic,
+                profiles,
+                features,
+                reviewed_config,
+            )
+            for review_topic in sorted({topic, *review_topics})
+        ]
+        validate_assessment_concept_reviews(reviews, pools, reviewed_config)
+        pool = next(item for item in pools if item.topic_id == topic)
+        legacy_blueprint = build_assessment_blueprint(
+            topic,
+            dataset,
+            profiles,
+            features,
+            legacy_config,
+            canonical_file_hashes=canonical_hashes,
+            book_profiles_hash=book_profiles_hash,
+        )
+        if canonical_hashes != {
+            name: _sha256_file(data_dir / name) for name in canonical_files
+        } or book_profiles_hash != _sha256_file(books):
+            raise AssessmentBlueprintError(
+                "canonical input or book profiles changed during loading"
+            )
+        reserve = {
+            "covered": (
+                reviewed_config.config.review_reserve["covered"]
+                if covered_reserve is None
+                else covered_reserve
+            ),
+            "prerequisite": (
+                reviewed_config.config.review_reserve["prerequisite"]
+                if prerequisite_reserve is None
+                else prerequisite_reserve
+            ),
+        }
+        packet = build_assessment_concept_review_packet(
+            pool,
+            legacy_blueprint,
+            reviewed_config,
+            reviews,
+            reserve=reserve,
+        )
+        write_json(packet, output)
+    except (
+        CanonicalDataError,
+        RankingInputError,
+        ConfigError,
+        AssessmentBlueprintError,
+        AssessmentConceptReviewError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(
+        json.dumps(
+            {
+                "topic_id": packet.topic_id,
+                "candidate_count": packet.candidate_count,
+                "covered_candidates": packet.covered_candidate_count,
+                "prerequisite_candidates": packet.prerequisite_candidate_count,
+                "review_version": packet.review_version,
+                "review_artifact_hash": packet.review_artifact_hash,
+                "assessment_config_version": packet.assessment_config_version,
+                "assessment_config_hash": packet.assessment_config_hash,
+                "output": str(output),
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    for item in packet.candidates:
+        coverage = f"{item.book_coverage_count}/{pool.topic_book_count}"
+        evidence = ",".join(item.evidence_types)
+        methods = ",".join(item.prerequisite_methods) or "-"
+        target = "yes" if item.current_question_spec_target else "no"
+        typer.echo(
+            f"{item.concept_role}\t#{item.priority_rank_within_role}\t{item.concept_id}"
+            f"\tpriority={item.assessment_priority:.6f}\tcoverage={coverage}"
+            f"\tevidence={evidence}\tprerequisite_method={methods}"
+            f"\tcurrent_question_target={target}\tstatus={item.status}"
+        )
 
 
 @app.command("ablate-book-profile")

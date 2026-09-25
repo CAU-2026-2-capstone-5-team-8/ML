@@ -1,0 +1,26 @@
+review_version: assessment-concept-review-v1
+reviews:
+  - topic_id: operating-systems
+    concept_id: process
+    concept_role: covered
+    status: eligible
+    reason_code: null
+    review_note: Fixture-only eligible covered concept.
+  - topic_id: operating-systems
+    concept_id: computer architecture
+    concept_role: prerequisite
+    status: ineligible
+    reason_code: low_diagnostic_value
+    review_note: Fixture-only ineligible prerequisite concept.
+  - topic_id: operating-systems
+    concept_id: data structures
+    concept_role: prerequisite
+    status: eligible
+    reason_code: null
+    review_note: Fixture-only eligible prerequisite concept.
+  - topic_id: operating-systems
+    concept_id: thread
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""

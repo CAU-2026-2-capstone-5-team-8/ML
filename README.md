@@ -403,6 +403,42 @@ change the existing reader-profile scoring or ranking API. See
 [Question Difficulty v1](docs/assessment-difficulty-v1.md) for rules, real-data findings, and
 limitations.
 
+### Review assessment-worthy concepts
+
+Concept evidence, prerequisite inference, and assessment eligibility are separate decisions. In
+particular, `prerequisite` does not automatically mean that a concept is worth asking as a
+diagnostic question. Prepare a bounded, evidence-rich human-review queue without changing the
+legacy `assessment-config-v1` blueprint:
+
+```bash
+uv run bookmatch-ml prepare-assessment-concept-review \
+  --data-dir ../Data-Pipeline/data/processed \
+  --books data/output/book_profiles.jsonl \
+  --topic operating-systems \
+  --output data/reviews/assessment_concept_review_operating_systems_v1.json
+```
+
+Human decisions live in the source-controlled
+`configs/assessment_concept_reviews.yaml`; generated packets under `data/reviews/` stay ignored.
+The review key is `topic_id + concept_id + concept_role`, so the same concept can be eligible as a
+covered target and ineligible as a prerequisite target. To build the fail-closed reviewed mode:
+
+```bash
+uv run bookmatch-ml build-assessment-blueprint \
+  --data-dir ../Data-Pipeline/data/processed \
+  --books data/output/book_profiles.jsonl \
+  --topic operating-systems \
+  --assessment-config configs/assessment_reviewed.yaml \
+  --concept-reviews configs/assessment_concept_reviews.yaml \
+  --output data/output/operating_systems_assessment_blueprint_reviewed.json
+```
+
+Only explicit `eligible` rows may become assessment targets. `ineligible`, explicit `unreviewed`,
+and missing decisions are excluded; quota gaps remain visible shortages and are never silently
+backfilled. The reviewed config hash binds the exact review artifact bytes while preserving the
+existing `question-spec-v1` schema. See the
+[assessment concept review report](docs/experiments/assessment-concept-review-v1.md).
+
 ## Experimental concept matching v2
 
 The existing `rank` CLI and default `/ml/rank` behavior remain `absolute_gap_v1`; v2 requires an
