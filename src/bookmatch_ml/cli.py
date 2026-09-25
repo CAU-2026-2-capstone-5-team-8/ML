@@ -91,6 +91,10 @@ from bookmatch_ml.evaluation.difficulty import EvaluationDataError, load_difficu
 from bookmatch_ml.evaluation.ranking_policies import evaluate_ranking_policies
 from bookmatch_ml.evaluation.report import build_evaluation_report
 from bookmatch_ml.io import write_json, write_jsonl
+from bookmatch_ml.ranking.concept_readiness_experiments import (
+    ConceptReadinessExperimentError,
+    evaluate_concept_readiness_ranking,
+)
 from bookmatch_ml.ranking.loader import (
     RankingInputError,
     load_book_profiles,
@@ -308,6 +312,96 @@ def build_matching_book_candidates_command(
                 "with_prerequisite_concepts": report.candidates_with_prerequisite_concepts,
                 "output": str(output),
                 "report": str(report_output),
+            },
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("evaluate-concept-readiness-ranking")
+def evaluate_concept_readiness_ranking_command(
+    concept_mapping: Annotated[
+        Path, typer.Option("--concept-mapping", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    readers: Annotated[
+        list[Path] | None,
+        typer.Option("--reader", exists=True, dir_okay=False, resolve_path=True),
+    ] = None,
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)] = Path(
+        "data/reports/concept-readiness-ranking-v1.json"
+    ),
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    review_config: Annotated[
+        Path, typer.Option("--review-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_REVIEWS_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_V2_CONFIG,
+) -> None:
+    """Compare offline concept-readiness variants without changing production rank-v1."""
+
+    if not readers:
+        typer.echo("Error: at least one --reader is required", err=True)
+        raise typer.Exit(code=1)
+    input_paths = {
+        "concept_mapping": concept_mapping,
+        "feature_config": feature_config,
+        "graph_config": graph_config,
+        "review_config": review_config,
+        "matching_config": matching_config,
+        **{f"reader:{index}": path for index, path in enumerate(readers)},
+    }
+    try:
+        if output.resolve() in {path.resolve() for path in input_paths.values()}:
+            raise ConceptReadinessExperimentError("--output must not overwrite an experiment input")
+        input_hashes = {name: _sha256_file(path) for name, path in input_paths.items()}
+        mapping = load_concept_mapping_report(concept_mapping)
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        reviews = load_concept_graph_reviews(review_config, graph)
+        matching = load_concept_matching_config(matching_config)
+        reader_profiles = [load_reader_profile(path) for path in readers]
+        if len({reader.topic_id for reader in reader_profiles}) != len(reader_profiles):
+            raise ConceptReadinessExperimentError("duplicate reader topic")
+        reader_hashes = {
+            reader.topic_id: _sha256_file(path)
+            for reader, path in zip(reader_profiles, readers, strict=True)
+        }
+        report = evaluate_concept_readiness_ranking(
+            mapping,
+            reader_profiles,
+            graph,
+            reviews,
+            matching,
+            mapping_report_hash=_sha256_file(concept_mapping),
+            reader_profile_hashes=reader_hashes,
+            input_hashes=input_hashes,
+        )
+        if input_hashes != {name: _sha256_file(path) for name, path in input_paths.items()}:
+            raise ConceptReadinessExperimentError("experiment input changed during evaluation")
+        write_json(report, output)
+    except (
+        ConceptReadinessExperimentError,
+        ConfigError,
+        RankingInputError,
+        SourceAwareAdapterError,
+        ValueError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "accepted_edge_count": len(report.accepted_graph.edges),
+                "experiment_version": report.experiment_version,
+                "output": str(output),
+                "topics": [topic.topic_id for topic in report.topics],
             },
             sort_keys=True,
         )
