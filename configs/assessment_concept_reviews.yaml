@@ -1,6 +1,7 @@
 review_version: assessment-concept-review-v1
 
-# Human decisions only. Generated evidence packets belong under ignored data/reviews/.
+# Human decisions and explicit unreviewed queue rows only.
+# Generated evidence packets belong under ignored data/reviews/.
 # Key: topic_id + concept_id + concept_role.
 reviews:
   - topic_id: operating-systems
@@ -99,3 +100,81 @@ reviews:
     status: ineligible
     reason_code: low_diagnostic_value
     review_note: General data-structure knowledge is broad background knowledge with limited operating-systems-specific diagnostic value.
+  - topic_id: linear-algebra
+    concept_id: matrix
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: vector
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: linear system
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: orthogonality
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: dimension
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: determinant
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: gaussian elimination
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: basis
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: eigenvalue
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: vector space
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: diagonalization
+    concept_role: covered
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: high school algebra
+    concept_role: prerequisite
+    status: unreviewed
+    reason_code: null
+    review_note: ""
+  - topic_id: linear-algebra
+    concept_id: systems of equations
+    concept_role: prerequisite
+    status: unreviewed
+    reason_code: null
+    review_note: ""

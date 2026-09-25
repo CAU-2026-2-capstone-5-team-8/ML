@@ -22,6 +22,8 @@ from bookmatch_ml.assessment.schemas import (
     AssessmentConceptReviewArtifact,
     AssessmentConceptReviewRow,
     LoadedAssessmentConceptReviews,
+    TopicConcept,
+    TopicConceptPool,
 )
 from bookmatch_ml.book.profile import build_book_profiles
 from bookmatch_ml.cli import app
@@ -55,10 +57,28 @@ def _reviews(rows: list[dict[str, object]]) -> LoadedAssessmentConceptReviews:
     )
 
 
-def _legacy_blueprint():
+def _synthetic_la_pool(os_pool: TopicConceptPool) -> TopicConceptPool:
+    concept_payload = os_pool.concepts[0].model_dump(mode="json")
+    concept_payload.update({"topic_id": "linear-algebra", "concept_id": "matrix"})
+    for support in concept_payload["book_support"]:
+        for evidence in support["evidence"]:
+            evidence["concept_id"] = "matrix"
+    concept = TopicConcept.model_validate(concept_payload)
+    return TopicConceptPool.model_validate(
+        os_pool.model_dump(mode="json")
+        | {
+            "topic_id": "linear-algebra",
+            "covered_concept_count": 1,
+            "prerequisite_concept_count": 0,
+            "concepts": [concept.model_dump(mode="json")],
+        }
+    )
+
+
+def _legacy_blueprint(topic_id: str = "operating-systems"):
     dataset, profiles = _inputs()
     return build_assessment_blueprint(
-        "operating-systems",
+        topic_id,
         dataset,
         profiles,
         FEATURES,
@@ -75,11 +95,12 @@ def _decision(
     concept_role: str,
     status: str,
     *,
+    topic_id: str = "operating-systems",
     reason_code: str | None = None,
     review_note: str = "",
 ) -> dict[str, object]:
     return {
-        "topic_id": "operating-systems",
+        "topic_id": topic_id,
         "concept_id": concept_id,
         "concept_role": concept_role,
         "status": status,
@@ -176,6 +197,38 @@ def test_review_validation_rejects_stale_concept_and_unknown_topic() -> None:
     )
     with pytest.raises(AssessmentConceptReviewError, match="unknown review topics"):
         validate_assessment_concept_reviews(unknown_topic, [pool], reviewed)
+
+
+def test_review_validation_accepts_multiple_topics() -> None:
+    _, profiles = _inputs()
+    reviews = _reviews(
+        [
+            _decision(
+                "process",
+                "covered",
+                "eligible",
+                review_note="Fixture OS decision.",
+            ),
+            _decision(
+                "matrix",
+                "covered",
+                "unreviewed",
+                topic_id="linear-algebra",
+            ),
+        ]
+    )
+    reviewed = reviewed_assessment_config(REVIEWED, reviews)
+    os_pool = build_topic_concept_pool("operating-systems", profiles, FEATURES, reviewed)
+    la_pool = _synthetic_la_pool(os_pool)
+    pools = [os_pool, la_pool]
+
+    validate_assessment_concept_reviews(reviews, pools, reviewed)
+
+    os_pool, la_pool = pools
+    assert [item.concept_id for item in eligible_concepts(os_pool, "covered", reviews)] == [
+        "process"
+    ]
+    assert eligible_concepts(la_pool, "covered", reviews) == []
 
 
 def test_reviewed_selection_keeps_only_eligible_without_implicit_fallback() -> None:
@@ -338,6 +391,14 @@ def test_legacy_assessment_v1_snapshot_is_unchanged() -> None:
     assert blueprint.config_version == "assessment-config-v1"
 
 
+def test_legacy_linear_algebra_assessment_v1_snapshot_is_unchanged() -> None:
+    blueprint = _legacy_blueprint("linear-algebra")
+    digest = hashlib.sha256(blueprint.model_dump_json().encode()).hexdigest()
+
+    assert digest == "6fa7b4b8478c9c98043fb9d25eaa93876b3750db879c9f694a0d948c449cb252"
+    assert blueprint.config_version == "assessment-config-v1"
+
+
 def test_os_review_packet_is_deterministic_and_bounded() -> None:
     _, profiles = _inputs()
     reviews = _reviews([])
@@ -357,6 +418,73 @@ def test_os_review_packet_is_deterministic_and_bounded() -> None:
     process = next(item for item in first.candidates if item.concept_id == "process")
     assert process.concept_role == "covered"
     assert process.current_question_spec_target is True
+
+
+def test_la_review_packet_is_deterministic_and_topic_specific() -> None:
+    _, profiles = _inputs()
+    reviews = _reviews([])
+    reviewed = reviewed_assessment_config(REVIEWED, reviews)
+    pool = build_topic_concept_pool("linear-algebra", profiles, FEATURES, reviewed)
+    legacy = _legacy_blueprint("linear-algebra")
+    reserve = reviewed.config.review_reserve
+
+    first = build_assessment_concept_review_packet(pool, legacy, reviewed, reviews, reserve=reserve)
+    second = build_assessment_concept_review_packet(
+        pool, legacy, reviewed, reviews, reserve=reserve
+    )
+
+    assert first == second
+    assert first.topic_id == "linear-algebra"
+    assert all(item.topic_id == "linear-algebra" for item in first.candidates)
+    assert all(item.status == "unreviewed" for item in first.candidates)
+
+
+def test_la_unreviewed_rows_do_not_change_os_reviewed_selection() -> None:
+    _, profiles = _inputs()
+    os_only = _reviews(
+        [
+            _decision(
+                "process",
+                "covered",
+                "eligible",
+                review_note="Fixture OS decision.",
+            )
+        ]
+    )
+    with_la_queue = _reviews(
+        [
+            _decision(
+                "process",
+                "covered",
+                "eligible",
+                review_note="Fixture OS decision.",
+            ),
+            _decision(
+                "matrix",
+                "covered",
+                "unreviewed",
+                topic_id="linear-algebra",
+            ),
+        ]
+    )
+
+    os_config = reviewed_assessment_config(REVIEWED, os_only)
+    multi_config = reviewed_assessment_config(REVIEWED, with_la_queue)
+    baseline = build_topic_concept_pool("operating-systems", profiles, FEATURES, os_config)
+    augmented = build_topic_concept_pool("operating-systems", profiles, FEATURES, multi_config)
+    validate_assessment_concept_reviews(os_only, [baseline], os_config)
+    validate_assessment_concept_reviews(
+        with_la_queue,
+        [augmented, _synthetic_la_pool(augmented)],
+        multi_config,
+    )
+
+    assert [item.concept_id for item in eligible_concepts(baseline, "covered", os_only)] == [
+        item.concept_id for item in eligible_concepts(augmented, "covered", with_la_queue)
+    ]
+    assert [item.concept_id for item in eligible_concepts(baseline, "prerequisite", os_only)] == [
+        item.concept_id for item in eligible_concepts(augmented, "prerequisite", with_la_queue)
+    ]
 
 
 def test_review_packet_cli_writes_identical_outputs(tmp_path: Path) -> None:
@@ -390,15 +518,15 @@ def test_review_packet_cli_writes_identical_outputs(tmp_path: Path) -> None:
 
 def test_current_os_human_review_is_complete_and_exact() -> None:
     reviews = load_assessment_concept_reviews(ROOT / "configs" / "assessment_concept_reviews.yaml")
+    os_reviews = [item for item in reviews.artifact.reviews if item.topic_id == "operating-systems"]
     decisions = {
-        (item.concept_role, item.concept_id): (item.status, item.reason_code)
-        for item in reviews.artifact.reviews
+        (item.concept_role, item.concept_id): (item.status, item.reason_code) for item in os_reviews
     }
 
-    assert len(reviews.artifact.reviews) == 16
-    assert all(item.status != "unreviewed" for item in reviews.artifact.reviews)
-    assert sum(item.status == "eligible" for item in reviews.artifact.reviews) == 11
-    assert sum(item.status == "ineligible" for item in reviews.artifact.reviews) == 5
+    assert len(os_reviews) == 16
+    assert all(item.status != "unreviewed" for item in os_reviews)
+    assert sum(item.status == "eligible" for item in os_reviews) == 11
+    assert sum(item.status == "ineligible" for item in os_reviews) == 5
     assert decisions == {
         ("covered", "process"): ("eligible", None),
         ("covered", "thread"): ("eligible", None),
@@ -417,6 +545,29 @@ def test_current_os_human_review_is_complete_and_exact() -> None:
         ("prerequisite", "algorithms"): ("ineligible", "low_diagnostic_value"),
         ("prerequisite", "data structures"): ("ineligible", "low_diagnostic_value"),
     }
+
+
+def test_current_la_review_queue_is_explicitly_unreviewed() -> None:
+    reviews = load_assessment_concept_reviews(ROOT / "configs" / "assessment_concept_reviews.yaml")
+    la_reviews = [item for item in reviews.artifact.reviews if item.topic_id == "linear-algebra"]
+
+    assert [(item.concept_role, item.concept_id) for item in la_reviews] == [
+        ("covered", "matrix"),
+        ("covered", "vector"),
+        ("covered", "linear system"),
+        ("covered", "orthogonality"),
+        ("covered", "dimension"),
+        ("covered", "determinant"),
+        ("covered", "gaussian elimination"),
+        ("covered", "basis"),
+        ("covered", "eigenvalue"),
+        ("covered", "vector space"),
+        ("covered", "diagonalization"),
+        ("prerequisite", "high school algebra"),
+        ("prerequisite", "systems of equations"),
+    ]
+    assert all(item.status == "unreviewed" for item in la_reviews)
+    assert all(item.reason_code is None and item.review_note == "" for item in la_reviews)
 
 
 def test_current_os_reviewed_config_hash_is_deterministic() -> None:

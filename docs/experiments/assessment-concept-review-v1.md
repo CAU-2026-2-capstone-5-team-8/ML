@@ -152,11 +152,13 @@ review decisions, not automatic labels or heuristic suggestions.
 prerequisite feature remain unchanged for recommendation-side use. The human rationale is that
 general programming knowledge is too broad to distinguish operating-systems readiness.
 
-The exact decision artifact hash is
-`sha256:e816f92b81138851e048f40ef879cabd0439053f3a901e8064e1710c25005383`.
+The combined multi-topic review artifact now retains these 16 OS decisions and 13 explicit,
+undecided Linear Algebra queue rows. Its exact hash is
+`sha256:a903b6b6cd4e693c294144682b0df37de78066de1957d41821c1e2a028c9dc8c`.
 Combined with `configs/assessment_reviewed.yaml` and the schema version, it produces effective
 reviewed config hash
-`sha256:3d94b26001746192b43e227253746e77e9c1d3ccd17f5871b1c87e61779b6d77`.
+`sha256:71bc89d82cfe19da2bb62265d96f4bd00c8cc138ad0f7d45a49298895aba9591`.
+The added Linear Algebra rows are all `unreviewed`; they do not change any OS eligibility decision.
 
 ## Reviewed selection and shortages
 
