@@ -271,3 +271,31 @@ def test_cli_writes_byte_identical_report_and_blind_pair_packet(tmp_path: Path) 
     report = json.loads(outputs[0])
     assert all(pair["human_preference"] is None for pair in report["human_pair_review_packet"])
     assert all(pair["review_note"] is None for pair in report["human_pair_review_packet"])
+
+
+def test_cli_rejects_output_that_would_overwrite_input(tmp_path: Path) -> None:
+    mapping_path = tmp_path / "mapping.json"
+    os_reader_path = tmp_path / "os-reader.json"
+    write_json(_mapping(), mapping_path)
+    original_mapping = mapping_path.read_bytes()
+    write_json(
+        next(reader for reader in _readers() if reader.topic_id == "operating-systems"),
+        os_reader_path,
+    )
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "evaluate-concept-readiness-ranking",
+            "--concept-mapping",
+            str(mapping_path),
+            "--reader",
+            str(os_reader_path),
+            "--output",
+            str(mapping_path),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "--output must not overwrite an experiment input" in result.output
+    assert mapping_path.read_bytes() == original_mapping

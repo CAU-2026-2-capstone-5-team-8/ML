@@ -356,8 +356,10 @@ def evaluate_concept_readiness_ranking_command(
         "matching_config": matching_config,
         **{f"reader:{index}": path for index, path in enumerate(readers)},
     }
-    input_hashes = {name: _sha256_file(path) for name, path in input_paths.items()}
     try:
+        if output.resolve() in {path.resolve() for path in input_paths.values()}:
+            raise ConceptReadinessExperimentError("--output must not overwrite an experiment input")
+        input_hashes = {name: _sha256_file(path) for name, path in input_paths.items()}
         mapping = load_concept_mapping_report(concept_mapping)
         features = load_feature_config(feature_config)
         graph = load_concept_graph(graph_config, features)
