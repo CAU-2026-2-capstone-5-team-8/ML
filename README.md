@@ -154,6 +154,30 @@ It evaluates four deterministic knowledge states per topic, keeps missing concep
 unavailable, and compares prerequisite-only, unweighted, and prerequisite-first diagnostics.
 See the [multi-reader experiment report](docs/experiments/multi-reader-concept-ranking-v1.md).
 
+## Demo the prerequisite-first ranking candidate
+
+Run the isolated ranking-v2 candidate against the real local Scale-50 concept mapping:
+
+```bash
+uv run bookmatch-ml demo-concept-recommendation \
+  --topic operating-systems \
+  --scenario beginner \
+  --limit 5
+```
+
+The concise output shows personalized and fallback counts, exact prerequisite-first ranks,
+both diagnostic axes, their coverage, and bounded explanations. It does not call or modify
+production `/ml/rank`. Generate the complete validation report with:
+
+```bash
+uv run bookmatch-ml evaluate-prerequisite-first-candidate \
+  --output data/reports/prerequisite-first-ranking-v2-candidate-v1.json
+```
+
+See the
+[prerequisite-first candidate report](docs/experiments/prerequisite-first-ranking-v2-candidate-v1.md)
+for the policy, Scale-50 results, human-pair agreement, and remaining production decisions.
+
 ## Requirements
 
 - Python 3.12 or newer
