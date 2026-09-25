@@ -138,6 +138,22 @@ prediction artifact, and matcher/config hashes. See the
 [`holdout design`](docs/experiments/matcher-v2-fresh-holdouts-v1.md) and
 [`completed results`](docs/experiments/matcher-v2-fresh-holdout-results-v1.md).
 
+## Evaluate deterministic reader scenarios
+
+Run the offline multi-reader concept-ranking diagnostic without changing production ranking:
+
+```bash
+uv run bookmatch-ml evaluate-multi-reader-concept-ranking \
+  --concept-mapping data/reports/scale-50-concept-presence-v2-overlap.json \
+  --fixed-reader data/output/reader_profile.json \
+  --fixed-reader data/output/concept_matching_la_reader.json \
+  --output data/reports/multi-reader-concept-ranking-v1.json
+```
+
+It evaluates four deterministic knowledge states per topic, keeps missing concept evidence
+unavailable, and compares prerequisite-only, unweighted, and prerequisite-first diagnostics.
+See the [multi-reader experiment report](docs/experiments/multi-reader-concept-ranking-v1.md).
+
 ## Requirements
 
 - Python 3.12 or newer
