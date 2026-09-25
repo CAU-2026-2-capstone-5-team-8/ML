@@ -8,6 +8,7 @@ from bookmatch_ml.config import (
     load_evaluation_config,
     load_feature_config,
     load_ranking_config,
+    load_ranking_v2_config,
     load_reader_config,
 )
 
@@ -39,6 +40,7 @@ def test_invalid_weight_configuration_fails_visibly(tmp_path: Path) -> None:
         ("features.yaml", load_feature_config),
         ("reader.yaml", load_reader_config),
         ("ranking.yaml", load_ranking_config),
+        ("ranking_v2.yaml", load_ranking_v2_config),
         ("evaluation.yaml", load_evaluation_config),
     ],
 )
@@ -72,6 +74,17 @@ def test_ranking_config_is_versioned_and_weights_are_normalized() -> None:
     assert loaded.config.model_version == "rank-v1"
     assert sum(loaded.config.component_weights.values()) == pytest.approx(1.0)
     assert sum(loaded.config.knowledge_weights.values()) == pytest.approx(1.0)
+    assert loaded.content_hash.startswith("sha256:")
+
+
+def test_ranking_v2_config_freezes_the_reviewed_non_numeric_policy() -> None:
+    loaded = load_ranking_v2_config(ROOT / "configs" / "ranking_v2.yaml")
+
+    assert loaded.config.config_version == "ranking-v2-config-v1"
+    assert loaded.config.model_version == "rank-prerequisite-first-v2"
+    assert loaded.config.fallback_policy == "return_personalizable_only"
+    assert loaded.config.coverage_policy == "diagnostic_only"
+    assert len(loaded.config.accepted_edges) == 18
     assert loaded.content_hash.startswith("sha256:")
 
 

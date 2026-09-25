@@ -8,7 +8,11 @@ from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 from bookmatch_ml.book.profile import build_book_profiles
-from bookmatch_ml.config import load_feature_config, load_ranking_config, load_reader_config
+from bookmatch_ml.config import (
+    load_feature_config,
+    load_ranking_config,
+    load_reader_config,
+)
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import load_canonical_dataset
 from bookmatch_ml.integration.schemas import (

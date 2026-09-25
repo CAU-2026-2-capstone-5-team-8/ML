@@ -77,6 +77,7 @@ from bookmatch_ml.config import (
     load_feature_config,
     load_ranking_config,
     load_ranking_policy_config,
+    load_ranking_v2_config,
     load_reader_config,
 )
 from bookmatch_ml.data.book_evidence import (
@@ -101,7 +102,12 @@ from bookmatch_ml.ranking.loader import (
     load_book_profiles,
     load_reader_profile,
 )
-from bookmatch_ml.ranking.matching import RankingError, rank_books, score_book_fit
+from bookmatch_ml.ranking.matching import (
+    RankingError,
+    rank_books,
+    score_book_fit,
+    to_matching_reader_profile,
+)
 from bookmatch_ml.ranking.multi_reader_concept_experiments import (
     MultiReaderConceptExperimentError,
     build_scenario_profiles,
@@ -114,6 +120,12 @@ from bookmatch_ml.ranking.prerequisite_first_candidate import (
     evaluate_candidate_scenario,
     evaluate_prerequisite_first_candidate,
 )
+from bookmatch_ml.ranking.prerequisite_first_v2 import (
+    RankingV2Error,
+    build_prerequisite_first_book_profiles,
+    build_ranking_v2_projection,
+    rank_prerequisite_first_v2,
+)
 from bookmatch_ml.ranking.source_aware_adapter import (
     SourceAwareAdapterError,
     build_source_aware_adapter_report,
@@ -121,7 +133,12 @@ from bookmatch_ml.ranking.source_aware_adapter import (
     load_concept_mapping_report,
 )
 from bookmatch_ml.reader.profile import AssessmentError, build_reader_profile, load_assessment
-from bookmatch_ml.schemas import BookCoverageSummary, CoverageReport, RankingResponse
+from bookmatch_ml.schemas import (
+    BookCoverageSummary,
+    CoverageReport,
+    MatchingBookProfile,
+    RankingResponse,
+)
 
 app = typer.Typer(no_args_is_help=True, pretty_exceptions_show_locals=False)
 DEFAULT_FEATURE_CONFIG = Path("configs/features.yaml")
@@ -141,10 +158,28 @@ DEFAULT_MULTI_READER_CONCEPT_EXPERIMENT_CONFIG = Path(
 DEFAULT_SCALE_50_CONCEPT_MAPPING = Path("data/reports/scale-50-concept-presence-v2-overlap.json")
 DEFAULT_FIXED_OS_READER = Path("data/output/reader_profile.json")
 DEFAULT_FIXED_LA_READER = Path("data/output/concept_matching_la_reader.json")
+DEFAULT_SCALE_50_MATCHING_CANDIDATES = Path("data/output/scale-50-matching-candidates.jsonl")
+DEFAULT_RANKING_V2_CONFIG = Path("configs/ranking_v2.yaml")
 
 
 def _sha256_file(path: Path) -> str:
     return f"sha256:{hashlib.sha256(path.read_bytes()).hexdigest()}"
+
+
+def _load_matching_book_profiles(path: Path) -> list[MatchingBookProfile]:
+    """Load strict matching candidates for the production-v2 smoke command."""
+
+    profiles = [
+        MatchingBookProfile.model_validate_json(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    ids = [profile.book_id for profile in profiles]
+    if not profiles:
+        raise RankingInputError(f"matching candidates are empty: {path}")
+    if len(ids) != len(set(ids)):
+        raise RankingInputError(f"duplicate matching candidates: {path}")
+    return profiles
 
 
 @app.callback()
@@ -743,6 +778,80 @@ def demo_concept_recommendation_command(
             f"{book.direct_learning_opportunity:.3f} | {book.direct_coverage:.3f}"
         )
         typer.echo(f"     이유: {' '.join(book.explanation_reasons)}")
+
+
+@app.command("demo-production-ranking-v2")
+def demo_production_ranking_v2_command(
+    reader_path: Annotated[
+        Path, typer.Option("--reader", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    limit: Annotated[int, typer.Option("--limit", min=1, max=100)] = 5,
+    candidates_path: Annotated[
+        Path, typer.Option("--candidates", exists=True, dir_okay=False, resolve_path=True)
+    ] = DEFAULT_SCALE_50_MATCHING_CANDIDATES,
+    concept_mapping: Annotated[
+        Path, typer.Option("--concept-mapping", exists=True, dir_okay=False, resolve_path=True)
+    ] = DEFAULT_SCALE_50_CONCEPT_MAPPING,
+    ranking_v2_config: Annotated[
+        Path, typer.Option("--ranking-v2-config", exists=True, dir_okay=False, resolve_path=True)
+    ] = DEFAULT_RANKING_V2_CONFIG,
+) -> None:
+    """Run production-v2 on an actual ReaderProfile and matching candidates."""
+
+    try:
+        reader = to_matching_reader_profile(load_reader_profile(reader_path))
+        candidates = _load_matching_book_profiles(candidates_path)
+        mapping = load_concept_mapping_report(concept_mapping)
+        loaded_config = load_ranking_v2_config(ranking_v2_config)
+        projection = build_ranking_v2_projection(loaded_config)
+        books = build_prerequisite_first_book_profiles(candidates, projection)
+        response = rank_prerequisite_first_v2(reader, books, loaded_config, limit=limit)
+    except (
+        ConfigError,
+        RankingInputError,
+        RankingV2Error,
+        SourceAwareAdapterError,
+        ValidationError,
+        ValueError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    titles = {book.book_id: book.title for book in mapping.books}
+    diagnostics = response.diagnostics
+    typer.echo(f"Model: {response.model_version}")
+    typer.echo(f"Topic: {response.topic_id}")
+    typer.echo(
+        "Personalized ranking available: "
+        f"{diagnostics.personalizable_count}/{diagnostics.topic_candidate_count}"
+    )
+    typer.echo(
+        "Fallback / unavailable: "
+        f"{diagnostics.fallback_count}/{diagnostics.topic_candidate_count} "
+        f"(concept-only {diagnostics.concept_only_count}, "
+        f"no concept evidence {diagnostics.evidence_unavailable_count})"
+    )
+    if diagnostics.personalized_candidate_shortage:
+        typer.echo(
+            f"Personalized candidate shortage: {diagnostics.personalized_candidate_shortage}"
+        )
+    typer.echo("")
+    typer.echo("Rank | Title | Prereq | P-cov | Opportunity | D-cov")
+    typer.echo("-----|-------|--------|-------|-------------|------")
+    for item in response.items:
+        opportunity = (
+            f"{item.direct_learning_opportunity:.3f}"
+            if item.direct_learning_opportunity is not None
+            else "not assessed"
+        )
+        typer.echo(
+            f"{item.rank:>4} | {titles.get(item.book_id, item.book_id)} | "
+            f"{item.prerequisite_readiness:.3f} | {item.prerequisite_coverage:.3f} | "
+            f"{opportunity} | {item.direct_coverage:.3f}"
+        )
+        typer.echo(f"     book_id: {item.book_id}")
+        typer.echo(f"     이유: {' '.join(item.reasons)}")
 
 
 def _build_expected_evidence_review(
