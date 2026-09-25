@@ -1,0 +1,69 @@
+config_version: ranking-v2-config-v1
+model_version: rank-prerequisite-first-v2
+ordering_policy: prerequisite_readiness_desc_then_direct_opportunity_desc_then_book_id
+fallback_policy: return_personalizable_only
+target_unavailable_policy: validation_error
+coverage_policy: diagnostic_only
+concept_graph_version: concept-graph-v1
+concept_graph_hash: sha256:a30a726f28b27215df5aa397bca62ecea7badd8dbbdb90e0a46a43ac05cb2245
+graph_review_version: concept-graph-reviews-v1
+graph_review_hash: sha256:d13d39a8a1827039459f0b8f4d75ab5293e3e8a7ad0c600a5b38512a8b912af7
+nodes:
+  linear-algebra:
+    - basis
+    - determinant
+    - diagonalization
+    - dimension
+    - eigenvalue
+    - eigenvector
+    - gaussian elimination
+    - high school algebra
+    - inner product
+    - least squares
+    - linear independence
+    - linear system
+    - linear transformation
+    - matrix
+    - orthogonality
+    - rank
+    - singular value decomposition
+    - systems of equations
+    - vector
+    - vector space
+  operating-systems:
+    - computer architecture
+    - concurrency
+    - deadlock
+    - distributed systems
+    - file system
+    - input/output
+    - memory management
+    - process
+    - programming
+    - protection
+    - scheduling
+    - security
+    - storage
+    - synchronization
+    - thread
+    - virtual memory
+    - virtualization
+accepted_edges:
+  - {topic: linear-algebra, prerequisite: high school algebra, dependent: linear system}
+  - {topic: linear-algebra, prerequisite: inner product, dependent: orthogonality}
+  - {topic: linear-algebra, prerequisite: linear system, dependent: gaussian elimination}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: determinant}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: eigenvalue}
+  - {topic: linear-algebra, prerequisite: matrix, dependent: rank}
+  - {topic: linear-algebra, prerequisite: orthogonality, dependent: least squares}
+  - {topic: linear-algebra, prerequisite: vector, dependent: vector space}
+  - {topic: linear-algebra, prerequisite: vector space, dependent: basis}
+  - {topic: operating-systems, prerequisite: computer architecture, dependent: memory management}
+  - {topic: operating-systems, prerequisite: concurrency, dependent: synchronization}
+  - {topic: operating-systems, prerequisite: memory management, dependent: virtual memory}
+  - {topic: operating-systems, prerequisite: process, dependent: concurrency}
+  - {topic: operating-systems, prerequisite: process, dependent: scheduling}
+  - {topic: operating-systems, prerequisite: process, dependent: thread}
+  - {topic: operating-systems, prerequisite: storage, dependent: file system}
+  - {topic: operating-systems, prerequisite: synchronization, dependent: deadlock}
+  - {topic: operating-systems, prerequisite: thread, dependent: concurrency}
