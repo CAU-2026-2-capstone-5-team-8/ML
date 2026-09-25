@@ -81,8 +81,10 @@ def validate_assessment_concept_reviews(
     loaded_reviews: LoadedAssessmentConceptReviews,
     pools: list[TopicConceptPool],
     loaded_config: LoadedAssessmentConfig,
+    *,
+    supported_topics: set[str] | None = None,
 ) -> None:
-    """Reject unknown topics and stale concept-role decisions without deleting them."""
+    """Reject unknown topics and stale rows for topics represented by current pools."""
 
     if loaded_config.config.selection_mode != "reviewed":
         raise AssessmentConceptReviewError("concept reviews require reviewed assessment mode")
@@ -91,15 +93,15 @@ def validate_assessment_concept_reviews(
     concepts_by_topic = {
         pool.topic_id: {(item.concept_id, item.role) for item in pool.concepts} for pool in pools
     }
-    unknown_topics = sorted(
-        {row.topic_id for row in loaded_reviews.artifact.reviews} - set(concepts_by_topic)
-    )
+    review_topics = {row.topic_id for row in loaded_reviews.artifact.reviews}
+    unknown_topics = sorted(review_topics - (supported_topics or set(concepts_by_topic)))
     if unknown_topics:
         raise AssessmentConceptReviewError("unknown review topics: " + ", ".join(unknown_topics))
     stale = sorted(
         (row.topic_id, row.concept_id, row.concept_role)
         for row in loaded_reviews.artifact.reviews
-        if (row.concept_id, row.concept_role) not in concepts_by_topic[row.topic_id]
+        if row.topic_id in concepts_by_topic
+        and (row.concept_id, row.concept_role) not in concepts_by_topic[row.topic_id]
     )
     if stale:
         formatted = ", ".join("/".join(item) for item in stale)

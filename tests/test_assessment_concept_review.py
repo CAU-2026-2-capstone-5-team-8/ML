@@ -46,6 +46,29 @@ def _inputs():
     return dataset, profiles
 
 
+def _topic_inputs(topic_id: str):
+    dataset, profiles = _inputs()
+    topic_profiles = [
+        profile
+        for profile in profiles
+        if profile.concept_profile.topic_distribution.get(topic_id, 0) > 0
+    ]
+    book_ids = {profile.book_id for profile in topic_profiles}
+    return (
+        dataset.model_copy(
+            update={
+                "books": [book for book in dataset.books if book.book_id in book_ids],
+                "documents": [
+                    document for document in dataset.documents if document.book_id in book_ids
+                ],
+                "toc": [entry for entry in dataset.toc if entry.book_id in book_ids],
+                "sources": [source for source in dataset.sources if source.book_id in book_ids],
+            }
+        ),
+        topic_profiles,
+    )
+
+
 def _reviews(rows: list[dict[str, object]]) -> LoadedAssessmentConceptReviews:
     artifact = AssessmentConceptReviewArtifact.model_validate(
         {"review_version": "assessment-concept-review-v1", "reviews": rows}
@@ -229,6 +252,76 @@ def test_review_validation_accepts_multiple_topics() -> None:
         "process"
     ]
     assert eligible_concepts(la_pool, "covered", reviews) == []
+
+
+def test_review_validation_defers_supported_topics_without_profiles() -> None:
+    _, profiles = _inputs()
+    reviews = _reviews(
+        [
+            _decision(
+                "process",
+                "covered",
+                "eligible",
+                review_note="Fixture OS decision.",
+            ),
+            _decision(
+                "matrix",
+                "covered",
+                "unreviewed",
+                topic_id="linear-algebra",
+            ),
+        ]
+    )
+    reviewed = reviewed_assessment_config(REVIEWED, reviews)
+    os_pool = build_topic_concept_pool("operating-systems", profiles, FEATURES, reviewed)
+
+    validate_assessment_concept_reviews(
+        reviews,
+        [os_pool],
+        reviewed,
+        supported_topics={"operating-systems", "linear-algebra"},
+    )
+
+    assert [item.concept_id for item in eligible_concepts(os_pool, "covered", reviews)] == [
+        "process"
+    ]
+
+
+def test_reviewed_blueprint_ignores_supported_review_topics_absent_from_profiles() -> None:
+    dataset, profiles = _topic_inputs("operating-systems")
+    reviews = _reviews(
+        [
+            _decision(
+                "process",
+                "covered",
+                "eligible",
+                review_note="Fixture OS decision.",
+            ),
+            _decision(
+                "matrix",
+                "covered",
+                "unreviewed",
+                topic_id="linear-algebra",
+            ),
+        ]
+    )
+
+    blueprint = build_assessment_blueprint(
+        "operating-systems",
+        dataset,
+        profiles,
+        FEATURES,
+        REVIEWED,
+        canonical_file_hashes={
+            name: HASH for name in ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        },
+        book_profiles_hash=HASH,
+        concept_reviews=reviews,
+    )
+
+    assert [(item.role, item.concept_id) for item in blueprint.selected_assessment_concepts] == [
+        ("covered", "process")
+    ]
 
 
 def test_reviewed_selection_keeps_only_eligible_without_implicit_fallback() -> None:
