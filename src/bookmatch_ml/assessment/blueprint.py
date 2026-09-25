@@ -9,10 +9,17 @@ from bookmatch_ml.assessment.pool import (
     build_topic_concept_pool,
     validate_profile_handoff,
 )
+from bookmatch_ml.assessment.review import (
+    AssessmentConceptReviewError,
+    eligible_concepts,
+    reviewed_assessment_config,
+    validate_assessment_concept_reviews,
+)
 from bookmatch_ml.assessment.schemas import (
     AssessmentBlueprint,
     AssessmentEvidenceRef,
     CognitiveOperation,
+    LoadedAssessmentConceptReviews,
     QuestionSpec,
     QuestionSpecShortage,
     SelectedAssessmentConcept,
@@ -201,11 +208,20 @@ def _make_spec(
 
 
 def _selected_by_role(
-    pool: TopicConceptPool, loaded_config: LoadedAssessmentConfig
+    pool: TopicConceptPool,
+    loaded_config: LoadedAssessmentConfig,
+    loaded_reviews: LoadedAssessmentConceptReviews | None = None,
 ) -> tuple[list[TopicConcept], list[TopicConcept], list[SelectedAssessmentConcept]]:
     selected: dict[str, list[TopicConcept]] = {}
     for role in ("covered", "prerequisite"):
-        candidates = [item for item in pool.concepts if item.role == role]
+        if loaded_config.config.selection_mode == "reviewed":
+            if loaded_reviews is None:
+                raise AssessmentConceptReviewError(
+                    "reviewed assessment mode requires a concept review artifact"
+                )
+            candidates = eligible_concepts(pool, role, loaded_reviews)
+        else:
+            candidates = [item for item in pool.concepts if item.role == role]
         selected[role] = candidates[: loaded_config.config.self_assessment_limits[role]]
     summary = [
         SelectedAssessmentConcept(
@@ -254,12 +270,48 @@ def build_assessment_blueprint(
     *,
     canonical_file_hashes: dict[str, str],
     book_profiles_hash: str,
+    concept_reviews: LoadedAssessmentConceptReviews | None = None,
 ) -> AssessmentBlueprint:
     """Select concept targets and emit versioned specifications from validated evidence."""
 
     validate_profile_handoff(dataset, profiles, feature_config)
+    if assessment_config.config.selection_mode == "reviewed":
+        if concept_reviews is None:
+            raise AssessmentConceptReviewError(
+                "reviewed assessment mode requires a concept review artifact"
+            )
+        assessment_config = reviewed_assessment_config(assessment_config, concept_reviews)
+        known_topics = set(feature_config.config.concept.topics) & set(
+            feature_config.config.prerequisite.topics
+        )
+        review_topics = {item.topic_id for item in concept_reviews.artifact.reviews}
+        unknown_topics = sorted(review_topics - known_topics)
+        if unknown_topics:
+            raise AssessmentConceptReviewError(
+                "unknown review topics: " + ", ".join(unknown_topics)
+            )
+        review_pools = [
+            build_topic_concept_pool(
+                review_topic,
+                profiles,
+                feature_config,
+                assessment_config,
+            )
+            for review_topic in sorted({topic_id, *review_topics})
+        ]
+        validate_assessment_concept_reviews(
+            concept_reviews,
+            review_pools,
+            assessment_config,
+        )
+        pool = next(item for item in review_pools if item.topic_id == topic_id)
+    else:
+        if concept_reviews is not None:
+            raise AssessmentConceptReviewError(
+                "legacy assessment mode must not receive a concept review artifact"
+            )
+        pool = build_topic_concept_pool(topic_id, profiles, feature_config, assessment_config)
     config = assessment_config.config
-    pool = build_topic_concept_pool(topic_id, profiles, feature_config, assessment_config)
     if topic_id not in config.relation_pairs:
         raise AssessmentBlueprintError(f"no configured relation candidates for {topic_id}")
     covered_names = set(feature_config.config.concept.topics[topic_id].root)
@@ -269,7 +321,11 @@ def build_assessment_blueprint(
                 f"configured relation pair is outside {topic_id} covered lexicon: {left}, {right}"
             )
 
-    covered, prerequisites, selected = _selected_by_role(pool, assessment_config)
+    covered, prerequisites, selected = _selected_by_role(
+        pool,
+        assessment_config,
+        concept_reviews,
+    )
     selected_covered = {item.concept_id: item for item in covered}
     profiles_by_id = {item.book_id: item for item in profiles}
     preference = config.prose_document_preference
@@ -314,7 +370,11 @@ def build_assessment_blueprint(
             )
             for item in covered
         ],
-        "fewer selected covered concepts than requested recognition targets",
+        (
+            "fewer review-eligible covered concepts than requested recognition targets"
+            if config.selection_mode == "reviewed"
+            else "fewer selected covered concepts than requested recognition targets"
+        ),
     )
 
     compare_candidates = []
@@ -364,7 +424,11 @@ def build_assessment_blueprint(
             )
             for item in prerequisites
         ],
-        "fewer inferred prerequisite concepts than requested background targets",
+        (
+            "fewer review-eligible prerequisite concepts than requested background targets"
+            if config.selection_mode == "reviewed"
+            else "fewer inferred prerequisite concepts than requested background targets"
+        ),
     )
 
     apply_candidates = []

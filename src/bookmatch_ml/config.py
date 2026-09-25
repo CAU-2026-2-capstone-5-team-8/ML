@@ -256,6 +256,11 @@ class AssessmentConfig(ConfigModel):
     relation_pairs: dict[str, list[tuple[str, str]]]
     prose_document_preference: list[str]
     max_evidence_refs_per_spec: int = Field(ge=2)
+    selection_mode: Literal["legacy", "reviewed"] = "legacy"
+    review_schema_version: str | None = None
+    review_reserve: dict[str, int] = Field(
+        default_factory=lambda: {"covered": 0, "prerequisite": 0}
+    )
 
     @model_validator(mode="after")
     def assessment_rules_must_be_complete(self) -> "AssessmentConfig":
@@ -290,6 +295,15 @@ class AssessmentConfig(ConfigModel):
             count < 0 for count in self.self_assessment_limits.values()
         ):
             raise ValueError("self_assessment_limits must cover both roles")
+        if set(self.review_reserve) != {"covered", "prerequisite"} or any(
+            count < 0 for count in self.review_reserve.values()
+        ):
+            raise ValueError("review_reserve must cover both roles")
+        if self.selection_mode == "legacy":
+            if self.review_schema_version is not None or any(self.review_reserve.values()):
+                raise ValueError("legacy assessment mode must not configure concept review")
+        elif not self.review_schema_version or not self.review_schema_version.strip():
+            raise ValueError("reviewed assessment mode requires review_schema_version")
         allowed_quotas = {
             "vocabulary": {"recognize", "compare"},
             "background_knowledge": {"recall"},

@@ -1,0 +1,5 @@
+review_version: assessment-concept-review-v1
+
+# Human decisions only. Generated evidence packets belong under ignored data/reviews/.
+# Key: topic_id + concept_id + concept_role.
+reviews: []
