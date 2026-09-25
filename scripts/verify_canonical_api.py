@@ -8,7 +8,12 @@ from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 from bookmatch_ml.book.profile import build_book_profiles
-from bookmatch_ml.config import load_feature_config, load_ranking_config, load_reader_config
+from bookmatch_ml.config import (
+    load_feature_config,
+    load_ranking_config,
+    load_ranking_v2_config,
+    load_reader_config,
+)
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import load_canonical_dataset
 from bookmatch_ml.integration.schemas import (
@@ -69,6 +74,7 @@ def main() -> None:
     service = IntegrationService(
         load_reader_config(args.config_dir / "reader.yaml"),
         load_ranking_config(args.config_dir / "ranking.yaml"),
+        load_ranking_v2_config(args.config_dir / "ranking_v2.yaml"),
     )
     assessment = ReaderProfileRequest.model_validate_json(args.assessment.read_bytes())
     reader_request = assessment.model_dump(mode="json", by_alias=True)

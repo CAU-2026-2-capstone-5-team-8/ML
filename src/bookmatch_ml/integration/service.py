@@ -1,13 +1,19 @@
 """Pure orchestration used by the HTTP adapter."""
 
-from bookmatch_ml.config import LoadedRankingConfig, LoadedReaderConfig
+from bookmatch_ml.config import LoadedRankingConfig, LoadedRankingV2Config, LoadedReaderConfig
 from bookmatch_ml.integration.schemas import (
     RankRequest,
     RankResponse,
+    RankV2Response,
     ReaderProfileRequest,
     ReaderProfileResponse,
 )
 from bookmatch_ml.ranking.matching import rank_matching_books, score_matching_book_fit
+from bookmatch_ml.ranking.prerequisite_first_v2 import (
+    build_prerequisite_first_book_profiles,
+    build_ranking_v2_projection,
+    rank_prerequisite_first_v2,
+)
 from bookmatch_ml.reader.profile import build_reader_profile
 from bookmatch_ml.schemas import RankingResponse
 
@@ -19,16 +25,33 @@ class IntegrationService:
         self,
         reader_config: LoadedReaderConfig,
         ranking_config: LoadedRankingConfig,
+        ranking_v2_config: LoadedRankingV2Config,
     ) -> None:
         self._reader_config = reader_config
         self._ranking_config = ranking_config
+        self._ranking_v2_config = ranking_v2_config
+        self._ranking_v2_projection = build_ranking_v2_projection(ranking_v2_config)
 
     def build_reader_profile(self, request: ReaderProfileRequest) -> ReaderProfileResponse:
         profile = build_reader_profile(request.to_internal(), self._reader_config)
         return ReaderProfileResponse.from_internal(profile, user_id=request.user_id)
 
-    def rank(self, request: RankRequest) -> RankResponse:
+    def rank(self, request: RankRequest) -> RankResponse | RankV2Response:
         reader = request.reader_profile.to_internal()
+        if request.ranking_model == "rank-prerequisite-first-v2":
+            books = [book.to_internal() for book in request.candidate_books]
+            response = rank_prerequisite_first_v2(
+                reader,
+                build_prerequisite_first_book_profiles(
+                    books,
+                    self._ranking_v2_projection,
+                ),
+                self._ranking_v2_config,
+                limit=request.limit,
+                book_id=request.book_id,
+            )
+            return RankV2Response.from_internal(response, user_id=request.reader_profile.user_id)
+
         books = [book.to_internal() for book in request.candidate_books]
         if request.book_id is None:
             response = rank_matching_books(reader, books, self._ranking_config, request.limit)
