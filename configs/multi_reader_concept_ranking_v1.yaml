@@ -1,0 +1,198 @@
+config_version: multi-reader-concept-ranking-config-v1
+experiment_version: multi-reader-concept-ranking-experiment-v1
+primary_lexicographic_tolerance: 0.05
+lexicographic_tolerance_sensitivity: [0.0, 0.05, 0.1]
+reviewed_report_hash: sha256:a5f3a77c65ce4ef0d838ff97b7a620a2927ab466d6eb01ad3e1c06024b0f3c47
+expected_legacy_agreement:
+  d1: 3
+  d2: 9
+  direct_only: 4
+  prerequisite_only: 9
+
+scenarios:
+  linear-algebra:
+    - scenario_id: beginner
+      description: Comfortable with school algebra but only beginning formal linear algebra.
+      readiness:
+        basis: 0.1
+        determinant: 0.3
+        diagonalization: 0.0
+        dimension: 0.1
+        eigenvalue: 0.0
+        eigenvector: 0.0
+        gaussian elimination: 0.3
+        high school algebra: 0.8
+        inner product: 0.1
+        least squares: 0.0
+        linear independence: 0.2
+        linear system: 0.5
+        linear transformation: 0.1
+        matrix: 0.4
+        orthogonality: 0.1
+        rank: 0.1
+        singular value decomposition: 0.0
+        systems of equations: 0.6
+        vector: 0.4
+        vector space: 0.2
+    - scenario_id: intermediate
+      description: Strong fundamentals with partial abstract and spectral knowledge.
+      readiness:
+        basis: 0.6
+        determinant: 0.7
+        diagonalization: 0.4
+        dimension: 0.6
+        eigenvalue: 0.5
+        eigenvector: 0.5
+        gaussian elimination: 0.8
+        high school algebra: 1.0
+        inner product: 0.5
+        least squares: 0.4
+        linear independence: 0.6
+        linear system: 0.9
+        linear transformation: 0.6
+        matrix: 0.9
+        orthogonality: 0.5
+        rank: 0.6
+        singular value decomposition: 0.3
+        systems of equations: 0.9
+        vector: 0.9
+        vector space: 0.7
+    - scenario_id: advanced
+      description: Broad, consistently high readiness with a small remaining SVD gap.
+      readiness:
+        basis: 0.95
+        determinant: 0.95
+        diagonalization: 0.9
+        dimension: 0.95
+        eigenvalue: 0.9
+        eigenvector: 0.9
+        gaussian elimination: 0.95
+        high school algebra: 1.0
+        inner product: 0.9
+        least squares: 0.9
+        linear independence: 0.95
+        linear system: 1.0
+        linear transformation: 0.95
+        matrix: 1.0
+        orthogonality: 0.9
+        rank: 0.95
+        singular value decomposition: 0.85
+        systems of equations: 1.0
+        vector: 1.0
+        vector space: 0.95
+    - scenario_id: uneven
+      description: Computationally strong but weak on abstract vector-space and geometric foundations.
+      readiness:
+        basis: 0.2
+        determinant: 0.9
+        diagonalization: 0.45
+        dimension: 0.2
+        eigenvalue: 0.5
+        eigenvector: 0.5
+        gaussian elimination: 0.95
+        high school algebra: 1.0
+        inner product: 0.2
+        least squares: 0.2
+        linear independence: 0.25
+        linear system: 0.95
+        linear transformation: 0.4
+        matrix: 1.0
+        orthogonality: 0.15
+        rank: 0.85
+        singular value decomposition: 0.1
+        systems of equations: 1.0
+        vector: 0.6
+        vector space: 0.3
+  operating-systems:
+    - scenario_id: beginner
+      description: Has programming experience but limited operating-system mechanisms.
+      readiness:
+        computer architecture: 0.5
+        concurrency: 0.2
+        deadlock: 0.0
+        distributed systems: 0.0
+        file system: 0.2
+        input/output: 0.3
+        memory management: 0.3
+        process: 0.4
+        programming: 0.8
+        protection: 0.1
+        scheduling: 0.2
+        security: 0.0
+        storage: 0.3
+        synchronization: 0.1
+        thread: 0.2
+        virtual memory: 0.1
+        virtualization: 0.0
+    - scenario_id: intermediate
+      description: Understands core execution and memory concepts but has weaker advanced systems knowledge.
+      readiness:
+        computer architecture: 0.7
+        concurrency: 0.7
+        deadlock: 0.4
+        distributed systems: 0.3
+        file system: 0.6
+        input/output: 0.6
+        memory management: 0.7
+        process: 0.85
+        programming: 0.9
+        protection: 0.4
+        scheduling: 0.7
+        security: 0.4
+        storage: 0.6
+        synchronization: 0.6
+        thread: 0.7
+        virtual memory: 0.5
+        virtualization: 0.4
+    - scenario_id: advanced
+      description: Broad systems readiness with no major prerequisite gap.
+      readiness:
+        computer architecture: 0.9
+        concurrency: 0.95
+        deadlock: 0.9
+        distributed systems: 0.9
+        file system: 0.95
+        input/output: 0.95
+        memory management: 0.95
+        process: 0.95
+        programming: 0.95
+        protection: 0.9
+        scheduling: 0.95
+        security: 0.9
+        storage: 0.95
+        synchronization: 0.95
+        thread: 0.95
+        virtual memory: 0.9
+        virtualization: 0.9
+    - scenario_id: uneven
+      description: Strong in processes and concurrency but weak in architecture, memory, and storage.
+      readiness:
+        computer architecture: 0.2
+        concurrency: 0.95
+        deadlock: 0.8
+        distributed systems: 0.6
+        file system: 0.4
+        input/output: 0.3
+        memory management: 0.25
+        process: 0.95
+        programming: 1.0
+        protection: 0.5
+        scheduling: 0.9
+        security: 0.3
+        storage: 0.3
+        synchronization: 0.9
+        thread: 0.9
+        virtual memory: 0.15
+        virtualization: 0.2
+
+frozen_human_pairs:
+  - {pair_id: linear-algebra:pair-1, topic_id: linear-algebra, left_book_id: book_09c91e7b456682eb19fb, right_book_id: isbn13:9780131437401, human_preference: A}
+  - {pair_id: linear-algebra:pair-2, topic_id: linear-algebra, left_book_id: book_09c91e7b456682eb19fb, right_book_id: isbn13:9780135367971, human_preference: A}
+  - {pair_id: linear-algebra:pair-3, topic_id: linear-algebra, left_book_id: isbn13:9780135367971, right_book_id: isbn13:9781118909584, human_preference: A}
+  - {pair_id: linear-algebra:pair-4, topic_id: linear-algebra, left_book_id: isbn13:9780205080106, right_book_id: isbn13:9781118909584, human_preference: A}
+  - {pair_id: linear-algebra:pair-5, topic_id: linear-algebra, left_book_id: isbn13:9780131437401, right_book_id: isbn13:9780135367971, human_preference: B}
+  - {pair_id: operating-systems:pair-1, topic_id: operating-systems, left_book_id: isbn13:9780132199087, right_book_id: isbn13:9781118804926, human_preference: A}
+  - {pair_id: operating-systems:pair-2, topic_id: operating-systems, left_book_id: isbn13:9780130319999, right_book_id: isbn13:9780132199087, human_preference: A}
+  - {pair_id: operating-systems:pair-3, topic_id: operating-systems, left_book_id: isbn13:9780070575721, right_book_id: isbn13:9780201498387, human_preference: A}
+  - {pair_id: operating-systems:pair-4, topic_id: operating-systems, left_book_id: isbn13:9780070575721, right_book_id: isbn13:9780132017992, human_preference: A}
+  - {pair_id: operating-systems:pair-5, topic_id: operating-systems, left_book_id: isbn13:9780201498387, right_book_id: isbn13:9780201741964, human_preference: B}

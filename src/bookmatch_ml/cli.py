@@ -101,6 +101,11 @@ from bookmatch_ml.ranking.loader import (
     load_reader_profile,
 )
 from bookmatch_ml.ranking.matching import RankingError, rank_books, score_book_fit
+from bookmatch_ml.ranking.multi_reader_concept_experiments import (
+    MultiReaderConceptExperimentError,
+    evaluate_multi_reader_concept_ranking,
+    load_multi_reader_concept_experiment_config,
+)
 from bookmatch_ml.ranking.source_aware_adapter import (
     SourceAwareAdapterError,
     build_source_aware_adapter_report,
@@ -122,6 +127,9 @@ DEFAULT_CONCEPT_MATCHING_CONFIG = Path("configs/concept_matching.yaml")
 DEFAULT_CONCEPT_MATCHING_V2_CONFIG = Path("configs/concept_matching_v2.yaml")
 DEFAULT_CONCEPT_GRAPH_REVIEWS_CONFIG = Path("configs/concept_graph_reviews.yaml")
 DEFAULT_MATCHER_V2_EXPERIMENT_CONFIG = Path("configs/matcher_v2_experiments.yaml")
+DEFAULT_MULTI_READER_CONCEPT_EXPERIMENT_CONFIG = Path(
+    "configs/multi_reader_concept_ranking_v1.yaml"
+)
 
 
 def _sha256_file(path: Path) -> str:
@@ -402,6 +410,110 @@ def evaluate_concept_readiness_ranking_command(
                 "experiment_version": report.experiment_version,
                 "output": str(output),
                 "topics": [topic.topic_id for topic in report.topics],
+            },
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("evaluate-multi-reader-concept-ranking")
+def evaluate_multi_reader_concept_ranking_command(
+    concept_mapping: Annotated[
+        Path, typer.Option("--concept-mapping", exists=True, dir_okay=False, resolve_path=True)
+    ],
+    fixed_readers: Annotated[
+        list[Path] | None,
+        typer.Option("--fixed-reader", exists=True, dir_okay=False, resolve_path=True),
+    ] = None,
+    output: Annotated[Path, typer.Option("--output", dir_okay=False, resolve_path=True)] = Path(
+        "data/reports/multi-reader-concept-ranking-v1.json"
+    ),
+    experiment_config: Annotated[
+        Path, typer.Option("--experiment-config", exists=True, dir_okay=False)
+    ] = DEFAULT_MULTI_READER_CONCEPT_EXPERIMENT_CONFIG,
+    feature_config: Annotated[
+        Path, typer.Option("--feature-config", exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option("--graph-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    review_config: Annotated[
+        Path, typer.Option("--review-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_REVIEWS_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option("--matching-config", exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_V2_CONFIG,
+) -> None:
+    """Evaluate concept diagnostics across frozen deterministic reader scenarios."""
+
+    if not fixed_readers:
+        typer.echo("Error: at least one --fixed-reader is required", err=True)
+        raise typer.Exit(code=1)
+    input_paths = {
+        "concept_mapping": concept_mapping,
+        "experiment_config": experiment_config,
+        "feature_config": feature_config,
+        "graph_config": graph_config,
+        "review_config": review_config,
+        "matching_config": matching_config,
+        **{f"fixed_reader:{index}": path for index, path in enumerate(fixed_readers)},
+    }
+    try:
+        if output.resolve() in {path.resolve() for path in input_paths.values()}:
+            raise MultiReaderConceptExperimentError(
+                "--output must not overwrite an experiment input"
+            )
+        input_hashes = {name: _sha256_file(path) for name, path in input_paths.items()}
+        mapping = load_concept_mapping_report(concept_mapping)
+        features = load_feature_config(feature_config)
+        graph = load_concept_graph(graph_config, features)
+        reviews = load_concept_graph_reviews(review_config, graph)
+        matching = load_concept_matching_config(matching_config)
+        loaded_experiment = load_multi_reader_concept_experiment_config(experiment_config)
+        fixed_profiles = [load_reader_profile(path) for path in fixed_readers]
+        fixed_topics = [profile.topic_id for profile in fixed_profiles]
+        if len(fixed_topics) != len(set(fixed_topics)):
+            raise MultiReaderConceptExperimentError("duplicate fixed reader topic")
+        if set(fixed_topics) != set(loaded_experiment.config.scenarios):
+            raise MultiReaderConceptExperimentError(
+                "fixed readers must cover exactly the configured scenario topics"
+            )
+        fixed_hashes = {
+            profile.topic_id: _sha256_file(path)
+            for profile, path in zip(fixed_profiles, fixed_readers, strict=True)
+        }
+        report = evaluate_multi_reader_concept_ranking(
+            mapping,
+            fixed_profiles,
+            graph,
+            reviews,
+            matching,
+            loaded_experiment,
+            mapping_report_hash=_sha256_file(concept_mapping),
+            fixed_reader_hashes=fixed_hashes,
+            input_hashes=input_hashes,
+        )
+        if input_hashes != {name: _sha256_file(path) for name, path in input_paths.items()}:
+            raise MultiReaderConceptExperimentError("experiment input changed during evaluation")
+        write_json(report, output)
+    except (
+        MultiReaderConceptExperimentError,
+        ConceptReadinessExperimentError,
+        ConfigError,
+        RankingInputError,
+        SourceAwareAdapterError,
+        ValueError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "experiment_version": report.experiment_version,
+                "output": str(output),
+                "scenario_count": len(report.scenarios),
+                "topics": sorted(report.accepted_graph.nodes),
             },
             sort_keys=True,
         )
