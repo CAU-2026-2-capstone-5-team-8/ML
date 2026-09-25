@@ -278,6 +278,38 @@ def test_app_factory_uses_packaged_configs_outside_repository_working_directory(
     }
 
 
+def test_v1_only_external_config_starts_without_ranking_v2_file(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """An opt-in v2 policy cannot become a startup dependency for existing v1 deployments."""
+
+    config_dir = tmp_path / "configs"
+    config_dir.mkdir()
+    for name in ("reader.yaml", "ranking.yaml"):
+        (config_dir / name).write_bytes((ROOT / "configs" / name).read_bytes())
+    monkeypatch.setenv("BOOKMATCH_ML_CONFIG_DIR", str(config_dir))
+    application = create_app()
+    v1_request = {
+        "readerProfile": _matching_reader_payload(),
+        "candidateBooks": _candidate_payloads(),
+        "limit": 5,
+    }
+
+    async def request_both() -> tuple[httpx.Response, httpx.Response]:
+        transport = httpx.ASGITransport(app=application)
+        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+            v1 = await client.post("/ml/rank", json=v1_request)
+            v2 = await client.post("/ml/rank", json=_rank_v2_request())
+            return v1, v2
+
+    v1, v2 = asyncio.run(request_both())
+
+    assert v1.status_code == 200
+    assert v1.json()["modelVersion"] == "rank-v1"
+    assert v2.status_code == 422
+    assert v2.json()["detail"] == "ranking-v2 is not configured on this server"
+
+
 def test_api_module_does_not_create_an_app_or_load_configs_at_import() -> None:
     import bookmatch_ml.api as api_module
 

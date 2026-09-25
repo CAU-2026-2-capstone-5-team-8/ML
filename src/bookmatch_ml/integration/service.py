@@ -10,6 +10,7 @@ from bookmatch_ml.integration.schemas import (
 )
 from bookmatch_ml.ranking.matching import rank_matching_books, score_matching_book_fit
 from bookmatch_ml.ranking.prerequisite_first_v2 import (
+    RankingV2Error,
     build_prerequisite_first_book_profiles,
     build_ranking_v2_projection,
     rank_prerequisite_first_v2,
@@ -25,12 +26,16 @@ class IntegrationService:
         self,
         reader_config: LoadedReaderConfig,
         ranking_config: LoadedRankingConfig,
-        ranking_v2_config: LoadedRankingV2Config,
+        ranking_v2_config: LoadedRankingV2Config | None = None,
     ) -> None:
         self._reader_config = reader_config
         self._ranking_config = ranking_config
         self._ranking_v2_config = ranking_v2_config
-        self._ranking_v2_projection = build_ranking_v2_projection(ranking_v2_config)
+        self._ranking_v2_projection = (
+            build_ranking_v2_projection(ranking_v2_config)
+            if ranking_v2_config is not None
+            else None
+        )
 
     def build_reader_profile(self, request: ReaderProfileRequest) -> ReaderProfileResponse:
         profile = build_reader_profile(request.to_internal(), self._reader_config)
@@ -39,6 +44,8 @@ class IntegrationService:
     def rank(self, request: RankRequest) -> RankResponse | RankV2Response:
         reader = request.reader_profile.to_internal()
         if request.ranking_model == "rank-prerequisite-first-v2":
+            if self._ranking_v2_config is None or self._ranking_v2_projection is None:
+                raise RankingV2Error("ranking-v2 is not configured on this server")
             books = [book.to_internal() for book in request.candidate_books]
             response = rank_prerequisite_first_v2(
                 reader,

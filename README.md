@@ -564,8 +564,9 @@ Interactive OpenAPI documentation is available at `http://127.0.0.1:8000/docs` w
 is running.
 
 The factory loads packaged defaults without reading repository-relative files at import time.
-Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml`, `ranking.yaml`, and
-`ranking_v2.yaml` to select externally mounted, versioned configurations in deployment.
+Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml` and `ranking.yaml` to select
+externally mounted, versioned configurations in deployment. Add `ranking_v2.yaml` when that
+deployment should accept explicit ranking-v2 requests; v1-only operation does not require it.
 
 `POST /ml/reader-profile` accepts the same assessment content as `examples/assessment.json`, with
 camelCase keys and an optional `userId` correlation value. It returns the three readiness

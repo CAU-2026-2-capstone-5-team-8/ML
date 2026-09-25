@@ -53,13 +53,14 @@ def _load_ranking_config(path: Path | None) -> LoadedRankingConfig:
         return load_ranking_config(packaged_path)
 
 
-def _load_ranking_v2_config(path: Path | None) -> LoadedRankingV2Config:
-    """Load the explicit, environment-provided, or packaged ranking-v2 policy."""
+def _load_ranking_v2_config(path: Path | None) -> LoadedRankingV2Config | None:
+    """Load v2 policy when explicitly provided or available to the deployment."""
 
     if path is not None:
         return load_ranking_v2_config(path)
     if config_dir := os.environ.get(CONFIG_DIR_ENV):
-        return load_ranking_v2_config(Path(config_dir) / "ranking_v2.yaml")
+        configured_path = Path(config_dir) / "ranking_v2.yaml"
+        return load_ranking_v2_config(configured_path) if configured_path.is_file() else None
     resource = files("bookmatch_ml.default_configs").joinpath("ranking_v2.yaml")
     with as_file(resource) as packaged_path:
         return load_ranking_v2_config(packaged_path)

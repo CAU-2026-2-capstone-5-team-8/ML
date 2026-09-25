@@ -129,11 +129,11 @@ The returned item retains its global rank within the full personalizable pool.
   "diagnostics": {
     "requestedLimit": 5,
     "returnedCount": 1,
-    "topicCandidateCount": 2,
+    "topicCandidateCount": 1,
     "personalizableCount": 1,
     "conceptOnlyCount": 0,
-    "evidenceUnavailableCount": 1,
-    "fallbackCount": 1,
+    "evidenceUnavailableCount": 0,
+    "fallbackCount": 0,
     "personalizedCandidateShortage": 4
   },
   "modelVersion": "rank-prerequisite-first-v2",
