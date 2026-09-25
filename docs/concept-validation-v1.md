@@ -84,6 +84,21 @@ row for every configured graph edge. Allowed `review_status` values are `unrevie
 `rejected`, and `needs_revision`. A decided edge requires a non-blank `review_note`; initial rows
 remain `unreviewed` with a null note. Duplicate, missing, and unknown edge references are rejected.
 
+Use the following decision policy when changing an edge from `unreviewed`:
+
+- `accepted`: understanding the prerequisite directly helps a learner understand the dependent,
+  and the learning order can be explained from common textbook structure or the concepts'
+  definitions;
+- `rejected`: the concepts may be related or co-located, but there is no sufficiently direct
+  learning-order dependency, either order is generally workable, or the proposed relation is too
+  broad or ambiguous;
+- `needs_revision`: the intended dependency may be useful, but its direction appears reversed, an
+  intermediate prerequisite is missing, or another canonical concept would state it more
+  accurately.
+
+Co-occurrence in the same book or chapter is not by itself a reason to accept an edge. The
+`review_note` should state the educational reason for a decision or the concrete revision needed.
+
 `build-concept-review` joins these decisions to each edge's automatic evidence in both the main
 report and `data/reviews/concept_graph_review.json`. The latter is a replaceable generated
 snapshot. Human review config is never read by profile matching or ranking, so a decision cannot

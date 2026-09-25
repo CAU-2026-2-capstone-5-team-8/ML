@@ -65,6 +65,20 @@ uv run bookmatch-ml map-book-evidence-concepts \
 The output deduplicates `(book, topic, concept)` presence. Repeated evidence remains available as
 diagnostic provenance and is not converted into a ranking weight.
 
+Join that report to deterministically rebuilt legacy `BookProfile` values and emit candidates for
+the existing ranking/API contract:
+
+```bash
+uv run bookmatch-ml build-matching-book-candidates \
+  --concept-mapping data/reports/scale-50-concept-presence-v2-overlap.json \
+  --book-profiles data/output/scale-50-book-profiles.jsonl \
+  --output data/output/scale-50-matching-candidates.jsonl \
+  --report data/reports/scale-50-matching-candidates-report.json
+```
+
+See [`docs/source-aware-matching-profile-adapter.md`](docs/source-aware-matching-profile-adapter.md)
+for the field policy and integration boundary.
+
 The strict importer retains exact, reviewed public-web, same-Work alternate, description,
 subject/topic, and title categories together with source and edition provenance. It also exposes
 unweighted concept-candidate text for later experiments. No numeric source weighting has been
@@ -128,6 +142,59 @@ predictions. Evaluation requires every row to be reviewed and validates the fixe
 prediction artifact, and matcher/config hashes. See the
 [`holdout design`](docs/experiments/matcher-v2-fresh-holdouts-v1.md) and
 [`completed results`](docs/experiments/matcher-v2-fresh-holdout-results-v1.md).
+
+## Evaluate deterministic reader scenarios
+
+Run the offline multi-reader concept-ranking diagnostic without changing production ranking:
+
+```bash
+uv run bookmatch-ml evaluate-multi-reader-concept-ranking \
+  --concept-mapping data/reports/scale-50-concept-presence-v2-overlap.json \
+  --fixed-reader data/output/reader_profile.json \
+  --fixed-reader data/output/concept_matching_la_reader.json \
+  --output data/reports/multi-reader-concept-ranking-v1.json
+```
+
+It evaluates four deterministic knowledge states per topic, keeps missing concept evidence
+unavailable, and compares prerequisite-only, unweighted, and prerequisite-first diagnostics.
+See the [multi-reader experiment report](docs/experiments/multi-reader-concept-ranking-v1.md).
+
+## Demo the prerequisite-first ranking candidate
+
+Run the isolated ranking-v2 candidate against the real local Scale-50 concept mapping:
+
+```bash
+uv run bookmatch-ml demo-concept-recommendation \
+  --topic operating-systems \
+  --scenario beginner \
+  --limit 5
+```
+
+The concise output shows personalized and fallback counts, exact prerequisite-first ranks,
+both diagnostic axes, their coverage, and bounded explanations. It does not call or modify
+production `/ml/rank`. Generate the complete validation report with:
+
+```bash
+uv run bookmatch-ml evaluate-prerequisite-first-candidate \
+  --output data/reports/prerequisite-first-ranking-v2-candidate-v1.json
+```
+
+See the
+[prerequisite-first candidate report](docs/experiments/prerequisite-first-ranking-v2-candidate-v1.md)
+for the policy, Scale-50 results, human-pair agreement, and remaining production decisions.
+
+To exercise the production-v2 implementation with an actual generated `ReaderProfile` rather
+than a named scenario, run:
+
+```bash
+uv run bookmatch-ml demo-production-ranking-v2 \
+  --reader data/output/reader_profile.json \
+  --limit 5
+```
+
+Use `data/output/concept_matching_la_reader.json` for the fixed Linear Algebra reader. This
+command consumes the same Scale-50 matching candidates and server-owned accepted prerequisite
+projection used by the explicit v2 API path.
 
 ## Requirements
 
@@ -343,8 +410,9 @@ limitations.
 
 ## Experimental concept matching v3 and difficulty v2
 
-The existing `rank` CLI and `/ml/rank` API default remain `absolute_gap_v1`. A separate batch command
-compares their v1 result with TOC-based book concept coverage and the existing
+The existing `rank` CLI and default `/ml/rank` behavior remain `absolute_gap_v1`; ranking v2 and
+the experimental difficulty strategy each require an explicit request selector. A separate batch
+command compares the v1 result with TOC-based book concept coverage and the existing
 `ReaderProfile.concept_readiness` values. It reports **prerequisite readiness** and **learning
 opportunity** separately, each with its own mastery-assessment coverage. Missing concept mastery
 is unknown, never zero. Prose difficulty remains in the report only as a v1 comparison and
@@ -506,11 +574,11 @@ Interactive OpenAPI documentation is available at `http://127.0.0.1:8000/docs` w
 is running.
 
 The factory loads packaged defaults without reading repository-relative files at import time.
-Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml`, `ranking.yaml`, and
-`concept_difficulty.yaml` to select externally mounted, versioned configuration in deployment.
-For backward compatibility, a directory containing only the original two files still starts the
-baseline API; the experimental strategy returns a validation error until its third config is
-mounted.
+Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml` and `ranking.yaml` to select
+externally mounted, versioned configurations in deployment. Add `ranking_v2.yaml` when that
+deployment should accept explicit ranking-v2 requests, and `concept_difficulty.yaml` when it should
+accept the experimental concept-difficulty strategy; v1-only operation requires neither, and a
+strategy whose config is missing returns a validation error.
 
 `POST /ml/reader-profile` accepts the same assessment content as `examples/assessment.json`, with
 camelCase keys and an optional `userId` correlation value. It returns the three readiness
@@ -571,6 +639,14 @@ providers and does not own authentication or recommendation history. Its candida
 small matching projection rather than the complete internal `BookProfile`, so internal analysis
 details are not coupled to Spring DTOs.
 
+Ranking-v2 is available on the same route only when the request explicitly sets
+`"rankingModel": "rank-prerequisite-first-v2"`. Omitting the selector preserves `rank-v1`.
+V2 returns rank plus separate prerequisite-readiness and direct-opportunity axes, never a fake
+scalar score, and returns at most the requested limit without filling shortages from fallback
+pools. The complete request/response, error semantics, Scale-50 smoke commands, and Backend
+migration checklist are in
+[`docs/rank-v2-production-integration.md`](docs/rank-v2-production-integration.md).
+
 ## Evaluate the baseline
 
 After generating the current ten-book profile artifact, run the combined evaluation report:
@@ -615,8 +691,9 @@ limitations and next decision gates, is recorded in
 
 ## Compare ranking evidence policies
 
-The existing `rank` CLI and `/ml/rank` API retain renormalized scoring. A separate batch experiment
-compares that baseline with a configurable minimum coverage rule and a two-stage presentation:
+The existing `rank` CLI and default `/ml/rank` behavior retain renormalized scoring. A separate
+batch experiment compares that baseline with a configurable minimum coverage rule and a two-stage
+presentation:
 
 ```bash
 uv run bookmatch-ml evaluate-ranking-policies \
@@ -641,8 +718,9 @@ uv run ruff check .
 uv run ruff format --check .
 ```
 
-The tests use only small synthetic fixtures under `tests/fixtures/`; they require no network,
-database, external LLM, Spring service, or live Data-Pipeline collection.
+The tests use small versioned fixtures under `tests/fixtures/`, including a compact Scale-50
+ranking snapshot; they require no network, database, external LLM, Spring service, or live
+Data-Pipeline collection.
 
 ## Package layout
 

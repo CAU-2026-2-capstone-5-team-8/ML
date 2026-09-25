@@ -376,6 +376,56 @@ class LoadedRankingConfig(ConfigModel):
     content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
 
 
+class RankingV2AcceptedEdge(ConfigModel):
+    topic: str = Field(min_length=1)
+    prerequisite: str = Field(min_length=1)
+    dependent: str = Field(min_length=1)
+
+
+class RankingV2Config(ConfigModel):
+    """Versioned non-numeric policy for prerequisite-first production ranking."""
+
+    config_version: Literal["ranking-v2-config-v1"]
+    model_version: Literal["rank-prerequisite-first-v2"]
+    ordering_policy: Literal[
+        "prerequisite_readiness_desc_then_direct_opportunity_desc_then_book_id"
+    ]
+    fallback_policy: Literal["return_personalizable_only"]
+    target_unavailable_policy: Literal["validation_error"]
+    coverage_policy: Literal["diagnostic_only"]
+    concept_graph_version: Literal["concept-graph-v1"]
+    concept_graph_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    graph_review_version: Literal["concept-graph-reviews-v1"]
+    graph_review_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    nodes: dict[str, list[str]]
+    accepted_edges: list[RankingV2AcceptedEdge]
+
+    @model_validator(mode="after")
+    def accepted_projection_must_be_complete_and_sorted(self) -> "RankingV2Config":
+        if set(self.nodes) != {"linear-algebra", "operating-systems"}:
+            raise ValueError("ranking-v2 nodes must cover the two production topics")
+        if any(nodes != sorted(set(nodes)) for nodes in self.nodes.values()):
+            raise ValueError("ranking-v2 nodes must be unique and sorted")
+        keys = [(edge.topic, edge.prerequisite, edge.dependent) for edge in self.accepted_edges]
+        if len(keys) != 18 or keys != sorted(set(keys)):
+            raise ValueError("ranking-v2 requires exactly 18 unique sorted accepted edges")
+        membership = {
+            concept: topic for topic, concepts in self.nodes.items() for concept in concepts
+        }
+        if any(
+            membership.get(edge.prerequisite) != edge.topic
+            or membership.get(edge.dependent) != edge.topic
+            for edge in self.accepted_edges
+        ):
+            raise ValueError("ranking-v2 accepted edge references an invalid topic concept")
+        return self
+
+
+class LoadedRankingV2Config(ConfigModel):
+    config: RankingV2Config
+    content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+
 class RankingPolicyExperimentConfig(ConfigModel):
     config_version: str = Field(min_length=1)
     evaluation_version: str = Field(min_length=1)
@@ -508,6 +558,24 @@ def load_ranking_config(path: Path) -> LoadedRankingConfig:
     except (yaml.YAMLError, ValidationError, ValueError) as exc:
         raise ConfigError(f"invalid ranking config: {path}: {exc}") from exc
     return LoadedRankingConfig(
+        config=config,
+        content_hash=f"sha256:{hashlib.sha256(content).hexdigest()}",
+    )
+
+
+def load_ranking_v2_config(path: Path) -> LoadedRankingV2Config:
+    """Load the strict prerequisite-first production policy and retain its hash."""
+
+    try:
+        content = path.read_bytes()
+    except OSError as exc:
+        raise ConfigError(f"cannot read ranking-v2 config: {path}: {exc}") from exc
+    try:
+        payload = _load_unique_key_yaml(content)
+        config = RankingV2Config.model_validate(payload)
+    except (yaml.YAMLError, ValidationError, ValueError) as exc:
+        raise ConfigError(f"invalid ranking-v2 config: {path}: {exc}") from exc
+    return LoadedRankingV2Config(
         config=config,
         content_hash=f"sha256:{hashlib.sha256(content).hexdigest()}",
     )

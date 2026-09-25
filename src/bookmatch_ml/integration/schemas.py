@@ -6,6 +6,9 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from pydantic.alias_generators import to_camel
 
 from bookmatch_ml.concept_v2.profile import BookConceptProfileV2
+from bookmatch_ml.ranking.prerequisite_first_v2 import (
+    RankingV2Response as InternalRankingV2Response,
+)
 from bookmatch_ml.schemas import (
     Assessment,
     AssessmentResponse,
@@ -169,6 +172,7 @@ class BookCandidateDto(ApiModel):
 
 
 class RankRequest(ApiModel):
+    ranking_model: Literal["rank-v1", "rank-prerequisite-first-v2"] = "rank-v1"
     reader_profile: MatchingReaderProfileDto
     candidate_books: list[BookCandidateDto] = Field(min_length=1)
     limit: int = Field(default=5, ge=1, le=100)
@@ -299,4 +303,63 @@ class RankResponse(ApiModel):
             reader_profile_version=response.reader_profile_version,
             reader_config_version=response.reader_config_version,
             reader_config_hash=response.reader_config_hash,
+        )
+
+
+class RankV2DiagnosticsDto(ApiModel):
+    requested_limit: int = Field(ge=1)
+    returned_count: int = Field(ge=0)
+    topic_candidate_count: int = Field(ge=0)
+    personalizable_count: int = Field(ge=0)
+    concept_only_count: int = Field(ge=0)
+    evidence_unavailable_count: int = Field(ge=0)
+    fallback_count: int = Field(ge=0)
+    personalized_candidate_shortage: int = Field(ge=0)
+
+
+class RankedBookV2Dto(ApiModel):
+    book_id: str
+    rank: int = Field(ge=1)
+    availability_status: Literal["personalizable"]
+    prerequisite_readiness: float = Field(ge=0, le=1)
+    prerequisite_assessed_count: int = Field(ge=1)
+    prerequisite_total_count: int = Field(ge=1)
+    prerequisite_coverage: float = Field(gt=0, le=1)
+    direct_learning_opportunity: float | None = Field(default=None, ge=0, le=1)
+    direct_assessed_count: int = Field(ge=0)
+    direct_total_count: int = Field(ge=1)
+    direct_coverage: float = Field(ge=0, le=1)
+    covered_concepts: list[str]
+    inferred_prerequisites: list[str]
+    reasons: list[str] = Field(min_length=2)
+    model_version: Literal["rank-prerequisite-first-v2"]
+    book_feature_version: str
+    book_config_version: str
+    book_config_hash: str
+
+
+class RankV2Response(ApiModel):
+    user_id: int | None = Field(default=None, ge=1)
+    topic_id: str
+    items: list[RankedBookV2Dto]
+    diagnostics: RankV2DiagnosticsDto
+    model_version: Literal["rank-prerequisite-first-v2"]
+    config_version: Literal["ranking-v2-config-v1"]
+    config_hash: str
+    concept_graph_version: str
+    concept_graph_hash: str
+    graph_review_version: str
+    graph_review_hash: str
+    reader_profile_version: str
+    reader_config_version: str
+    reader_config_hash: str
+
+    @classmethod
+    def from_internal(cls, response: InternalRankingV2Response, *, user_id: int | None) -> Self:
+        """Map the non-scalar internal response to the camel-case API contract."""
+
+        payload = response.model_dump()
+        return cls(
+            user_id=user_id,
+            **payload,
         )

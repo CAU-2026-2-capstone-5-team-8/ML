@@ -13,7 +13,11 @@ from bookmatch_ml.concept_v2.profile import (
     build_book_concept_profile_v2,
     load_concept_matching_config,
 )
-from bookmatch_ml.config import load_feature_config, load_reader_config
+from bookmatch_ml.config import (
+    load_feature_config,
+    load_ranking_v2_config,
+    load_reader_config,
+)
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import load_canonical_dataset
 from bookmatch_ml.integration.schemas import (
@@ -28,6 +32,7 @@ ROOT = Path(__file__).parents[1]
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "canonical"
 FEATURE_CONFIG = load_feature_config(ROOT / "configs" / "features.yaml")
 READER_CONFIG = load_reader_config(ROOT / "configs" / "reader.yaml")
+RANKING_V2_CONFIG = load_ranking_v2_config(ROOT / "configs" / "ranking_v2.yaml")
 APP = create_app()
 
 
@@ -241,6 +246,74 @@ def test_rank_endpoint_exposes_missing_prose_without_zero_substitution() -> None
     ]
 
 
+def _rank_v2_request(*, include_fallback: bool = True) -> dict[str, object]:
+    """Build one API request from the real ReaderProfile projection."""
+
+    reader = _matching_reader_payload()
+    candidate = next(
+        item
+        for item in _candidate_payloads()
+        if item["topicDistribution"].get("operating-systems", 0) > 0
+    )
+    candidates = [candidate]
+    if include_fallback:
+        fallback = dict(candidate)
+        fallback.update(
+            {
+                "bookId": "fallback-without-evidence",
+                "coveredConcepts": [],
+            }
+        )
+        candidates.append(fallback)
+    return {
+        "rankingModel": RANKING_V2_CONFIG.config.model_version,
+        "readerProfile": reader,
+        "candidateBooks": candidates,
+        "limit": 5,
+    }
+
+
+def test_rank_endpoint_supports_explicit_v2_without_scalar_score_or_fallback_fill() -> None:
+    request = _rank_v2_request()
+
+    response = _post("/ml/rank", request)
+
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert payload["modelVersion"] == "rank-prerequisite-first-v2"
+    assert len(payload["items"]) == 1
+    assert "score" not in payload["items"][0]
+    assert payload["items"][0]["availabilityStatus"] == "personalizable"
+    assert payload["conceptGraphHash"] == RANKING_V2_CONFIG.config.concept_graph_hash
+    assert payload["graphReviewHash"] == RANKING_V2_CONFIG.config.graph_review_hash
+    assert payload["diagnostics"] == {
+        "requestedLimit": 5,
+        "returnedCount": 1,
+        "topicCandidateCount": 2,
+        "personalizableCount": 1,
+        "conceptOnlyCount": 0,
+        "evidenceUnavailableCount": 1,
+        "fallbackCount": 1,
+        "personalizedCandidateShortage": 4,
+    }
+
+
+def test_rank_v2_rejects_unavailable_target_and_client_owned_graph_metadata() -> None:
+    target_request = _rank_v2_request()
+    target_request["bookId"] = "fallback-without-evidence"
+    spoofed_request = _rank_v2_request(include_fallback=False)
+    spoofed_request["conceptGraphHash"] = "sha256:" + "0" * 64
+
+    target = _post("/ml/rank", target_request)
+    spoofed = _post("/ml/rank", spoofed_request)
+
+    assert target.status_code == 422
+    assert "not personalizable" in target.json()["detail"]
+    assert spoofed.status_code == 422
+    assert spoofed.json()["detail"][0]["type"] == "extra_forbidden"
+    assert spoofed.json()["detail"][0]["loc"] == ["body", "conceptGraphHash"]
+
+
 def test_api_rejects_domain_invalid_assessment() -> None:
     request = _reader_request()
     request["responses"] = request["responses"][:1]
@@ -274,6 +347,7 @@ def test_openapi_contract_exposes_only_the_two_calculation_routes() -> None:
     assert "assessmentId" in reader_properties
     assert "assessment_id" not in reader_properties
     assert "candidateBooks" in rank_properties
+    assert "rankingModel" in rank_properties
 
 
 def test_app_factory_uses_packaged_configs_outside_repository_working_directory(
@@ -289,6 +363,38 @@ def test_app_factory_uses_packaged_configs_outside_repository_working_directory(
     }
 
 
+def test_v1_only_external_config_starts_without_ranking_v2_file(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """An opt-in v2 policy cannot become a startup dependency for existing v1 deployments."""
+
+    config_dir = tmp_path / "configs"
+    config_dir.mkdir()
+    for name in ("reader.yaml", "ranking.yaml"):
+        (config_dir / name).write_bytes((ROOT / "configs" / name).read_bytes())
+    monkeypatch.setenv("BOOKMATCH_ML_CONFIG_DIR", str(config_dir))
+    application = create_app()
+    v1_request = {
+        "readerProfile": _matching_reader_payload(),
+        "candidateBooks": _candidate_payloads(),
+        "limit": 5,
+    }
+
+    async def request_both() -> tuple[httpx.Response, httpx.Response]:
+        transport = httpx.ASGITransport(app=application)
+        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+            v1 = await client.post("/ml/rank", json=v1_request)
+            v2 = await client.post("/ml/rank", json=_rank_v2_request())
+            return v1, v2
+
+    v1, v2 = asyncio.run(request_both())
+
+    assert v1.status_code == 200
+    assert v1.json()["modelVersion"] == "rank-v1"
+    assert v2.status_code == 422
+    assert v2.json()["detail"] == "ranking-v2 is not configured on this server"
+
+
 def test_api_module_does_not_create_an_app_or_load_configs_at_import() -> None:
     import bookmatch_ml.api as api_module
 
@@ -298,5 +404,5 @@ def test_api_module_does_not_create_an_app_or_load_configs_at_import() -> None:
 def test_packaged_api_configs_match_versioned_project_defaults() -> None:
     packaged = files("bookmatch_ml.default_configs")
 
-    for name in ("reader.yaml", "ranking.yaml", "concept_difficulty.yaml"):
+    for name in ("reader.yaml", "ranking.yaml", "ranking_v2.yaml", "concept_difficulty.yaml"):
         assert packaged.joinpath(name).read_bytes() == (ROOT / "configs" / name).read_bytes()
