@@ -9,6 +9,7 @@ import typer
 from pydantic import ValidationError
 
 from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
+from bookmatch_ml.assessment.grounding import GroundingError, build_generation_grounding
 from bookmatch_ml.assessment.pool import AssessmentBlueprintError, build_topic_concept_pool
 from bookmatch_ml.assessment.review import (
     AssessmentConceptReviewError,
@@ -17,6 +18,7 @@ from bookmatch_ml.assessment.review import (
     reviewed_assessment_config,
     validate_assessment_concept_reviews,
 )
+from bookmatch_ml.assessment.schemas import AssessmentBlueprint
 from bookmatch_ml.book.profile import build_book_profiles
 from bookmatch_ml.concept_v2.book_evidence_mapping import (
     build_book_evidence_concept_mapping_report,
@@ -173,6 +175,15 @@ DEFAULT_RANKING_V2_CONFIG = Path("configs/ranking_v2.yaml")
 
 def _sha256_file(path: Path) -> str:
     return f"sha256:{hashlib.sha256(path.read_bytes()).hexdigest()}"
+
+
+def _validate_grounding_output_path(output: Path, inputs: list[Path]) -> Path:
+    """Reject aliases that would overwrite a blueprint or canonical input file."""
+
+    resolved_output = output.resolve()
+    if resolved_output in {path.resolve() for path in inputs}:
+        raise GroundingError("grounding output must differ from every input artifact")
+    return resolved_output
 
 
 def _load_matching_book_profiles(path: Path) -> list[MatchingBookProfile]:
@@ -1556,6 +1567,81 @@ def build_assessment_blueprint_command(
                 "shortages": len(blueprint.shortages),
                 "config_version": blueprint.config_version,
                 "config_hash": blueprint.config_hash,
+                "output": str(output),
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("build-generation-grounding")
+def build_generation_grounding_command(
+    data_dir: Annotated[
+        Path,
+        typer.Option("--data-dir", file_okay=False, resolve_path=True),
+    ],
+    blueprint_path: Annotated[
+        Path,
+        typer.Option(
+            "--blueprint",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+        ),
+    ],
+    question_id: Annotated[str, typer.Option("--question-id")],
+    output: Annotated[
+        Path,
+        typer.Option("--output", dir_okay=False, resolve_path=True),
+    ],
+) -> None:
+    """Bind one comprehension/apply QuestionSpec to exact canonical source prose."""
+
+    canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+    try:
+        canonical_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        blueprint_hash = _sha256_file(blueprint_path)
+        blueprint = AssessmentBlueprint.model_validate_json(
+            blueprint_path.read_text(encoding="utf-8")
+        )
+        matches = [item for item in blueprint.question_specs if item.question_id == question_id]
+        if len(matches) != 1:
+            raise GroundingError(
+                f"question_id {question_id!r} was not found exactly once in the blueprint"
+            )
+        if blueprint.canonical_file_hashes != canonical_hashes:
+            raise GroundingError("blueprint canonical hashes do not match the supplied dataset")
+        dataset = load_canonical_dataset(data_dir)
+        if canonical_hashes != {
+            name: _sha256_file(data_dir / name) for name in canonical_files
+        } or blueprint_hash != _sha256_file(blueprint_path):
+            raise GroundingError("blueprint or canonical dataset changed during grounding")
+        grounding = build_generation_grounding(
+            matches[0],
+            dataset,
+            canonical_file_hashes=canonical_hashes,
+            blueprint_hash=blueprint_hash,
+        )
+        resolved_output = _validate_grounding_output_path(
+            output,
+            [blueprint_path, *(data_dir / name for name in canonical_files)],
+        )
+        write_json(grounding, resolved_output)
+    except (CanonicalDataError, GroundingError, OSError, ValidationError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(
+        json.dumps(
+            {
+                "grounding_version": grounding.grounding_version,
+                "question_spec_id": grounding.question_spec_id,
+                "source_document_id": grounding.source_document_id,
+                "passage_characters": len(grounding.passage_text),
+                "passage_hash": grounding.passage_hash,
                 "output": str(output),
             },
             ensure_ascii=False,
