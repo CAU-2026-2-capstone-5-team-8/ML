@@ -416,6 +416,12 @@ uv run bookmatch-ml prepare-assessment-concept-review \
   --books data/output/book_profiles.jsonl \
   --topic operating-systems \
   --output data/reviews/assessment_concept_review_operating_systems_v1.json
+
+uv run bookmatch-ml prepare-assessment-concept-review \
+  --data-dir ../Data-Pipeline/data/processed \
+  --books data/output/book_profiles.jsonl \
+  --topic linear-algebra \
+  --output data/reviews/assessment_concept_review_linear_algebra_v1.json
 ```
 
 Human decisions live in the source-controlled
@@ -438,6 +444,8 @@ and missing decisions are excluded; quota gaps remain visible shortages and are 
 backfilled. The reviewed config hash binds the exact review artifact bytes while preserving the
 existing `question-spec-v1` schema. See the
 [assessment concept review report](docs/experiments/assessment-concept-review-v1.md).
+The cross-domain Linear Algebra queue is documented in the
+[Linear Algebra assessment concept review report](docs/experiments/linear-algebra-assessment-concept-review-v1.md).
 
 ## Experimental concept matching v2
 

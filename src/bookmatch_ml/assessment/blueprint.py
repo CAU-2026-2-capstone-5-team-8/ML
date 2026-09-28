@@ -290,6 +290,12 @@ def build_assessment_blueprint(
             raise AssessmentConceptReviewError(
                 "unknown review topics: " + ", ".join(unknown_topics)
             )
+        represented_topics = {
+            profile_topic
+            for profile in profiles
+            for profile_topic, weight in profile.concept_profile.topic_distribution.items()
+            if weight > 0
+        }
         review_pools = [
             build_topic_concept_pool(
                 review_topic,
@@ -297,12 +303,13 @@ def build_assessment_blueprint(
                 feature_config,
                 assessment_config,
             )
-            for review_topic in sorted({topic_id, *review_topics})
+            for review_topic in sorted({topic_id, *(review_topics & represented_topics)})
         ]
         validate_assessment_concept_reviews(
             concept_reviews,
             review_pools,
             assessment_config,
+            supported_topics=known_topics,
         )
         pool = next(item for item in review_pools if item.topic_id == topic_id)
     else:
