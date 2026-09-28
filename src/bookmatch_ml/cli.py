@@ -177,6 +177,15 @@ def _sha256_file(path: Path) -> str:
     return f"sha256:{hashlib.sha256(path.read_bytes()).hexdigest()}"
 
 
+def _validate_grounding_output_path(output: Path, inputs: list[Path]) -> Path:
+    """Reject aliases that would overwrite a blueprint or canonical input file."""
+
+    resolved_output = output.resolve()
+    if resolved_output in {path.resolve() for path in inputs}:
+        raise GroundingError("grounding output must differ from every input artifact")
+    return resolved_output
+
+
 def _load_matching_book_profiles(path: Path) -> list[MatchingBookProfile]:
     """Load strict matching candidates for the production-v2 smoke command."""
 
@@ -1616,7 +1625,11 @@ def build_generation_grounding_command(
             canonical_file_hashes=canonical_hashes,
             blueprint_hash=blueprint_hash,
         )
-        write_json(grounding, output)
+        resolved_output = _validate_grounding_output_path(
+            output,
+            [blueprint_path, *(data_dir / name for name in canonical_files)],
+        )
+        write_json(grounding, resolved_output)
     except (CanonicalDataError, GroundingError, OSError, ValidationError) as exc:
         typer.echo(f"Error: {exc}", err=True)
         raise typer.Exit(code=1) from exc

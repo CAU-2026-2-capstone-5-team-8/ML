@@ -70,5 +70,5 @@ The selected passage defines a matrix as a rectangular array, explains row/colum
 illustrates entry indexing. It is sufficient for a small application question without sending the
 140,910-character chapter. Two exports from identical inputs were byte-identical.
 
-`integrate`/Level 3, multiple-document grounding, implicit or missing licenses, and arbitrary
-fallback to another document remain unsupported.
+`integrate`/Level 3, multiple-document grounding, licenses outside the currently approved open
+reuse families, and arbitrary fallback to another document remain unsupported.

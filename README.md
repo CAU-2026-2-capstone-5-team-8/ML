@@ -418,13 +418,14 @@ uv run bookmatch-ml build-generation-grounding \
 ```
 
 `generation-grounding-v1` verifies the blueprint's four canonical file hashes, exact
-QuestionSpec, document/book/source joins, document content hash, prose type, and an explicit source
-license. It then selects the first sentence containing the primary concept and enough immediately
-following source sentences to reach 600 characters, with a hard 1,800-character ceiling. The
-passage remains an exact contiguous substring of `Document.text`; no model or network call is used.
+QuestionSpec, document/book/source joins, document content hash, prose type, and an approved
+explicit reuse license. It then selects the first sentence containing the primary concept and
+enough immediately following source sentences to reach 600 characters, with a hard 1,800-character
+ceiling. The passage remains an exact contiguous substring of `Document.text`; no model or network
+call is used.
 The artifact records the passage hash, source and document hashes, license and rights provenance,
 and contains no export timestamp, so identical inputs produce byte-identical output. `integrate`,
-Level 3, multiple-source, unlicensed, missing, altered, or irrelevant inputs fail closed.
+Level 3, multiple-source, unapproved-license, missing, altered, or irrelevant inputs fail closed.
 
 Actual Linear Algebra availability and the architecture choice are documented in the
 [comprehension grounding report](docs/experiments/comprehension-grounding-v1.md). Generated

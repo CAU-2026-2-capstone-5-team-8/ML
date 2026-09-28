@@ -18,6 +18,14 @@ MAX_PASSAGE_CHARACTERS = 1800
 _PROSE_TYPES = {"preface", "introduction", "preview", "sample_chapter", "other"}
 _CANONICAL_FILES = {"books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl"}
 _HASH_PATTERN = re.compile(r"^sha256:[0-9a-f]{64}$")
+_APPROVED_REUSE_LICENSE_MARKERS = (
+    "creative commons attribution",
+    "cc by",
+    "gnu free documentation license",
+    "gfdl",
+    "public domain",
+)
+_REUSE_DENIAL_MARKERS = ("all rights reserved", "no reuse", "no redistribution")
 
 
 class GroundingError(ValueError):
@@ -36,6 +44,13 @@ def _sha256_json(value: object) -> str:
         separators=(",", ":"),
     ).encode("utf-8")
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
+
+
+def _has_approved_reuse_license(value: str) -> bool:
+    normalized = " ".join(value.casefold().split())
+    return not any(marker in normalized for marker in _REUSE_DENIAL_MARKERS) and any(
+        marker in normalized for marker in _APPROVED_REUSE_LICENSE_MARKERS
+    )
 
 
 class GenerationGrounding(StrictModel):
@@ -223,8 +238,8 @@ def build_generation_grounding(
     source = sources[0]
     if source.book_id != document.book_id:
         raise GroundingError("source provenance book does not match the source document")
-    if source.license is None or not source.license.strip():
-        raise GroundingError("generation-grounding-v1 requires an explicit source license")
+    if source.license is None or not _has_approved_reuse_license(source.license):
+        raise GroundingError("generation-grounding-v1 requires an approved explicit reuse license")
     if set(canonical_file_hashes) != _CANONICAL_FILES or any(
         _HASH_PATTERN.fullmatch(digest) is None for digest in canonical_file_hashes.values()
     ):

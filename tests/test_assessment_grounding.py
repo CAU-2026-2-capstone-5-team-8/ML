@@ -14,6 +14,7 @@ from bookmatch_ml.assessment.grounding import (
     extract_passage,
 )
 from bookmatch_ml.assessment.schemas import AssessmentEvidenceRef, QuestionSpec
+from bookmatch_ml.cli import _validate_grounding_output_path
 from bookmatch_ml.schemas import Book, CanonicalDataset, Document, Source
 
 HASH = "sha256:" + "1" * 64
@@ -157,8 +158,16 @@ def test_grounding_rejects_missing_mismatched_or_unlicensed_source() -> None:
         _build(dataset=dataset.model_copy(update={"documents": [wrong_type]}))
 
     unlicensed = dataset.sources[0].model_copy(update={"license": None})
-    with pytest.raises(GroundingError, match="explicit source license"):
+    with pytest.raises(GroundingError, match="explicit reuse license"):
         _build(dataset=dataset.model_copy(update={"sources": [unlicensed]}))
+
+    ambiguous = dataset.sources[0].model_copy(update={"license": "Publicly available"})
+    with pytest.raises(GroundingError, match="explicit reuse license"):
+        _build(dataset=dataset.model_copy(update={"sources": [ambiguous]}))
+
+    denied = dataset.sources[0].model_copy(update={"license": "All rights reserved; no reuse"})
+    with pytest.raises(GroundingError, match="explicit reuse license"):
+        _build(dataset=dataset.model_copy(update={"sources": [denied]}))
 
 
 def test_passage_extraction_fails_closed_on_irrelevant_or_unsafe_lengths() -> None:
@@ -200,3 +209,13 @@ def test_grounding_contract_rejects_altered_passage_or_malformed_dataset_hashes(
             canonical_file_hashes={"books.jsonl": HASH},
             blueprint_hash=HASH,
         )
+
+
+def test_grounding_output_cannot_overwrite_an_input(tmp_path) -> None:
+    blueprint = tmp_path / "blueprint.json"
+    canonical = tmp_path / "documents.jsonl"
+    output = tmp_path / "grounding.json"
+
+    with pytest.raises(GroundingError, match="differ from every input"):
+        _validate_grounding_output_path(blueprint, [blueprint, canonical])
+    assert _validate_grounding_output_path(output, [blueprint, canonical]) == output.resolve()
