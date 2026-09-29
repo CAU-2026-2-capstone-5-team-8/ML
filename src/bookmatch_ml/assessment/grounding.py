@@ -46,6 +46,8 @@ _REVIEWED_DISPLAY_REPLACEMENTS = {
             "has 2 rows and 3 columns and so is a 2×3 matrix",
         ),
         ("two-by-\nthree", "two-by-three"),
+        ("stated ﬁrst", "stated first"),
+        ("row and ﬁrst column", "row and first column"),
         ("isa2,1 =3", "is a2,1 = 3"),
     ),
 }

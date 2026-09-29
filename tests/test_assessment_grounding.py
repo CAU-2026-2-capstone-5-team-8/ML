@@ -53,11 +53,11 @@ HEFFERON_DISPLAY_PASSAGE = (
     "3 4 −7\n"
     ")\n"
     "has 2 rows and 3 columns and so is a 2×3 matrix. Read that aloud as “"
-    "two-by-three”; the number of rows is always stated ﬁrst. "
+    "two-by-three”; the number of rows is always stated first. "
     "(The matrix has parentheses\n"
     "around it so that when two matrices are adjacent we can tell where one ends and\n"
     "the other begins.) We name matrix entries with the corresponding lower-case\n"
-    "letter, so that the entry in the second row and ﬁrst column of the above array\n"
+    "letter, so that the entry in the second row and first column of the above array\n"
     "is a2,1 = 3."
 )
 

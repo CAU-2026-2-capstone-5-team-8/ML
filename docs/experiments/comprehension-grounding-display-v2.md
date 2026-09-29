@@ -64,6 +64,8 @@ reviewed replacements:
 | `anentry` | `an entry` | Restores one word boundary in a fixed prose fragment. |
 | `has2 rows and3 columns and so is a2×3 matrix` | `has 2 rows and 3 columns and so is a 2×3 matrix` | Restores prose spacing while preserving `2×3`. |
 | `two-by-\nthree` | `two-by-three` | Removes a PDF line wrap but preserves the visible compound-word hyphens. |
+| `stated ﬁrst` | `stated first` | Expands one reviewed typographic ligature without changing the word. |
+| `row and ﬁrst column` | `row and first column` | Expands the second reviewed `ﬁ` ligature in its exact prose context. |
 | `isa2,1 =3` | `is a2,1 = 3` | Restores prose/operator spacing without inventing lost subscript formatting. |
 
 The matrix rows remain separate lines. The policy intentionally leaves `a2,1` unchanged because the
@@ -78,9 +80,9 @@ correction, reflow, or model-based rewriting.
 - source document: `doc_de934d33d551223812e8`
 - source passage length: 617 characters
 - source passage hash: `sha256:7220ee5501766f97edabc506e871470356fa2aeb40ec92acfd6f7e44d9ce4ce0`
-- display passage length: 627 characters
-- display passage hash: `sha256:001d13062c6eb34f89d0c2d50224466851efbe1282ff19a7518595bb8e99bbb2`
-- grounding artifact hash: `sha256:04cce628e248f54b4e22556ca8dea7e8fd5d248ea9a4ffaf7d2f68d06ae6d8f1`
+- display passage length: 629 characters
+- display passage hash: `sha256:c5126e3650a7c2329f2a4281efc774465bb9954e19091808d7162938926850a4`
+- grounding artifact hash: `sha256:a9d7f5f1b1487040c6aff681fbfe8591800a274aa0b5e2231cf784ea8c1fe2a6`
 - normalization policy: `pdf-display-normalization-v1`
 
 Two builds from the same canonical files, blueprint, QuestionSpec, and policy were byte-identical.
