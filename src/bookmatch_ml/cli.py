@@ -9,7 +9,12 @@ import typer
 from pydantic import ValidationError
 
 from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
-from bookmatch_ml.assessment.grounding import GroundingError, build_generation_grounding
+from bookmatch_ml.assessment.grounding import (
+    DISPLAY_NORMALIZATION_POLICY,
+    GroundingError,
+    build_generation_grounding,
+    build_generation_grounding_v2,
+)
 from bookmatch_ml.assessment.pool import AssessmentBlueprintError, build_topic_concept_pool
 from bookmatch_ml.assessment.review import (
     AssessmentConceptReviewError,
@@ -1642,6 +1647,89 @@ def build_generation_grounding_command(
                 "source_document_id": grounding.source_document_id,
                 "passage_characters": len(grounding.passage_text),
                 "passage_hash": grounding.passage_hash,
+                "output": str(output),
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("build-generation-grounding-v2")
+def build_generation_grounding_v2_command(
+    data_dir: Annotated[
+        Path,
+        typer.Option("--data-dir", file_okay=False, resolve_path=True),
+    ],
+    blueprint_path: Annotated[
+        Path,
+        typer.Option(
+            "--blueprint",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+        ),
+    ],
+    question_id: Annotated[str, typer.Option("--question-id")],
+    output: Annotated[
+        Path,
+        typer.Option("--output", dir_okay=False, resolve_path=True),
+    ],
+    display_normalization_policy: Annotated[
+        str,
+        typer.Option("--display-normalization-policy"),
+    ] = DISPLAY_NORMALIZATION_POLICY,
+) -> None:
+    """Bind exact source prose to a reviewed, deterministic display passage."""
+
+    canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+    try:
+        canonical_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        blueprint_hash = _sha256_file(blueprint_path)
+        blueprint = AssessmentBlueprint.model_validate_json(
+            blueprint_path.read_text(encoding="utf-8")
+        )
+        matches = [item for item in blueprint.question_specs if item.question_id == question_id]
+        if len(matches) != 1:
+            raise GroundingError(
+                f"question_id {question_id!r} was not found exactly once in the blueprint"
+            )
+        if blueprint.canonical_file_hashes != canonical_hashes:
+            raise GroundingError("blueprint canonical hashes do not match the supplied dataset")
+        dataset = load_canonical_dataset(data_dir)
+        if canonical_hashes != {
+            name: _sha256_file(data_dir / name) for name in canonical_files
+        } or blueprint_hash != _sha256_file(blueprint_path):
+            raise GroundingError("blueprint or canonical dataset changed during grounding")
+        grounding = build_generation_grounding_v2(
+            matches[0],
+            dataset,
+            canonical_file_hashes=canonical_hashes,
+            blueprint_hash=blueprint_hash,
+            display_normalization_policy=display_normalization_policy,
+        )
+        resolved_output = _validate_grounding_output_path(
+            output,
+            [blueprint_path, *(data_dir / name for name in canonical_files)],
+        )
+        write_json(grounding, resolved_output)
+    except (CanonicalDataError, GroundingError, OSError, ValidationError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(
+        json.dumps(
+            {
+                "grounding_version": grounding.grounding_version,
+                "question_spec_id": grounding.question_spec_id,
+                "source_document_id": grounding.source_document_id,
+                "source_passage_characters": len(grounding.source_passage_text),
+                "source_passage_hash": grounding.source_passage_hash,
+                "display_passage_characters": len(grounding.display_passage_text),
+                "display_passage_hash": grounding.display_passage_hash,
+                "display_normalization_policy": grounding.display_normalization_policy,
                 "output": str(output),
             },
             ensure_ascii=False,

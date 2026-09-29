@@ -431,6 +431,24 @@ Actual Linear Algebra availability and the architecture choice are documented in
 [comprehension grounding report](docs/experiments/comprehension-grounding-v1.md). Generated
 grounding artifacts contain third-party text and therefore remain under ignored `data/output/`.
 
+For user-facing presentation, build the additive v2 artifact without changing the v1 raw-passage
+meaning:
+
+```bash
+uv run bookmatch-ml build-generation-grounding-v2 \
+  --data-dir ../Data-Pipeline/data/processed \
+  --blueprint data/output/linear_algebra_assessment_blueprint_reviewed.json \
+  --question-id q_375e5b6bef551015f67c \
+  --output data/output/linear_algebra_matrix_grounding_v2.json
+```
+
+`generation-grounding-v2` preserves the exact canonical substring as `source_passage_text` and
+adds a separately hashed `display_passage_text`. `pdf-display-normalization-v1` is a reviewed,
+source-hash-bound replacement policy rather than a broad spacing heuristic; unknown or changed
+passages fail closed. The Data-Pipeline canonical files and their hashes are not modified. See the
+[display grounding report](docs/experiments/comprehension-grounding-display-v2.md) for the PDF
+extraction comparison, exact rules, hash chain, and limitations.
+
 ### Review assessment-worthy concepts
 
 Concept evidence, prerequisite inference, and assessment eligibility are separate decisions. In

@@ -7,11 +7,15 @@ import pytest
 from pydantic import ValidationError
 
 from bookmatch_ml.assessment.grounding import (
+    DISPLAY_NORMALIZATION_POLICY,
     MAX_PASSAGE_CHARACTERS,
     GenerationGrounding,
+    GenerationGroundingV2,
     GroundingError,
     build_generation_grounding,
+    build_generation_grounding_v2,
     extract_passage,
+    normalize_display_passage,
 )
 from bookmatch_ml.assessment.schemas import AssessmentEvidenceRef, QuestionSpec
 from bookmatch_ml.cli import _validate_grounding_output_path
@@ -24,6 +28,38 @@ CANONICAL_HASHES = {
     "toc.jsonl": HASH,
     "sources.jsonl": HASH,
 }
+HEFFERON_DOCUMENT_ID = "doc_de934d33d551223812e8"
+HEFFERON_SOURCE_PASSAGE = """2.6 DeﬁnitionAnm×n matrix is a rectangular array of numbers withm rows
+andn columns. Each number in the matrix is anentry.
+We usually denote a matrix with an upper case roman letter. For instance,
+A =
+(
+1 2.2 5
+3 4 −7
+)
+has2 rows and3 columns and so is a2×3 matrix. Read that aloud as “two-by-
+three”; the number of rows is always stated ﬁrst. (The matrix has parentheses
+around it so that when two matrices are adjacent we can tell where one ends and
+the other begins.) We name matrix entries with the corresponding lower-case
+letter, so that the entry in the second row and ﬁrst column of the above array
+isa2,1 =3."""
+HEFFERON_DISPLAY_PASSAGE = (
+    "2.6 Definition An m×n matrix is a rectangular array of numbers with m rows\n"
+    "and n columns. Each number in the matrix is an entry.\n"
+    "We usually denote a matrix with an upper case roman letter. For instance,\n"
+    "A =\n"
+    "(\n"
+    "1 2.2 5\n"
+    "3 4 −7\n"
+    ")\n"
+    "has 2 rows and 3 columns and so is a 2×3 matrix. Read that aloud as “"
+    "two-by-three”; the number of rows is always stated ﬁrst. "
+    "(The matrix has parentheses\n"
+    "around it so that when two matrices are adjacent we can tell where one ends and\n"
+    "the other begins.) We name matrix entries with the corresponding lower-case\n"
+    "letter, so that the entry in the second row and ﬁrst column of the above array\n"
+    "is a2,1 = 3."
+)
 
 
 def _hash_text(value: str) -> str:
@@ -127,6 +163,32 @@ def _build(spec: QuestionSpec | None = None, dataset: CanonicalDataset | None = 
     )
 
 
+def _hefferon_spec() -> QuestionSpec:
+    spec = _spec()
+    evidence = spec.supporting_evidence[0].model_copy(update={"evidence_id": HEFFERON_DOCUMENT_ID})
+    return spec.model_copy(
+        update={
+            "supporting_evidence": [evidence],
+            "source_document_ids": [HEFFERON_DOCUMENT_ID],
+        }
+    )
+
+
+def _hefferon_dataset() -> CanonicalDataset:
+    dataset = _dataset(HEFFERON_SOURCE_PASSAGE)
+    document = dataset.documents[0].model_copy(update={"document_id": HEFFERON_DOCUMENT_ID})
+    return dataset.model_copy(update={"documents": [document]})
+
+
+def _build_v2() -> GenerationGroundingV2:
+    return build_generation_grounding_v2(
+        _hefferon_spec(),
+        _hefferon_dataset(),
+        canonical_file_hashes=CANONICAL_HASHES,
+        blueprint_hash=HASH,
+    )
+
+
 def test_grounding_is_deterministic_bounded_and_preserves_source_identity() -> None:
     first = _build()
     second = _build()
@@ -141,6 +203,58 @@ def test_grounding_is_deterministic_bounded_and_preserves_source_identity() -> N
     assert first.source_url == "https://example.test/open-textbook"
     assert first.license == "Creative Commons Attribution 4.0 International License"
     assert first.edition_relation == "unspecified"
+
+
+def test_grounding_v2_preserves_exact_source_and_builds_reviewed_display() -> None:
+    first = _build_v2()
+    second = _build_v2()
+
+    assert first == second
+    assert first.model_dump_json() == second.model_dump_json()
+    assert first.source_passage_text == HEFFERON_SOURCE_PASSAGE
+    assert first.source_passage_text in _hefferon_dataset().documents[0].text
+    assert first.source_passage_hash == _hash_text(HEFFERON_SOURCE_PASSAGE)
+    assert first.display_passage_text == HEFFERON_DISPLAY_PASSAGE
+    assert first.display_passage_hash == _hash_text(HEFFERON_DISPLAY_PASSAGE)
+    assert first.display_normalization_policy == DISPLAY_NORMALIZATION_POLICY
+    assert "1 2.2 5\n3 4 −7" in first.display_passage_text
+    assert "a2,1" in first.display_passage_text
+
+
+def test_display_normalization_fails_closed_for_unknown_policy_hash_or_passage() -> None:
+    source_hash = _hash_text(HEFFERON_SOURCE_PASSAGE)
+    with pytest.raises(GroundingError, match="unsupported display normalization policy"):
+        normalize_display_passage(
+            HEFFERON_SOURCE_PASSAGE,
+            source_document_id=HEFFERON_DOCUMENT_ID,
+            source_passage_hash=source_hash,
+            policy="pdf-display-normalization-v2",
+        )
+    with pytest.raises(GroundingError, match="source passage hash"):
+        normalize_display_passage(
+            HEFFERON_SOURCE_PASSAGE + " changed",
+            source_document_id=HEFFERON_DOCUMENT_ID,
+            source_passage_hash=source_hash,
+        )
+    with pytest.raises(GroundingError, match="no reviewed rules"):
+        normalize_display_passage(
+            HEFFERON_SOURCE_PASSAGE,
+            source_document_id="doc_unreviewed",
+            source_passage_hash=source_hash,
+        )
+
+
+def test_grounding_v2_contract_rejects_altered_display_or_source_hash() -> None:
+    grounding = _build_v2()
+    display_payload = grounding.model_dump()
+    display_payload["display_passage_text"] += " altered"
+    with pytest.raises(ValidationError, match="display passage hash"):
+        GenerationGroundingV2.model_validate(display_payload)
+
+    source_payload = grounding.model_dump()
+    source_payload["source_passage_hash"] = HASH
+    with pytest.raises(ValidationError, match="source passage hash"):
+        GenerationGroundingV2.model_validate(source_payload)
 
 
 def test_grounding_rejects_missing_mismatched_or_unlicensed_source() -> None:
