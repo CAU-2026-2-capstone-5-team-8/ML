@@ -12,9 +12,12 @@ from bookmatch_ml.assessment.schemas import QuestionSpec
 from bookmatch_ml.schemas import CanonicalDataset, StrictModel
 
 GROUNDING_VERSION = "generation-grounding-v1"
+DISPLAY_GROUNDING_VERSION = "generation-grounding-v2"
 PASSAGE_EXTRACTION_POLICY = "first-concept-sentence-window-v1"
+DISPLAY_NORMALIZATION_POLICY = "pdf-display-normalization-v1"
 MIN_PASSAGE_CHARACTERS = 600
 MAX_PASSAGE_CHARACTERS = 1800
+MAX_DISPLAY_PASSAGE_CHARACTERS = 2000
 _PROSE_TYPES = {"preface", "introduction", "preview", "sample_chapter", "other"}
 _CANONICAL_FILES = {"books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl"}
 _HASH_PATTERN = re.compile(r"^sha256:[0-9a-f]{64}$")
@@ -26,6 +29,28 @@ _APPROVED_REUSE_LICENSE_MARKERS = (
     "public domain",
 )
 _REUSE_DENIAL_MARKERS = ("all rights reserved", "no reuse", "no redistribution")
+
+# A reviewed allowlist keeps display repair auditable and prevents broad spacing
+# heuristics from changing identifiers or mathematical notation. Each rule set is
+# bound to one exact canonical source passage and is intentionally fail closed.
+_REVIEWED_DISPLAY_REPLACEMENTS = {
+    (
+        "doc_de934d33d551223812e8",
+        "sha256:7220ee5501766f97edabc506e871470356fa2aeb40ec92acfd6f7e44d9ce4ce0",
+    ): (
+        ("DeﬁnitionAnm×n", "Definition An m×n"),
+        ("withm rows\nandn columns", "with m rows\nand n columns"),
+        ("anentry", "an entry"),
+        (
+            "has2 rows and3 columns and so is a2×3 matrix",
+            "has 2 rows and 3 columns and so is a 2×3 matrix",
+        ),
+        ("two-by-\nthree", "two-by-three"),
+        ("stated ﬁrst", "stated first"),
+        ("row and ﬁrst column", "row and first column"),
+        ("isa2,1 =3", "is a2,1 = 3"),
+    ),
+}
 
 
 class GroundingError(ValueError):
@@ -124,6 +149,129 @@ class GenerationGrounding(StrictModel):
             raise ValueError("passage hash does not match passage text")
         if self.related_concepts:
             raise ValueError("generation-grounding-v1 supports only single-concept apply targets")
+        return self
+
+
+def normalize_display_passage(
+    source_passage_text: str,
+    *,
+    source_document_id: str,
+    source_passage_hash: str,
+    policy: str = DISPLAY_NORMALIZATION_POLICY,
+) -> str:
+    """Apply one reviewed, versioned display repair to an exact source passage."""
+
+    if policy != DISPLAY_NORMALIZATION_POLICY:
+        raise GroundingError(f"unsupported display normalization policy: {policy!r}")
+    if source_passage_hash != _sha256_text(source_passage_text):
+        raise GroundingError("source passage hash does not match source passage text")
+    replacements = _REVIEWED_DISPLAY_REPLACEMENTS.get((source_document_id, source_passage_hash))
+    if replacements is None:
+        raise GroundingError(
+            "display normalization policy has no reviewed rules for this source passage"
+        )
+
+    display_passage = source_passage_text
+    for original, replacement in replacements:
+        if display_passage.count(original) != 1:
+            raise GroundingError(
+                "reviewed display normalization input no longer matches its exact source fragment"
+            )
+        display_passage = display_passage.replace(original, replacement, 1)
+    return display_passage
+
+
+class GenerationGroundingV2(StrictModel):
+    """Preserve exact source prose while carrying a reviewed display representation."""
+
+    schema_version: Literal[2] = 2
+    grounding_version: Literal["generation-grounding-v2"] = DISPLAY_GROUNDING_VERSION
+    question_spec_id: str = Field(pattern=r"^q_[0-9a-f]{20}$")
+    question_spec_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    topic_id: str
+    question_type: Literal["comprehension"]
+    cognitive_operation: Literal["apply"]
+    target_difficulty: Literal[2]
+    primary_concept: str
+    related_concepts: list[str]
+    source_document_id: str
+    book_id: str
+    document_type: Literal["preface", "introduction", "preview", "sample_chapter", "other"]
+    document_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    source_passage_text: str = Field(
+        min_length=MIN_PASSAGE_CHARACTERS,
+        max_length=MAX_PASSAGE_CHARACTERS,
+    )
+    source_passage_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    source_passage_extraction_policy: Literal["first-concept-sentence-window-v1"] = (
+        PASSAGE_EXTRACTION_POLICY
+    )
+    display_passage_text: str = Field(
+        min_length=MIN_PASSAGE_CHARACTERS,
+        max_length=MAX_DISPLAY_PASSAGE_CHARACTERS,
+    )
+    display_passage_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    display_normalization_policy: Literal["pdf-display-normalization-v1"] = (
+        DISPLAY_NORMALIZATION_POLICY
+    )
+    source_id: str
+    provider: str
+    source_type: str
+    source_url: str
+    source_retrieved_at: datetime
+    license: str
+    rights_note: str | None = None
+    source_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    edition_relation: Literal["exact", "same_work", "unspecified"]
+    canonical_file_hashes: dict[str, str]
+    blueprint_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+    @field_validator(
+        "topic_id",
+        "primary_concept",
+        "source_document_id",
+        "book_id",
+        "source_id",
+        "provider",
+        "source_type",
+        "source_url",
+        "license",
+    )
+    @classmethod
+    def strings_must_be_nonblank_and_trimmed(cls, value: str) -> str:
+        if not value or value != value.strip():
+            raise ValueError(
+                "grounding identity and provenance strings must be nonblank and trimmed"
+            )
+        return value
+
+    @field_validator("canonical_file_hashes")
+    @classmethod
+    def canonical_hashes_must_cover_exact_inputs(cls, value: dict[str, str]) -> dict[str, str]:
+        if set(value) != _CANONICAL_FILES or any(
+            _HASH_PATTERN.fullmatch(digest) is None for digest in value.values()
+        ):
+            raise ValueError("canonical file hashes must cover all four JSONL inputs")
+        return value
+
+    @model_validator(mode="after")
+    def hashes_policy_and_target_must_match(self) -> "GenerationGroundingV2":
+        if self.source_passage_hash != _sha256_text(self.source_passage_text):
+            raise ValueError("source passage hash does not match source passage text")
+        if self.display_passage_hash != _sha256_text(self.display_passage_text):
+            raise ValueError("display passage hash does not match display passage text")
+        expected_display = normalize_display_passage(
+            self.source_passage_text,
+            source_document_id=self.source_document_id,
+            source_passage_hash=self.source_passage_hash,
+            policy=self.display_normalization_policy,
+        )
+        if self.display_passage_text != expected_display:
+            raise ValueError(
+                "display passage does not match the deterministic normalization policy"
+            )
+        if self.related_concepts:
+            raise ValueError("generation-grounding-v2 supports only single-concept apply targets")
         return self
 
 
@@ -274,4 +422,59 @@ def build_generation_grounding(
         edition_relation=_edition_relation(source.evidence),
         canonical_file_hashes=dict(sorted(canonical_file_hashes.items())),
         blueprint_hash=blueprint_hash,
+    )
+
+
+def build_generation_grounding_v2(
+    spec: QuestionSpec,
+    dataset: CanonicalDataset,
+    *,
+    canonical_file_hashes: dict[str, str],
+    blueprint_hash: str,
+    display_normalization_policy: str = DISPLAY_NORMALIZATION_POLICY,
+) -> GenerationGroundingV2:
+    """Add a reviewed display passage without changing v1 extraction semantics."""
+
+    source = build_generation_grounding(
+        spec,
+        dataset,
+        canonical_file_hashes=canonical_file_hashes,
+        blueprint_hash=blueprint_hash,
+    )
+    display_passage = normalize_display_passage(
+        source.passage_text,
+        source_document_id=source.source_document_id,
+        source_passage_hash=source.passage_hash,
+        policy=display_normalization_policy,
+    )
+    return GenerationGroundingV2(
+        question_spec_id=source.question_spec_id,
+        question_spec_hash=source.question_spec_hash,
+        topic_id=source.topic_id,
+        question_type=source.question_type,
+        cognitive_operation=source.cognitive_operation,
+        target_difficulty=source.target_difficulty,
+        primary_concept=source.primary_concept,
+        related_concepts=source.related_concepts,
+        source_document_id=source.source_document_id,
+        book_id=source.book_id,
+        document_type=source.document_type,
+        document_content_hash=source.document_content_hash,
+        source_passage_text=source.passage_text,
+        source_passage_hash=source.passage_hash,
+        source_passage_extraction_policy=source.passage_extraction_policy,
+        display_passage_text=display_passage,
+        display_passage_hash=_sha256_text(display_passage),
+        display_normalization_policy=display_normalization_policy,
+        source_id=source.source_id,
+        provider=source.provider,
+        source_type=source.source_type,
+        source_url=source.source_url,
+        source_retrieved_at=source.source_retrieved_at,
+        license=source.license,
+        rights_note=source.rights_note,
+        source_content_hash=source.source_content_hash,
+        edition_relation=source.edition_relation,
+        canonical_file_hashes=source.canonical_file_hashes,
+        blueprint_hash=source.blueprint_hash,
     )
