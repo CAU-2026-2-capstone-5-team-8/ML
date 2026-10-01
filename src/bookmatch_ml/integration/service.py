@@ -5,6 +5,7 @@ from bookmatch_ml.integration.schemas import (
     RankRequest,
     RankResponse,
     RankV2Response,
+    ReaderDiagnosticsResponse,
     ReaderProfileRequest,
     ReaderProfileResponse,
 )
@@ -15,6 +16,7 @@ from bookmatch_ml.ranking.prerequisite_first_v2 import (
     build_ranking_v2_projection,
     rank_prerequisite_first_v2,
 )
+from bookmatch_ml.reader.diagnostics import build_reader_diagnostics
 from bookmatch_ml.reader.profile import build_reader_profile
 from bookmatch_ml.schemas import RankingResponse
 
@@ -40,6 +42,10 @@ class IntegrationService:
     def build_reader_profile(self, request: ReaderProfileRequest) -> ReaderProfileResponse:
         profile = build_reader_profile(request.to_internal(), self._reader_config)
         return ReaderProfileResponse.from_internal(profile, user_id=request.user_id)
+
+    def reader_diagnostics(self, request: ReaderProfileRequest) -> ReaderDiagnosticsResponse:
+        result = build_reader_diagnostics(request.to_internal(), self._reader_config)
+        return ReaderDiagnosticsResponse.from_internal(result, user_id=request.user_id)
 
     def rank(self, request: RankRequest) -> RankResponse | RankV2Response:
         reader = request.reader_profile.to_internal()

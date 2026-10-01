@@ -18,6 +18,7 @@ from bookmatch_ml.integration.schemas import (
     RankRequest,
     RankResponse,
     RankV2Response,
+    ReaderDiagnosticsResponse,
     ReaderProfileRequest,
     ReaderProfileResponse,
 )
@@ -87,6 +88,13 @@ def create_app(
     def reader_profile(request: ReaderProfileRequest) -> ReaderProfileResponse:
         try:
             return service.build_reader_profile(request)
+        except (AssessmentError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @application.post("/ml/reader-diagnostics", response_model=ReaderDiagnosticsResponse)
+    def reader_diagnostics(request: ReaderProfileRequest) -> ReaderDiagnosticsResponse:
+        try:
+            return service.reader_diagnostics(request)
         except (AssessmentError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
