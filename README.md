@@ -1,5 +1,10 @@
 # BookMatch ML
 
+For concept-level response evidence grouped by question type and declared difficulty, use
+`POST /ml/reader-diagnostics` with the existing reader-profile request. It returns observed
+scores, question references, and the next assessment cell to review or probe, without changing
+the current profile scores or ranking. See [reader depth diagnostics](docs/reader-depth-diagnostics-v1.md).
+
 For a reproducible canonical-data → local HTTP verification workflow and the 25-book
 integration findings, see [Canonical HTTP verification](docs/canonical-http-verification-v1.md).
 The check verifies API consistency, not recommendation accuracy.
