@@ -329,6 +329,20 @@ per-document `text_extent`, including excluded documents. `analyzed_text_scope` 
 section is not a complete book. Historical missing scope stays unknown; scores and ranking
 formulas are unchanged. See the [98-book handoff verification](docs/experiments/text-extent-handoff-2026-10-03.md).
 
+## Prose language diagnostics
+
+Before interpreting prose scores across languages, run the independent diagnostic:
+
+```bash
+uv run bookmatch-ml audit-prose-language \
+  --data-dir <canonical-directory> --baseline-language en \
+  --output data/reports/prose-language-audit.json
+```
+
+It records declared-language mismatches, script counts, scope and baseline measurements without
+changing scores or inventing human labels. A language match is not validation; outputs always
+remain `not_evaluated`. See the [real Korean prose audit](docs/experiments/korean-prose-language-audit-2026-10-03.md).
+
 ## Evidence ablation
 
 Compare the required evidence conditions for a rich-evidence book:
