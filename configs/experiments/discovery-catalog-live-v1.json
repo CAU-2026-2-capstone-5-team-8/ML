@@ -1,0 +1,120 @@
+{
+  "snapshot_id": "discovery-catalog-live-20260929-v1",
+  "book_count": 471,
+  "toc_book_count": 439,
+  "topics": [
+    {
+      "topic": {
+        "code": "LA",
+        "name": "선형대수",
+        "parent_code": "MAT",
+        "parent_name": "수학",
+        "ml_topic_id": "linear-algebra"
+      },
+      "book_count": 98,
+      "toc_book_count": 83,
+      "canonical_hashes": {
+        "books.jsonl": "sha256:2ca7e8df020ebf139f64a13c9733e0de16868ea104908a1d5bba9003e51857d0",
+        "documents.jsonl": "sha256:57d218fa07ee131d540469a7a6093af925a9c900cf427b65350d70460db3d8ab",
+        "toc.jsonl": "sha256:4ddb83257db69a699d5de997cd03f7c76003ebc89cd02303a8fa644ea7aabadf",
+        "sources.jsonl": "sha256:aec1947acad699fd3799da0118c38689b27ea53827370152c2156bab0f627ce2"
+      }
+    },
+    {
+      "topic": {
+        "code": "OS",
+        "name": "운영체제",
+        "parent_code": "CS",
+        "parent_name": "컴퓨터과학",
+        "ml_topic_id": "operating-systems"
+      },
+      "book_count": 54,
+      "toc_book_count": 49,
+      "canonical_hashes": {
+        "books.jsonl": "sha256:7135301904774cd2903504bb4b9b4b5dcd0b869a08f59f44bc54f47be431af21",
+        "documents.jsonl": "sha256:d016ea249e10dfc041693b17c706b00b18b9a8b6d0c7ba7d6395c25f9adc8203",
+        "toc.jsonl": "sha256:eb05bdde6925fda877f2ac3560c371c69382a14bee2b3b0dfdf969855b2f42ac",
+        "sources.jsonl": "sha256:2b06f0c31a4937088e1a3550d9ab2267e48baac1e4c508ce2a6f294d204b3ed5"
+      }
+    },
+    {
+      "topic": {
+        "code": "ALG",
+        "name": "알고리즘",
+        "parent_code": "CS",
+        "parent_name": "컴퓨터과학",
+        "ml_topic_id": "algorithms"
+      },
+      "book_count": 70,
+      "toc_book_count": 69,
+      "canonical_hashes": {
+        "books.jsonl": "sha256:c3b5b17c0abb9ba904b793c2a2abc911258cbb2c4f804f1f6a97c39ba1d7db64",
+        "documents.jsonl": "sha256:0e1f6b7768dc5dd2026dfedebd67ad9bce5f5a0a99924815b3990c68a499b1d7",
+        "toc.jsonl": "sha256:0a9b893f6e5c56673141dac60886d5907a1f9479a07469ae92c2f421a0cd06c0",
+        "sources.jsonl": "sha256:4ab368be4b9e8c950081607439afe07230c85f4dbc31c51079b5a7bd27ec932b"
+      }
+    },
+    {
+      "topic": {
+        "code": "DB",
+        "name": "데이터베이스",
+        "parent_code": "CS",
+        "parent_name": "컴퓨터과학",
+        "ml_topic_id": "databases"
+      },
+      "book_count": 93,
+      "toc_book_count": 90,
+      "canonical_hashes": {
+        "books.jsonl": "sha256:2910508fce2299ede5d96bac3907d11faafa9bf8be585208c5d7b412b9ae32a4",
+        "documents.jsonl": "sha256:8db8deb7e92b4552951c7afc0d6464cf57de0a1346018f8d48e3cc1533b67ad4",
+        "toc.jsonl": "sha256:94b6eb635116a789b379d05a407631207c8c986c3cb5a38c80b60327c79affbc",
+        "sources.jsonl": "sha256:e9332e98b8e595de6762bdf2447405f305ebea66ceba2f397a4193cd849c0b78"
+      }
+    },
+    {
+      "topic": {
+        "code": "DM",
+        "name": "이산수학",
+        "parent_code": "MAT",
+        "parent_name": "수학",
+        "ml_topic_id": "discrete-mathematics"
+      },
+      "book_count": 92,
+      "toc_book_count": 84,
+      "canonical_hashes": {
+        "books.jsonl": "sha256:812bacfce247589c8e9aa1ca559ac93ca0f149ac0ffb30e867dd62942f085596",
+        "documents.jsonl": "sha256:006cf8435e8775cbc0a6d1756202917af6b47187ab38260b3ab9eb951dee1623",
+        "toc.jsonl": "sha256:8be60717e91934358ba3478372b4f01b78c7aaf7fc98a6763cb1c2e1a5841fc2",
+        "sources.jsonl": "sha256:8e4da311a4d3e07c40b5072b8f8dc74ac3834ef97237cbe2fdcb1c683c63acd7"
+      }
+    },
+    {
+      "topic": {
+        "code": "PS",
+        "name": "확률과 통계",
+        "parent_code": "MAT",
+        "parent_name": "수학",
+        "ml_topic_id": "probability-statistics"
+      },
+      "book_count": 64,
+      "toc_book_count": 64,
+      "canonical_hashes": {
+        "books.jsonl": "sha256:52a89376477e87324eae4245a8fc882c76f09de462a411d4136a149bea2db7c0",
+        "documents.jsonl": "sha256:7c57a1a83855c4d6f2336e21baedbaf2982f9fed8efac58692198eb70740f562",
+        "toc.jsonl": "sha256:5bfefd16afc2bbdd97fb1c09aa44f4833f45626db43273cac403415901e96add",
+        "sources.jsonl": "sha256:26e312fc619054ef5369712b600b4dc014636aa523d9cd9b27e3b530babcda91"
+      }
+    }
+  ],
+  "la_pilot_hashes": {
+    "matching-candidates.jsonl": "sha256:0c987d0d7ce587436c41915c9fa79e0ac888de670dcd93b6066a555ff399e35c",
+    "concept-mapping.json": "sha256:ff6e5fc8d3ef584e909b0e47b5208f7920ba63b52b4f357bfa07117a83afe0e3",
+    "book-profiles.jsonl": "sha256:92f186f16b6d343396c6f0a7322fdf3087d7bc6820ff10b511719f95d2d4ea9f"
+  },
+  "accepted_projection_sources": [
+    {
+      "snapshot_id": "discovery-la-live-handoff-20260929-v1",
+      "candidates_sha256": "sha256:6016c67841b2ba7be7c4bf8d9d9d56fbd40784108ef37b6f3028f2c998575469"
+    }
+  ]
+}

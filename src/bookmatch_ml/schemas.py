@@ -1,9 +1,16 @@
 """Provider-independent schemas at the Data-Pipeline/ML boundary."""
 
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_serializer,
+    model_validator,
+)
 
 DocumentType = Literal[
     "description",
@@ -67,13 +74,30 @@ class StrictModel(BaseModel):
 
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False, strict=True)
 
+    @model_serializer(mode="wrap")
+    def omit_absent_english_fields(self, handler: Any) -> dict[str, Any]:
+        result = handler(self)
+        for field in ("en_title", "en_subtitle", "en_text"):
+            if result.get(field) is None:
+                result.pop(field, None)
+        return result
+
+    @field_validator("en_title", "en_subtitle", "en_text", check_fields=False)
+    @classmethod
+    def english_field_must_not_be_blank(cls, value: str | None) -> str | None:
+        if value is not None and not value.strip():
+            raise ValueError("English analysis text must not be blank")
+        return value
+
 
 class Book(StrictModel):
     book_id: str = Field(pattern=r"^(isbn13:[0-9]{13}|isbn10:[0-9]{9}[0-9X]|book_[0-9a-f]{20})$")
     isbn_10: str | None = None
     isbn_13: str | None = None
     title: str = Field(min_length=1)
+    en_title: str | None = Field(default=None, min_length=1)
     subtitle: str | None = None
+    en_subtitle: str | None = Field(default=None, min_length=1)
     authors: list[str]
     publisher: str | None = None
     published_year: int | None = Field(default=None, ge=1000, le=9999)
@@ -152,6 +176,7 @@ class Document(StrictModel):
     book_id: str = Field(min_length=1)
     document_type: DocumentType
     text: str = Field(min_length=1)
+    en_text: str | None = Field(default=None, min_length=1)
     source_id: str = Field(min_length=1)
     content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
 
@@ -172,6 +197,7 @@ class TocEntry(StrictModel):
     order_index: int = Field(ge=0)
     label: str | None = None
     title: str = Field(min_length=1)
+    en_title: str | None = Field(default=None, min_length=1)
     source_id: str = Field(min_length=1)
 
 
@@ -429,6 +455,11 @@ class AssessmentResponse(StrictModel):
     concept_id: str | None = None
     concept_tags: list[str] = Field(default_factory=list)
     question_type: QuestionType
+    cognitive_operation: (
+        Literal["recognize", "recall", "compare", "relate", "apply", "integrate", "infer"] | None
+    ) = None
+    answer_mode: Literal["MULTIPLE_CHOICE", "SELF_REPORT"] | None = None
+    measurement_context: Literal["prior-knowledge", "provided-information"] | None = None
     difficulty: str = Field(min_length=1)
     correct: bool | None = None
     score: float | None = Field(default=None, ge=0, le=1)

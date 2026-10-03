@@ -1,0 +1,240 @@
+# Synthetic answers; scores/readiness/config provenance come from the preceding real response.
+# Run laProfile first. Eight sorted conceptReadiness rows are expected for this fixed request.
+@baseUrl = http://127.0.0.1:8011
+
+###
+# @name laProfile
+POST {{baseUrl}}/ml/reader-profile
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "assessmentId": "synthetic-la-live-validation-v1",
+  "topicId": "linear-algebra",
+  "responses": [
+    {
+      "questionId": "la-local-validation-v1-1",
+      "topicId": "linear-algebra",
+      "conceptId": "matrix",
+      "questionType": "vocabulary",
+      "difficulty": "easy",
+      "correct": true
+    },
+    {
+      "questionId": "la-local-validation-v1-2",
+      "topicId": "linear-algebra",
+      "conceptId": "vector",
+      "questionType": "vocabulary",
+      "difficulty": "easy",
+      "correct": true
+    },
+    {
+      "questionId": "la-local-validation-v1-3",
+      "topicId": "linear-algebra",
+      "conceptId": "linear system",
+      "questionType": "vocabulary",
+      "difficulty": "easy",
+      "correct": true
+    },
+    {
+      "questionId": "la-local-validation-v1-4",
+      "topicId": "linear-algebra",
+      "conceptId": "systems of equations",
+      "questionType": "background_knowledge",
+      "difficulty": "easy",
+      "correct": true
+    },
+    {
+      "questionId": "la-local-validation-v1-5",
+      "topicId": "linear-algebra",
+      "conceptId": "high school algebra",
+      "questionType": "background_knowledge",
+      "difficulty": "easy",
+      "correct": true
+    },
+    {
+      "questionId": "la-local-validation-v1-6",
+      "topicId": "linear-algebra",
+      "conceptId": "vector space",
+      "questionType": "background_knowledge",
+      "difficulty": "easy",
+      "correct": true
+    },
+    {
+      "questionId": "la-local-validation-v1-7",
+      "topicId": "linear-algebra",
+      "conceptId": "basis",
+      "questionType": "comprehension",
+      "difficulty": "easy",
+      "correct": true
+    },
+    {
+      "questionId": "la-local-validation-v1-8",
+      "topicId": "linear-algebra",
+      "conceptId": "eigenvalue",
+      "questionType": "comprehension",
+      "difficulty": "easy",
+      "correct": true
+    },
+    {
+      "questionId": "gq_66f3360464d1336ec1612715ebbdd3ed",
+      "topicId": "linear-algebra",
+      "conceptId": "matrix",
+      "questionType": "comprehension",
+      "difficulty": "easy",
+      "correct": true
+    }
+  ]
+}
+
+###
+# @name laRank
+POST {{baseUrl}}/ml/rank
+Content-Type: application/json
+
+{
+  "rankingModel": "rank-prerequisite-first-v2",
+  "readerProfile": {
+    "userId": {{laProfile.response.body.$.userId}},
+    "topicId": "{{laProfile.response.body.$.topicId}}",
+    "vocabulary": {{laProfile.response.body.$.vocabulary}},
+    "backgroundKnowledge": {{laProfile.response.body.$.backgroundKnowledge}},
+    "comprehension": {{laProfile.response.body.$.comprehension}},
+    "profileVersion": "{{laProfile.response.body.$.profileVersion}}",
+    "configVersion": "{{laProfile.response.body.$.configVersion}}",
+    "configHash": "{{laProfile.response.body.$.configHash}}",
+    "conceptReadiness": [
+      {
+        "conceptId": "{{laProfile.response.body.$.conceptReadiness[0].conceptId}}",
+        "score": {{laProfile.response.body.$.conceptReadiness[0].score}}
+      },
+      {
+        "conceptId": "{{laProfile.response.body.$.conceptReadiness[1].conceptId}}",
+        "score": {{laProfile.response.body.$.conceptReadiness[1].score}}
+      },
+      {
+        "conceptId": "{{laProfile.response.body.$.conceptReadiness[2].conceptId}}",
+        "score": {{laProfile.response.body.$.conceptReadiness[2].score}}
+      },
+      {
+        "conceptId": "{{laProfile.response.body.$.conceptReadiness[3].conceptId}}",
+        "score": {{laProfile.response.body.$.conceptReadiness[3].score}}
+      },
+      {
+        "conceptId": "{{laProfile.response.body.$.conceptReadiness[4].conceptId}}",
+        "score": {{laProfile.response.body.$.conceptReadiness[4].score}}
+      },
+      {
+        "conceptId": "{{laProfile.response.body.$.conceptReadiness[5].conceptId}}",
+        "score": {{laProfile.response.body.$.conceptReadiness[5].score}}
+      },
+      {
+        "conceptId": "{{laProfile.response.body.$.conceptReadiness[6].conceptId}}",
+        "score": {{laProfile.response.body.$.conceptReadiness[6].score}}
+      },
+      {
+        "conceptId": "{{laProfile.response.body.$.conceptReadiness[7].conceptId}}",
+        "score": {{laProfile.response.body.$.conceptReadiness[7].score}}
+      }
+    ]
+  },
+  "candidateBooks": [
+    {
+      "bookId": "isbn13:9788952117441",
+      "topicDistribution": {
+        "linear-algebra": 1.0
+      },
+      "coveredConcepts": [
+        {
+          "concept": "basis",
+          "weight": 1.0
+        },
+        {
+          "concept": "diagonalization",
+          "weight": 1.0
+        },
+        {
+          "concept": "dimension",
+          "weight": 1.0
+        },
+        {
+          "concept": "gaussian elimination",
+          "weight": 1.0
+        },
+        {
+          "concept": "inner product",
+          "weight": 1.0
+        },
+        {
+          "concept": "matrix",
+          "weight": 1.0
+        },
+        {
+          "concept": "orthogonality",
+          "weight": 1.0
+        },
+        {
+          "concept": "rank",
+          "weight": 1.0
+        },
+        {
+          "concept": "vector",
+          "weight": 1.0
+        },
+        {
+          "concept": "vector space",
+          "weight": 1.0
+        }
+      ],
+      "prerequisiteConcepts": [],
+      "lexicalDifficulty": null,
+      "syntacticComplexity": null,
+      "conceptDensity": null,
+      "prerequisiteDemand": null,
+      "featureVersion": "book-v1",
+      "configVersion": "features-v1",
+      "configHash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6"
+    },
+    {
+      "bookId": "isbn13:9788961055680",
+      "topicDistribution": {
+        "linear-algebra": 1.0
+      },
+      "coveredConcepts": [
+        {
+          "concept": "rank",
+          "weight": 1.0
+        }
+      ],
+      "prerequisiteConcepts": [],
+      "lexicalDifficulty": null,
+      "syntacticComplexity": null,
+      "conceptDensity": null,
+      "prerequisiteDemand": null,
+      "featureVersion": "book-v1",
+      "configVersion": "features-v1",
+      "configHash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6"
+    },
+    {
+      "bookId": "isbn13:9788970505329",
+      "topicDistribution": {
+        "linear-algebra": 1.0
+      },
+      "coveredConcepts": [
+        {
+          "concept": "rank",
+          "weight": 1.0
+        }
+      ],
+      "prerequisiteConcepts": [],
+      "lexicalDifficulty": null,
+      "syntacticComplexity": null,
+      "conceptDensity": null,
+      "prerequisiteDemand": null,
+      "featureVersion": "book-v1",
+      "configVersion": "features-v1",
+      "configHash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6"
+    }
+  ],
+  "limit": 5
+}

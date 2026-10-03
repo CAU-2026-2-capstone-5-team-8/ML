@@ -1,0 +1,21 @@
+{
+  "snapshot_id": "discovery-la-live-handoff-20260929-v1",
+  "canonical_hashes": {
+    "books.jsonl": "sha256:f9f927aed7e2832f5fdc33defb3b0b7a3176320e80a00d6581794f7bd4d85180",
+    "documents.jsonl": "sha256:5be72c4d7b6b448be51a5bb4d6b81e198fa34daa5f86cfccfb7573f3bceb76f1",
+    "toc.jsonl": "sha256:0e719e5d4b906d969a655e0a77767fa5862322db08837a7c8be14f010ce18a59",
+    "sources.jsonl": "sha256:e17bc7968588dfcbde8b6c4f441a6c9de72975ae64f0b2a3e108045ccbccd25c"
+  },
+  "pilot_hashes": {
+    "matching-candidates.jsonl": "sha256:0c987d0d7ce587436c41915c9fa79e0ac888de670dcd93b6066a555ff399e35c",
+    "concept-mapping.json": "sha256:ff6e5fc8d3ef584e909b0e47b5208f7920ba63b52b4f357bfa07117a83afe0e3",
+    "book-profiles.jsonl": "sha256:92f186f16b6d343396c6f0a7322fdf3087d7bc6820ff10b511719f95d2d4ea9f"
+  },
+  "selected_book_ids": ["isbn13:9788952117441", "isbn13:9788961055680", "isbn13:9788970505329"],
+  "selection_note": "Three previously personalizable textbooks with explicit TOC concept support. Excludes exam workbooks and the example-centered title whose current matching comes only from description. Missing two books is accepted; no fabricated features. Availability remains reader-dependent.",
+  "approved_hashes": {
+    "generated.json": "sha256:ea384ab3f3098018003a4c12cd79397ece4f35b169bd7a269bde17ff33b291dd",
+    "reviews.jsonl": "sha256:8688969e3d81d528b2cba65af3111922c63486329d9c6e47fa7ff43c1d601159",
+    "grounding.json": "sha256:a9d7f5f1b1487040c6aff681fbfe8591800a274aa0b5e2231cf784ea8c1fe2a6"
+  }
+}

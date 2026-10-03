@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from pydantic import Field
 
+from bookmatch_ml.book.english import analysis_text
 from bookmatch_ml.concept_v2.graph import LoadedConceptGraph
 from bookmatch_ml.concept_v2.profile import (
     LoadedConceptMatchingConfig,
@@ -101,7 +102,7 @@ def build_book_evidence_concept_mapping_report(
         for evidence in sorted(record.evidence, key=lambda item: item.evidence_id):
             for topic in topics:
                 matches, ambiguous = match_concept_text_production(
-                    evidence.text,
+                    analysis_text(evidence.text, evidence.en_text),
                     topic,
                     features,
                     graph,

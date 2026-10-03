@@ -53,6 +53,7 @@ class ImportedEvidenceItem(StrictModel):
     evidence_id: str = Field(pattern=r"^evidence_[0-9a-f]{20}$")
     evidence_type: EvidenceType
     text: str = Field(min_length=1)
+    en_text: str | None = Field(default=None, min_length=1)
     source_id: str = Field(min_length=1)
     provider: str = Field(min_length=1)
     source_type: SourceType
@@ -80,8 +81,7 @@ class ImportedEvidenceItem(StrictModel):
     @field_validator("text")
     @classmethod
     def text_must_not_be_blank(cls, value: str) -> str:
-        value = value.strip()
-        if not value:
+        if not value.strip():
             raise ValueError("evidence text must not be blank")
         return value
 

@@ -9,6 +9,7 @@ from typing import Literal
 from pydantic import Field, field_validator, model_validator
 
 from bookmatch_ml.assessment.schemas import QuestionSpec
+from bookmatch_ml.book.english import analysis_text
 from bookmatch_ml.schemas import CanonicalDataset, StrictModel
 
 GROUNDING_VERSION = "generation-grounding-v1"
@@ -395,7 +396,7 @@ def build_generation_grounding(
     if _HASH_PATTERN.fullmatch(blueprint_hash) is None:
         raise GroundingError("blueprint hash is malformed")
 
-    passage = extract_passage(document.text, spec.primary_concept)
+    passage = extract_passage(analysis_text(document.text, document.en_text), spec.primary_concept)
     return GenerationGrounding(
         question_spec_id=spec.question_id,
         question_spec_hash=_sha256_json(spec.model_dump(mode="json")),

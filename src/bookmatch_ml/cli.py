@@ -155,7 +155,7 @@ from bookmatch_ml.schemas import (
 )
 
 app = typer.Typer(no_args_is_help=True, pretty_exceptions_show_locals=False)
-DEFAULT_FEATURE_CONFIG = Path("configs/features.yaml")
+DEFAULT_FEATURE_CONFIG = Path("configs/features_english.yaml")
 DEFAULT_READER_CONFIG = Path("configs/reader.yaml")
 DEFAULT_RANKING_CONFIG = Path("configs/ranking.yaml")
 DEFAULT_EVALUATION_CONFIG = Path("configs/evaluation.yaml")
@@ -165,7 +165,7 @@ DEFAULT_REVIEWED_ASSESSMENT_CONFIG = Path("configs/assessment_reviewed.yaml")
 DEFAULT_ASSESSMENT_CONCEPT_REVIEWS = Path("configs/assessment_concept_reviews.yaml")
 DEFAULT_CONCEPT_GRAPH_CONFIG = Path("configs/concept_graph.yaml")
 DEFAULT_CONCEPT_MATCHING_CONFIG = Path("configs/concept_matching.yaml")
-DEFAULT_CONCEPT_MATCHING_V2_CONFIG = Path("configs/concept_matching_v2.yaml")
+DEFAULT_CONCEPT_MATCHING_V2_CONFIG = Path("configs/concept_matching_english.yaml")
 DEFAULT_CONCEPT_GRAPH_REVIEWS_CONFIG = Path("configs/concept_graph_reviews.yaml")
 DEFAULT_MATCHER_V2_EXPERIMENT_CONFIG = Path("configs/matcher_v2_experiments.yaml")
 DEFAULT_MULTI_READER_CONCEPT_EXPERIMENT_CONFIG = Path(
@@ -2702,6 +2702,22 @@ def evaluate(
             sort_keys=True,
         )
     )
+
+
+@app.command("build-concept-assessment")
+def build_concept_assessment_command(
+    data_dir: Annotated[Path, typer.Option(exists=True, file_okay=False)],
+    output: Annotated[Path, typer.Option()],
+    targets: Annotated[Path, typer.Option()] = Path("configs/concept_assessment_targets.json"),
+    config_dir: Annotated[Path, typer.Option()] = Path("configs"),
+) -> None:
+    """Build concept × ability specifications from canonical TOC evidence."""
+    from bookmatch_ml.assessment.concept_blueprint import build_concept_blueprint
+
+    blueprint = build_concept_blueprint(data_dir, targets, config_dir)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(blueprint.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    typer.echo(f"{len(blueprint.question_specs)} concept assessment targets written")
 
 
 if __name__ == "__main__":

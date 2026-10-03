@@ -1,0 +1,171 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8011/ml/rank",
+  "requestHeaders": {},
+  "request": {
+    "rankingModel": "rank-prerequisite-first-v2",
+    "readerProfile": {
+      "userId": 1,
+      "topicId": "linear-algebra",
+      "vocabulary": 1.0,
+      "backgroundKnowledge": 1.0,
+      "comprehension": 1.0,
+      "conceptReadiness": [
+        {
+          "conceptId": "basis",
+          "score": 2
+        },
+        {
+          "conceptId": "eigenvalue",
+          "score": 1.0
+        },
+        {
+          "conceptId": "high school algebra",
+          "score": 1.0
+        },
+        {
+          "conceptId": "linear system",
+          "score": 1.0
+        },
+        {
+          "conceptId": "matrix",
+          "score": 1.0
+        },
+        {
+          "conceptId": "systems of equations",
+          "score": 1.0
+        },
+        {
+          "conceptId": "vector",
+          "score": 1.0
+        },
+        {
+          "conceptId": "vector space",
+          "score": 1.0
+        }
+      ],
+      "profileVersion": "reader-v1",
+      "configVersion": "reader-config-v1",
+      "configHash": "sha256:9bc1cfbc18eddb39582d7697626269cd11203bec74e2be676a5495b8f91fb73b"
+    },
+    "candidateBooks": [
+      {
+        "bookId": "isbn13:9788952117441",
+        "topicDistribution": {
+          "linear-algebra": 1.0
+        },
+        "coveredConcepts": [
+          {
+            "concept": "basis",
+            "weight": 1.0
+          },
+          {
+            "concept": "diagonalization",
+            "weight": 1.0
+          },
+          {
+            "concept": "dimension",
+            "weight": 1.0
+          },
+          {
+            "concept": "gaussian elimination",
+            "weight": 1.0
+          },
+          {
+            "concept": "inner product",
+            "weight": 1.0
+          },
+          {
+            "concept": "matrix",
+            "weight": 1.0
+          },
+          {
+            "concept": "orthogonality",
+            "weight": 1.0
+          },
+          {
+            "concept": "rank",
+            "weight": 1.0
+          },
+          {
+            "concept": "vector",
+            "weight": 1.0
+          },
+          {
+            "concept": "vector space",
+            "weight": 1.0
+          }
+        ],
+        "prerequisiteConcepts": [],
+        "lexicalDifficulty": null,
+        "syntacticComplexity": null,
+        "conceptDensity": null,
+        "prerequisiteDemand": null,
+        "featureVersion": "book-v1",
+        "configVersion": "features-v1",
+        "configHash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6"
+      },
+      {
+        "bookId": "isbn13:9788961055680",
+        "topicDistribution": {
+          "linear-algebra": 1.0
+        },
+        "coveredConcepts": [
+          {
+            "concept": "rank",
+            "weight": 1.0
+          }
+        ],
+        "prerequisiteConcepts": [],
+        "lexicalDifficulty": null,
+        "syntacticComplexity": null,
+        "conceptDensity": null,
+        "prerequisiteDemand": null,
+        "featureVersion": "book-v1",
+        "configVersion": "features-v1",
+        "configHash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6"
+      },
+      {
+        "bookId": "isbn13:9788970505329",
+        "topicDistribution": {
+          "linear-algebra": 1.0
+        },
+        "coveredConcepts": [
+          {
+            "concept": "rank",
+            "weight": 1.0
+          }
+        ],
+        "prerequisiteConcepts": [],
+        "lexicalDifficulty": null,
+        "syntacticComplexity": null,
+        "conceptDensity": null,
+        "prerequisiteDemand": null,
+        "featureVersion": "book-v1",
+        "configVersion": "features-v1",
+        "configHash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6"
+      }
+    ],
+    "limit": 5
+  },
+  "status": 422,
+  "response": {
+    "detail": [
+      {
+        "type": "less_than_equal",
+        "loc": [
+          "body",
+          "readerProfile",
+          "conceptReadiness",
+          0,
+          "score"
+        ],
+        "msg": "Input should be less than or equal to 1",
+        "input": 2,
+        "ctx": {
+          "le": 1.0
+        }
+      }
+    ]
+  }
+}
