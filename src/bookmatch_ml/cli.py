@@ -103,7 +103,10 @@ from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import CanonicalDataError, load_canonical_dataset
 from bookmatch_ml.evaluation.ablation import build_evidence_ablation_report
 from bookmatch_ml.evaluation.difficulty import EvaluationDataError, load_difficulty_judgments
-from bookmatch_ml.evaluation.english_evidence import compare_english_evidence
+from bookmatch_ml.evaluation.english_evidence import (
+    compare_english_evidence,
+    prepare_english_evidence_review,
+)
 from bookmatch_ml.evaluation.prose_language import build_prose_language_audit
 from bookmatch_ml.evaluation.ranking_policies import evaluate_ranking_policies
 from bookmatch_ml.evaluation.report import build_evaluation_report
@@ -1431,6 +1434,9 @@ def evaluate_evidence_concept_holdout_command(
 def compare_english_evidence_command(
     input_path: Annotated[Path, typer.Option("--input", exists=True, dir_okay=False)],
     output: Annotated[Path, typer.Option(dir_okay=False)],
+    review_packet: Annotated[
+        bool, typer.Option(help="Include exact source texts and blank review fields; keep local.")
+    ] = False,
     feature_config: Annotated[
         Path, typer.Option(exists=True, dir_okay=False)
     ] = DEFAULT_FEATURE_CONFIG,
@@ -1448,7 +1454,8 @@ def compare_english_evidence_command(
         digest = _sha256_file(input_path)
         records = load_book_evidence(input_path)
         features = load_feature_config(feature_config)
-        report = compare_english_evidence(
+        builder = prepare_english_evidence_review if review_packet else compare_english_evidence
+        report = builder(
             records,
             features,
             load_concept_graph(graph_config, features),

@@ -343,6 +343,23 @@ It preserves existing analysis/ranking behavior and makes no translation calls. 
 [real 10-book comparison](docs/experiments/english-evidence-comparison-2026-10-03.md) reproduces
 4→10 matched books and 13→131 book/concept pairs; translation accuracy remains unreviewed.
 
+For manual inspection, add `--review-packet` and choose a new local output file:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> --review-packet \
+  --output data/reviews/english-evidence-review.json
+```
+
+The packet contains **exact source texts** and provenance: keep it in ignored local storage.
+It includes all TOC rows (including unchanged/unmatched rows), row-level added/removed
+concepts, and which rows support book-level changes. Prose samples retain their extent and
+rights metadata in a separate list; missing English remains null and no prose score is
+calculated. Reviewer identity, translation judgments, match judgments, and notes start null.
+These fields are a manual worksheet, not automatically accepted evaluation labels.
+Default comparison output remains text-free. See the
+[review preparation and observed gaps](docs/experiments/english-evidence-review-2026-10-03.md).
+
 Before interpreting prose scores across languages, run the independent diagnostic:
 
 ```bash
