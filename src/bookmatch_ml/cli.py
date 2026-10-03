@@ -266,7 +266,7 @@ def inspect_book_evidence(
             dir_okay=False,
             readable=True,
             resolve_path=True,
-            help="Data-Pipeline book-evidence-v1 JSONL artifact.",
+            help="Data-Pipeline book-evidence-v1/v2 JSONL artifact.",
         ),
     ],
 ) -> None:
@@ -303,7 +303,7 @@ def map_book_evidence_concepts_command(
         Path, typer.Option("--matching-config", exists=True, dir_okay=False)
     ] = DEFAULT_CONCEPT_MATCHING_V2_CONFIG,
 ) -> None:
-    """Map book-evidence-v1 rows to deduplicated production concept presence."""
+    """Map book-evidence-v1/v2 rows to deduplicated production concept presence."""
 
     try:
         input_hash = _sha256_file(input_path)
