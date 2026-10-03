@@ -54,8 +54,8 @@
 
 ## 보관과 재현
 
-원문을 포함한 자료는 Data-Pipeline의 무시된 로컬 경로
-`data/experiments/english-evidence-review-20261003/`에만 저장했다:
+원문을 포함한 자료는 ML의 무시된 로컬 경로
+`data/reviews/english-evidence-review-20261003/`에만 저장했다:
 
 - `toc-review.json` / `toc-review-replay.json`
 - `korean-prose-v3.jsonl`
