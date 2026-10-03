@@ -103,6 +103,7 @@ from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import CanonicalDataError, load_canonical_dataset
 from bookmatch_ml.evaluation.ablation import build_evidence_ablation_report
 from bookmatch_ml.evaluation.difficulty import EvaluationDataError, load_difficulty_judgments
+from bookmatch_ml.evaluation.prose_language import build_prose_language_audit
 from bookmatch_ml.evaluation.ranking_policies import evaluate_ranking_policies
 from bookmatch_ml.evaluation.report import build_evaluation_report
 from bookmatch_ml.io import write_json, write_jsonl
@@ -1422,6 +1423,41 @@ def evaluate_evidence_concept_holdout_command(
             },
             sort_keys=True,
         )
+    )
+
+
+@app.command("audit-prose-language")
+def audit_prose_language_command(
+    data_dir: Annotated[Path, typer.Option(exists=True, file_okay=False, resolve_path=True)],
+    output: Annotated[Path, typer.Option(dir_okay=False, resolve_path=True)],
+    baseline_language: Annotated[
+        str, typer.Option(help="Declared target language of this baseline; not inferred.")
+    ],
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)] = DEFAULT_FEATURE_CONFIG,
+) -> None:
+    """Audit prose language and baseline measurements; leave human quality judgments blank."""
+    try:
+        if output.exists():
+            raise ValueError("output must be a new file; existing files are preserved")
+        paths = [
+            data_dir / name
+            for name in ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        ]
+        hashes = {path.name: _sha256_file(path) for path in paths}
+        dataset = load_canonical_dataset(data_dir)
+        report = build_prose_language_audit(dataset, load_feature_config(config), baseline_language)
+        if hashes != {path.name: _sha256_file(path) for path in paths}:
+            raise ValueError("canonical inputs changed during the audit")
+        report.canonical_hashes = hashes
+        content = report.model_dump_json(indent=2) + "\n"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with output.open("x", encoding="utf-8") as stream:
+            stream.write(content)
+    except (CanonicalDataError, ConfigError, OSError, ValueError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(report.model_dump(exclude={"documents", "canonical_hashes"}), ensure_ascii=False)
     )
 
 
