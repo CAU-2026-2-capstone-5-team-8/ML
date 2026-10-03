@@ -6,6 +6,8 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 
+from bookmatch_ml.concept_v2.learning_fit import LearningFitRequest, recommend_learning
+from bookmatch_ml.concept_v2.presentation import concept_graph
 from bookmatch_ml.config import (
     LoadedRankingConfig,
     LoadedRankingV2Config,
@@ -98,11 +100,29 @@ def create_app(
         except (AssessmentError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
+    @application.get("/ml/concepts/{topic_id}")
+    def concepts(topic_id: str) -> dict[str, object]:
+        if ranking_v2_config is None:
+            raise HTTPException(status_code=503, detail="concept graph is not configured")
+        try:
+            return concept_graph(ranking_v2_config, topic_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
     @application.post("/ml/rank", response_model=RankResponse | RankV2Response)
     def rank(request: RankRequest) -> RankResponse | RankV2Response:
         try:
             return service.rank(request)
         except (RankingError, RankingV2Error, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @application.post("/ml/learning-fit")
+    def learning_fit(request: LearningFitRequest) -> dict:
+        if ranking_v2_config is None:
+            raise HTTPException(status_code=503, detail="concept graph is not configured")
+        try:
+            return recommend_learning(request, ranking_v2_config)
+        except ValueError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return application

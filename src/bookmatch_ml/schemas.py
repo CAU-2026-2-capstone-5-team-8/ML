@@ -521,6 +521,11 @@ class AssessmentResponse(StrictModel):
     concept_id: str | None = None
     concept_tags: list[str] = Field(default_factory=list)
     question_type: QuestionType
+    cognitive_operation: (
+        Literal["recognize", "recall", "compare", "relate", "apply", "integrate", "infer"] | None
+    ) = None
+    answer_mode: Literal["MULTIPLE_CHOICE", "SELF_REPORT"] | None = None
+    measurement_context: Literal["prior-knowledge", "provided-information"] | None = None
     difficulty: str = Field(min_length=1)
     correct: bool | None = None
     score: float | None = Field(default=None, ge=0, le=1)

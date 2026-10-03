@@ -192,6 +192,8 @@ def test_concept_cli_accepts_reordered_valid_v1_profiles(tmp_path: Path):
         app,
         [
             "evaluate-concept-matching",
+            "--feature-config",
+            str(ROOT / "configs/features.yaml"),
             "--data-dir",
             str(fixture_dir),
             "--reader",

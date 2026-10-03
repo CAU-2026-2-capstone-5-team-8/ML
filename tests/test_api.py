@@ -281,13 +281,15 @@ def test_api_rejects_duplicate_candidates_and_unknown_specific_book() -> None:
     assert unknown.status_code == 422
 
 
-def test_openapi_contract_exposes_calculation_routes() -> None:
+def test_openapi_contract_exposes_calculation_and_reviewed_graph_routes() -> None:
     schema = _get("/openapi.json").json()
 
     assert set(schema["paths"]) == {
         "/ml/reader-profile",
         "/ml/reader-diagnostics",
         "/ml/rank",
+        "/ml/concepts/{topic_id}",
+        "/ml/learning-fit",
     }
     reader_properties = schema["components"]["schemas"]["ReaderProfileRequest"]["properties"]
     rank_properties = schema["components"]["schemas"]["RankRequest"]["properties"]
@@ -308,6 +310,8 @@ def test_app_factory_uses_packaged_configs_outside_repository_working_directory(
         "/ml/reader-profile",
         "/ml/reader-diagnostics",
         "/ml/rank",
+        "/ml/concepts/{topic_id}",
+        "/ml/learning-fit",
     }
 
 

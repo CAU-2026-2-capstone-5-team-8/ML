@@ -5,6 +5,10 @@ For concept-level response evidence grouped by question type and declared diffic
 scores, question references, and the next assessment cell to review or probe, without changing
 the current profile scores or ranking. See [reader depth diagnostics](docs/reader-depth-diagnostics-v1.md).
 
+선형대수 실도서 3권의 실제 프로필·추천 HTTP 연결은
+[live handoff](docs/linear-algebra-live-handoff.md)와
+[REST Client 예제](examples/linear-algebra-live.http)를 참고하세요.
+
 For a reproducible canonical-data → local HTTP verification workflow and the 25-book
 integration findings, see [Canonical HTTP verification](docs/canonical-http-verification-v1.md).
 The check verifies API consistency, not recommendation accuracy.
@@ -887,3 +891,45 @@ src/bookmatch_ml/
 
 Canonical and generated third-party data belongs in ignored `data/` subdirectories. Do not
 commit raw book text to this repository.
+
+## English evidence integration boundary
+
+Canonical book/TOC/document English fields follow the current optional-field schema.
+The evidence handoff accepts English only through `book-evidence-v3`; v1/v2 remain frozen.
+Default concept mapping, prose difficulty, and question grounding use original text.
+Stored English is compared explicitly with `compare-english-evidence` and can be inspected
+with `--review-packet`; it does not silently replace the source passage or its hash.
+
+The earlier English-first pilot configuration and helper have been retired from this PR.
+CLI defaults remain `configs/features.yaml` and `configs/concept_matching_v2.yaml`.
+Historical pilot outputs are local snapshots, not active Backend projections. See the
+[PR #32 reconciliation](docs/account-concept-v3-integration.md) for compatibility checks.
+
+대량 수집 471권·목차439권과 LA83 후보의 실제 연동은 [대량 데이터 후속 연결](docs/linear-algebra-live-handoff.md#대량-데이터-후속-연결)을 참고한다. 고정 snapshot 준비는 `scripts/prepare_discovery_catalog_handoff.py`, 실제 HTTP 검증은 `scripts/verify_discovery_catalog_live.py`를 사용한다.
+
+## 개념·수행 능력 추천과 공통 지도 (2026-10-03)
+
+`/ml/reader-profile`에 전달된 `answerMode`와 `cognitiveOperation`으로 objective 개념·능력 관찰을 만들고 자기평가를 분리한 `conceptProfile`을 반환합니다. `/ml/concepts/{topicId}`는 검토 승인된 공통 개념 그래프를 제공하고, `/ml/learning-fit`은 선택 능력의 objective 관찰·책 내용·선수관계 후보를 비교하는 `concept-learning-v1` 기준선입니다. 기존 `/ml/rank` 계약과 알고리즘은 변경하지 않습니다. 새 추천은 미평가를 0으로 채우거나 자기평가를 verified 능력으로 합치지 않으며, 선수관계가 비어 있는 경우에도 준비도 판단을 보류합니다. 상세 계약·제약·실제 앱 연결은 [Backend 설계 기록](../Backend/docs/concept-learning-v1.md)을 참고하세요.
+
+
+## 개념별 진단 설계서 v2
+
+`build-concept-assessment`는 선형대수 6개 개념 × 뜻·성질/계산·적용/설명·추론 목표 18개를 생성합니다.
+목표·오개념·설계 난도는 `configs/concept_assessment_targets.json`에 있습니다. 기존 문항 유형 할당과 별개이며,
+실제 canonical 목차 연결이 없는 개념은 생성하지 않습니다. 입력 네 파일과 개념 그래프·매칭·특징 설정의 해시를 보존합니다.
+목차는 평가 대상 선정 근거입니다. 정답, 학년, 책 본문 난이도의 근거로 쓰지 않습니다.
+
+```sh
+uv run bookmatch-ml build-concept-assessment --data-dir ../Data-Pipeline/data/processed --output data/output/concept-assessment-v2/blueprint.json
+```
+
+버전은 `concept-assessment-blueprint-v2` / `concept-question-spec-v2`이며 QG가 독립 계약 사본을 읽습니다.
+QG의 생성·검토·Backend 등록 흐름은 [개편 계획](../Question-Generation/docs/concept-assessment-plan.md)에 있습니다.
+생성은 이 저장소의 책임이 아니고, 실제 사용자 응답이나 외부 생성 API를 기본 테스트에서 호출하지 않습니다.
+
+`concept-abilities-v2`는 `measurementContext=prior-knowledge`의 객관식 응답만 `abilities`로 집계합니다.
+`provided-information`은 `providedInformationAbilities`, 조건이 없는 예전 객관식은 `legacyContextAbilities`에
+분리합니다. 자기평가는 `selfReports`입니다. 뜻/적용/추론의 정답 수는 관찰이며 보정된 숙련도 확률이 아닙니다.
+기존 종합 점수는 저장 호환용으로 유지되지만 새 추천에서 사용하지 않습니다.
+개념 문항의 `generated-question-v5` 계약은 생성 프롬프트 v1과 Markdown·LaTeX 규칙을 추가한 v2를 모두 읽습니다.
+본문 표시 형식은 개념·능력·측정 조건·목차 근거를 바꾸지 않으며, 본문 변경은 새 content ID로 검증합니다.

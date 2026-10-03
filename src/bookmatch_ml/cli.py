@@ -2788,5 +2788,21 @@ def evaluate(
     )
 
 
+@app.command("build-concept-assessment")
+def build_concept_assessment_command(
+    data_dir: Annotated[Path, typer.Option(exists=True, file_okay=False)],
+    output: Annotated[Path, typer.Option()],
+    targets: Annotated[Path, typer.Option()] = Path("configs/concept_assessment_targets.json"),
+    config_dir: Annotated[Path, typer.Option()] = Path("configs"),
+) -> None:
+    """Build concept × ability specifications from canonical TOC evidence."""
+    from bookmatch_ml.assessment.concept_blueprint import build_concept_blueprint
+
+    blueprint = build_concept_blueprint(data_dir, targets, config_dir)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(blueprint.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    typer.echo(f"{len(blueprint.question_specs)} concept assessment targets written")
+
+
 if __name__ == "__main__":
     app()

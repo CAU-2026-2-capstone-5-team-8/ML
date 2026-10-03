@@ -1,0 +1,178 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8011/ml/reader-profile",
+  "requestHeaders": {},
+  "request": {
+    "userId": 1,
+    "assessmentId": "synthetic-la-live-validation-v1",
+    "topicId": "linear-algebra",
+    "responses": [
+      {
+        "questionId": "la-local-validation-v1-1",
+        "topicId": "linear-algebra",
+        "conceptId": "matrix",
+        "questionType": "vocabulary",
+        "difficulty": "easy",
+        "correct": true
+      },
+      {
+        "questionId": "la-local-validation-v1-2",
+        "topicId": "linear-algebra",
+        "conceptId": "vector",
+        "questionType": "vocabulary",
+        "difficulty": "easy",
+        "correct": true
+      },
+      {
+        "questionId": "la-local-validation-v1-3",
+        "topicId": "linear-algebra",
+        "conceptId": "linear system",
+        "questionType": "vocabulary",
+        "difficulty": "easy",
+        "correct": true
+      },
+      {
+        "questionId": "la-local-validation-v1-4",
+        "topicId": "linear-algebra",
+        "conceptId": "systems of equations",
+        "questionType": "background_knowledge",
+        "difficulty": "easy",
+        "correct": true
+      },
+      {
+        "questionId": "la-local-validation-v1-5",
+        "topicId": "linear-algebra",
+        "conceptId": "high school algebra",
+        "questionType": "background_knowledge",
+        "difficulty": "easy",
+        "correct": true
+      },
+      {
+        "questionId": "la-local-validation-v1-6",
+        "topicId": "linear-algebra",
+        "conceptId": "vector space",
+        "questionType": "background_knowledge",
+        "difficulty": "easy",
+        "correct": true
+      },
+      {
+        "questionId": "la-local-validation-v1-7",
+        "topicId": "linear-algebra",
+        "conceptId": "basis",
+        "questionType": "comprehension",
+        "difficulty": "easy",
+        "correct": true
+      },
+      {
+        "questionId": "la-local-validation-v1-8",
+        "topicId": "linear-algebra",
+        "conceptId": "eigenvalue",
+        "questionType": "comprehension",
+        "difficulty": "easy",
+        "correct": true
+      },
+      {
+        "questionId": "gq_66f3360464d1336ec1612715ebbdd3ed",
+        "topicId": "linear-algebra",
+        "conceptId": "matrix",
+        "questionType": "comprehension",
+        "difficulty": "easy",
+        "correct": true
+      }
+    ]
+  },
+  "status": 200,
+  "response": {
+    "userId": 1,
+    "assessmentId": "synthetic-la-live-validation-v1",
+    "topicId": "linear-algebra",
+    "vocabulary": 1.0,
+    "backgroundKnowledge": 1.0,
+    "comprehension": 1.0,
+    "dimensionDetails": [
+      {
+        "questionType": "vocabulary",
+        "score": 1.0,
+        "responseCount": 3,
+        "earnedWeight": 3.0,
+        "availableWeight": 3.0
+      },
+      {
+        "questionType": "background_knowledge",
+        "score": 1.0,
+        "responseCount": 3,
+        "earnedWeight": 3.0,
+        "availableWeight": 3.0
+      },
+      {
+        "questionType": "comprehension",
+        "score": 1.0,
+        "responseCount": 3,
+        "earnedWeight": 3.0,
+        "availableWeight": 3.0
+      }
+    ],
+    "conceptReadiness": [
+      {
+        "conceptId": "basis",
+        "score": 1.0,
+        "responseCount": 1,
+        "earnedWeight": 1.0,
+        "availableWeight": 1.0
+      },
+      {
+        "conceptId": "eigenvalue",
+        "score": 1.0,
+        "responseCount": 1,
+        "earnedWeight": 1.0,
+        "availableWeight": 1.0
+      },
+      {
+        "conceptId": "high school algebra",
+        "score": 1.0,
+        "responseCount": 1,
+        "earnedWeight": 1.0,
+        "availableWeight": 1.0
+      },
+      {
+        "conceptId": "linear system",
+        "score": 1.0,
+        "responseCount": 1,
+        "earnedWeight": 1.0,
+        "availableWeight": 1.0
+      },
+      {
+        "conceptId": "matrix",
+        "score": 1.0,
+        "responseCount": 2,
+        "earnedWeight": 2.0,
+        "availableWeight": 2.0
+      },
+      {
+        "conceptId": "systems of equations",
+        "score": 1.0,
+        "responseCount": 1,
+        "earnedWeight": 1.0,
+        "availableWeight": 1.0
+      },
+      {
+        "conceptId": "vector",
+        "score": 1.0,
+        "responseCount": 1,
+        "earnedWeight": 1.0,
+        "availableWeight": 1.0
+      },
+      {
+        "conceptId": "vector space",
+        "score": 1.0,
+        "responseCount": 1,
+        "earnedWeight": 1.0,
+        "availableWeight": 1.0
+      }
+    ],
+    "responseCount": 9,
+    "profileVersion": "reader-v1",
+    "configVersion": "reader-config-v1",
+    "configHash": "sha256:9bc1cfbc18eddb39582d7697626269cd11203bec74e2be676a5495b8f91fb73b"
+  }
+}

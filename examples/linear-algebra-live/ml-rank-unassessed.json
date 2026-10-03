@@ -1,0 +1,144 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8011/ml/rank",
+  "requestHeaders": {},
+  "request": {
+    "rankingModel": "rank-prerequisite-first-v2",
+    "readerProfile": {
+      "userId": 1,
+      "topicId": "linear-algebra",
+      "vocabulary": 1.0,
+      "backgroundKnowledge": 1.0,
+      "comprehension": 1.0,
+      "conceptReadiness": [],
+      "profileVersion": "reader-v1",
+      "configVersion": "reader-config-v1",
+      "configHash": "sha256:9bc1cfbc18eddb39582d7697626269cd11203bec74e2be676a5495b8f91fb73b"
+    },
+    "candidateBooks": [
+      {
+        "bookId": "isbn13:9788952117441",
+        "topicDistribution": {
+          "linear-algebra": 1.0
+        },
+        "coveredConcepts": [
+          {
+            "concept": "basis",
+            "weight": 1.0
+          },
+          {
+            "concept": "diagonalization",
+            "weight": 1.0
+          },
+          {
+            "concept": "dimension",
+            "weight": 1.0
+          },
+          {
+            "concept": "gaussian elimination",
+            "weight": 1.0
+          },
+          {
+            "concept": "inner product",
+            "weight": 1.0
+          },
+          {
+            "concept": "matrix",
+            "weight": 1.0
+          },
+          {
+            "concept": "orthogonality",
+            "weight": 1.0
+          },
+          {
+            "concept": "rank",
+            "weight": 1.0
+          },
+          {
+            "concept": "vector",
+            "weight": 1.0
+          },
+          {
+            "concept": "vector space",
+            "weight": 1.0
+          }
+        ],
+        "prerequisiteConcepts": [],
+        "lexicalDifficulty": null,
+        "syntacticComplexity": null,
+        "conceptDensity": null,
+        "prerequisiteDemand": null,
+        "featureVersion": "book-v1",
+        "configVersion": "features-v1",
+        "configHash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6"
+      },
+      {
+        "bookId": "isbn13:9788961055680",
+        "topicDistribution": {
+          "linear-algebra": 1.0
+        },
+        "coveredConcepts": [
+          {
+            "concept": "rank",
+            "weight": 1.0
+          }
+        ],
+        "prerequisiteConcepts": [],
+        "lexicalDifficulty": null,
+        "syntacticComplexity": null,
+        "conceptDensity": null,
+        "prerequisiteDemand": null,
+        "featureVersion": "book-v1",
+        "configVersion": "features-v1",
+        "configHash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6"
+      },
+      {
+        "bookId": "isbn13:9788970505329",
+        "topicDistribution": {
+          "linear-algebra": 1.0
+        },
+        "coveredConcepts": [
+          {
+            "concept": "rank",
+            "weight": 1.0
+          }
+        ],
+        "prerequisiteConcepts": [],
+        "lexicalDifficulty": null,
+        "syntacticComplexity": null,
+        "conceptDensity": null,
+        "prerequisiteDemand": null,
+        "featureVersion": "book-v1",
+        "configVersion": "features-v1",
+        "configHash": "sha256:6230d12facf94e46c1daa11d9d83b3929322af2f69a36614d3f553684bfb21d6"
+      }
+    ],
+    "limit": 5
+  },
+  "status": 200,
+  "response": {
+    "userId": 1,
+    "topicId": "linear-algebra",
+    "items": [],
+    "diagnostics": {
+      "requestedLimit": 5,
+      "returnedCount": 0,
+      "topicCandidateCount": 3,
+      "personalizableCount": 0,
+      "conceptOnlyCount": 3,
+      "evidenceUnavailableCount": 0,
+      "fallbackCount": 3,
+      "personalizedCandidateShortage": 5
+    },
+    "modelVersion": "rank-prerequisite-first-v2",
+    "configVersion": "ranking-v2-config-v1",
+    "configHash": "sha256:cc25bcb6c94400019aeda33a15acf5862269ac0cc8fb570797a0bb78b3d5e044",
+    "conceptGraphVersion": "concept-graph-v1",
+    "conceptGraphHash": "sha256:a30a726f28b27215df5aa397bca62ecea7badd8dbbdb90e0a46a43ac05cb2245",
+    "graphReviewVersion": "concept-graph-reviews-v1",
+    "graphReviewHash": "sha256:d13d39a8a1827039459f0b8f4d75ab5293e3e8a7ad0c600a5b38512a8b912af7",
+    "readerProfileVersion": "reader-v1",
+    "readerConfigVersion": "reader-config-v1",
+    "readerConfigHash": "sha256:9bc1cfbc18eddb39582d7697626269cd11203bec74e2be676a5495b8f91fb73b"
+  }
+}
