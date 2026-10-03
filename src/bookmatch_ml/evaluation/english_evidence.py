@@ -118,3 +118,76 @@ def compare_english_evidence(
         },
         "books": books,
     }
+
+
+def prepare_english_evidence_review(
+    records: list[ImportedBookEvidence],
+    features: LoadedFeatureConfig,
+    graph: LoadedConceptGraph,
+    matching: LoadedConceptMatchingConfig,
+) -> dict[str, Any]:
+    """Build a local review packet from validated evidence, never inferred review labels.
+
+    Includes unchanged and unmatched TOCs so matching gains cannot hide translation
+    omissions. Prose is listed separately and never scored as part of this comparison.
+    """
+    report = compare_english_evidence(records, features, graph, matching)
+    by_book = {record.book.book_id: record for record in records}
+    changed_rows = 0
+    prose_count = 0
+
+    def concept_keys(matches):
+        return {(m["topic"], m["concept_id"]) for m in matches}
+
+    def encode(values):
+        return [{"topic": t, "concept_id": c} for t, c in sorted(values)]
+
+    def review_evidence(item):
+        # Retain the complete evidence envelope, including rights, extent, and exact text.
+        return {
+            "evidence": item.model_dump(mode="json"),
+            "translation_status": "missing_english"
+            if item.en_text is None
+            else "stored_english_unreviewed",
+            "human_translation_review": None,
+            "human_match_review": None,
+            "reviewer": None,
+            "review_notes": None,
+        }
+
+    for book in report["books"]:
+        record = by_book[book["book_id"]]
+        evidence = {item.evidence_id: item for item in record.evidence}
+        book_added = concept_keys(book["added_concepts"])
+        book_removed = concept_keys(book["removed_concepts"])
+        for row in book["rows"]:
+            original = concept_keys(row["original_matches"])
+            english = concept_keys(row["english_matches"])
+            added, removed = english - original, original - english
+            changed_rows += bool(added or removed)
+            row.update(review_evidence(evidence[row["evidence_id"]]))
+            row["added_concepts"] = encode(added)
+            row["removed_concepts"] = encode(removed)
+            row["supports_book_added_concepts"] = encode(added & book_added)
+            row["supports_book_removed_concepts"] = encode(removed & book_removed)
+        book["prose_samples"] = []
+        for item in sorted(record.evidence, key=lambda e: e.evidence_id):
+            if item.document_type not in PROSE_DOCUMENT_TYPES:
+                continue
+            sample = review_evidence(item)
+            sample["original_text_hash"] = (
+                "sha256:" + hashlib.sha256(item.text.encode()).hexdigest()
+            )
+            sample["english_text_hash"] = (
+                "sha256:" + hashlib.sha256(item.en_text.encode()).hexdigest()
+                if item.en_text is not None
+                else None
+            )
+            book["prose_samples"].append(sample)
+            prose_count += 1
+    report["report_version"] = "english-evidence-review-v1"
+    report["review_scope"] = "all_toc_rows_and_prose_samples"
+    report["contains_source_text"] = True
+    report["summary"]["changed_toc_rows"] = changed_rows
+    report["summary"]["prose_samples"] = prose_count
+    return report
