@@ -8,7 +8,6 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
-from bookmatch_ml.book.english import analysis_text
 from bookmatch_ml.book.text import normalize_text
 from bookmatch_ml.concept_v2.graph import LoadedConceptGraph
 from bookmatch_ml.concept_v2.toc import TocVisit, reconstruct_toc
@@ -223,13 +222,9 @@ def _map_entry(
     ] = "normalized_alias_phrase_v1",
 ) -> tuple[list[TocConceptMapping], bool]:
     if matcher_version == "normalized_alias_span_v2":
-        text_matches, ambiguous = _match_normalized_text_v2(
-            analysis_text(visit.entry.title, visit.entry.en_title), aliases, exclusions
-        )
+        text_matches, ambiguous = _match_normalized_text_v2(visit.entry.title, aliases, exclusions)
     else:
-        text_matches, ambiguous = _match_normalized_text(
-            analysis_text(visit.entry.title, visit.entry.en_title), aliases, exclusions
-        )
+        text_matches, ambiguous = _match_normalized_text(visit.entry.title, aliases, exclusions)
     mappings = [
         TocConceptMapping(
             toc_entry_id=visit.entry.toc_entry_id,

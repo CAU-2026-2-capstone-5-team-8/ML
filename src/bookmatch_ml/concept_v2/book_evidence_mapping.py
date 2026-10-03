@@ -4,7 +4,6 @@ from collections import defaultdict
 
 from pydantic import Field
 
-from bookmatch_ml.book.english import analysis_text
 from bookmatch_ml.concept_v2.graph import LoadedConceptGraph
 from bookmatch_ml.concept_v2.profile import (
     LoadedConceptMatchingConfig,
@@ -17,7 +16,7 @@ from bookmatch_ml.data.book_evidence import (
     EvidenceType,
     ImportedBookEvidence,
 )
-from bookmatch_ml.schemas import SourceType, StrictModel
+from bookmatch_ml.schemas import DocumentType, SourceType, StrictModel, TextExtent
 
 MAPPING_REPORT_VERSION = "book-evidence-concept-presence-v1"
 
@@ -33,6 +32,13 @@ class ConceptEvidenceSupport(StrictModel):
     source_evidence_tier: EvidenceTier | None = None
     edition_relation: EditionRelation
     toc_path: list[str] | None = None
+    document_id: str | None = None
+    document_type: DocumentType | None = None
+    text_extent: TextExtent | None = None
+    source_url: str | None = None
+    source_external_id: str | None = None
+    source_license: str | None = None
+    source_rights_note: str | None = None
     matching_alias: str
     match_method: str
     provenance_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
@@ -92,6 +98,9 @@ def build_book_evidence_concept_mapping_report(
 ) -> BookEvidenceConceptMappingReport:
     """Match every evidence row, then deduplicate concept presence within each book/topic."""
 
+    versions = {record.contract_version for record in records}
+    if len(versions) != 1:
+        raise ValueError("concept mapping requires one nonempty evidence contract version")
     books: list[BookEvidenceConceptMapping] = []
     for record in sorted(records, key=lambda item: item.book.book_id):
         topics = sorted(set(record.book.topics) & set(graph.graph.nodes))
@@ -102,7 +111,7 @@ def build_book_evidence_concept_mapping_report(
         for evidence in sorted(record.evidence, key=lambda item: item.evidence_id):
             for topic in topics:
                 matches, ambiguous = match_concept_text_production(
-                    analysis_text(evidence.text, evidence.en_text),
+                    evidence.text,
                     topic,
                     features,
                     graph,
@@ -125,6 +134,13 @@ def build_book_evidence_concept_mapping_report(
                             source_evidence_tier=evidence.source_evidence_tier,
                             edition_relation=evidence.edition_relation,
                             toc_path=evidence.toc_path,
+                            document_id=evidence.document_id,
+                            document_type=evidence.document_type,
+                            text_extent=getattr(evidence, "text_extent", None),
+                            source_url=evidence.source_url,
+                            source_external_id=getattr(evidence, "source_external_id", None),
+                            source_license=getattr(evidence, "source_license", None),
+                            source_rights_note=getattr(evidence, "source_rights_note", None),
                             matching_alias=match.matching_alias,
                             match_method=match.match_method,
                             provenance_hash=evidence.provenance_hash,
@@ -165,7 +181,7 @@ def build_book_evidence_concept_mapping_report(
         )
     return BookEvidenceConceptMappingReport(
         report_version=MAPPING_REPORT_VERSION,
-        book_evidence_contract_version="book-evidence-v1",
+        book_evidence_contract_version=next(iter(versions)),
         book_evidence_hash=book_evidence_hash,
         matcher_version=matching.config.matcher_version,
         model_version=matching.config.model_version,

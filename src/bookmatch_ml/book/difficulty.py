@@ -2,7 +2,6 @@
 
 from statistics import median
 
-from bookmatch_ml.book.english import analysis_text
 from bookmatch_ml.book.text import (
     contains_any_phrase,
     count_alias_mentions,
@@ -60,18 +59,18 @@ def _analyze_document(
 ) -> DocumentDifficulty:
     config = loaded_config.config
     difficulty_config = config.difficulty
-    tokens = tokenize(analysis_text(document.text, document.en_text))
-    sentence_values = sentences(analysis_text(document.text, document.en_text))
+    tokens = tokenize(document.text)
+    sentence_values = sentences(document.text)
     sentence_token_counts = [len(tokenize(sentence)) for sentence in sentence_values]
 
     concepts = _aliases_by_concept(evidence, config.concept.topics)
     prerequisites = _aliases_by_concept(evidence, config.prerequisite.topics)
     concept_counts = {
-        concept: count_alias_mentions(analysis_text(document.text, document.en_text), aliases)
+        concept: count_alias_mentions(document.text, aliases)
         for concept, aliases in concepts.items()
     }
     prerequisite_counts = {
-        concept: count_alias_mentions(analysis_text(document.text, document.en_text), aliases)
+        concept: count_alias_mentions(document.text, aliases)
         for concept, aliases in prerequisites.items()
     }
     concept_mention_count = sum(concept_counts.values())
@@ -92,9 +91,7 @@ def _analyze_document(
             count >= difficulty_config.long_sentence_tokens for count in sentence_token_counts
         )
         / sentence_count,
-        clause_markers_per_sentence=sum(
-            analysis_text(document.text, document.en_text).count(marker) for marker in ",;:"
-        )
+        clause_markers_per_sentence=sum(document.text.count(marker) for marker in ",;:")
         / sentence_count,
         concept_mention_count=concept_mention_count,
         unique_concept_count=sum(count > 0 for count in concept_counts.values()),
@@ -136,7 +133,8 @@ def _analyze_document(
     return DocumentDifficulty(
         document_id=document.document_id,
         document_type=document.document_type,
-        character_count=len(analysis_text(document.text, document.en_text)),
+        text_extent=document.text_extent,
+        character_count=len(document.text),
         token_count=token_count,
         sentence_count=sentence_count,
         raw=raw,
@@ -156,13 +154,14 @@ def build_difficulty_profile(
     for document in evidence.documents:
         if document.document_type not in PROSE_DOCUMENT_TYPES:
             continue
-        token_count = len(tokenize(analysis_text(document.text, document.en_text)))
+        token_count = len(tokenize(document.text))
         if token_count < minimum_tokens:
             excluded.append(
                 ExcludedProseDocument(
                     document_id=document.document_id,
                     document_type=document.document_type,
-                    character_count=len(analysis_text(document.text, document.en_text)),
+                    text_extent=document.text_extent,
+                    character_count=len(document.text),
                     token_count=token_count,
                     reason="no_tokens" if token_count == 0 else "below_minimum_tokens",
                 )
@@ -181,6 +180,16 @@ def build_difficulty_profile(
         )
 
     config = loaded_config.config
+    scopes = {d.text_extent.scope if d.text_extent else "unknown" for d in analyzed}
+    analyzed_scope = (
+        "unavailable"
+        if not analyzed
+        else "excerpt_only"
+        if scopes == {"excerpt"}
+        else "complete_sections_only"
+        if scopes == {"complete_section"}
+        else "mixed_or_unknown"
+    )
     return DifficultyProfile(
         book_id=evidence.book_id,
         lexical_difficulty=aggregate("lexical_difficulty"),
@@ -192,6 +201,7 @@ def build_difficulty_profile(
         analyzed_token_count=analyzed_token_count,
         documents=analyzed,
         excluded_documents=excluded,
+        analyzed_text_scope=analyzed_scope,
         aggregation_rule=config.difficulty.aggregation_rule,
         feature_version=config.difficulty_profile_version,
         config_version=config.config_version,

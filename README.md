@@ -48,7 +48,7 @@ logic.
 
 ## Inspect source-aware book evidence
 
-Data-Pipeline can also export an additive `book-evidence-v1` JSONL artifact for all benchmark
+Data-Pipeline can export `book-evidence-v1/v2/v3` JSONL artifacts for all benchmark
 books, including metadata fallbacks when TOC is unavailable. Validate it without changing the
 existing canonical loader, matcher, or ranking v1:
 
@@ -326,6 +326,55 @@ and prerequisite proxies. Configured normalization and weights produce four `[0,
 Documents are first analyzed independently and then combined with the recorded
 `token_weighted_mean_v1` aggregation rule. Books without sufficient prose retain `null` scores;
 short prose is recorded under `excluded_documents` with a reason.
+
+`text_scope_version=text-extent-v1` adds excerpt/complete-section/unknown coverage counts and
+per-document `text_extent`, including excluded documents. `analyzed_text_scope` identifies
+`excerpt_only`, `complete_sections_only`, `mixed_or_unknown`, or `unavailable`. A complete named
+section is not a complete book. Historical missing scope stays unknown; scores and ranking
+formulas are unchanged. See the [98-book handoff verification](docs/experiments/text-extent-handoff-2026-10-03.md).
+
+## Prose language diagnostics
+
+For already stored English TOC fields, compare both texts with identical settings:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> --output data/reports/english-comparison.json
+```
+
+This opt-in comparison uses paired TOC rows only; absent English never falls back to the original.
+It preserves existing analysis/ranking behavior and makes no translation calls. The
+[real 10-book comparison](docs/experiments/english-evidence-comparison-2026-10-03.md) reproduces
+4→10 matched books and 13→131 book/concept pairs; translation accuracy remains unreviewed.
+
+For manual inspection, add `--review-packet` and choose a new local output file:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> --review-packet \
+  --output data/reviews/english-evidence-review.json
+```
+
+The packet contains **exact source texts** and provenance: keep it in ignored local storage.
+It includes all TOC rows (including unchanged/unmatched rows), row-level added/removed
+concepts, and which rows support book-level changes. Prose samples retain their extent and
+rights metadata in a separate list; missing English remains null and no prose score is
+calculated. Reviewer identity, translation judgments, match judgments, and notes start null.
+These fields are a manual worksheet, not automatically accepted evaluation labels.
+Default comparison output remains text-free. See the
+[review preparation and observed gaps](docs/experiments/english-evidence-review-2026-10-03.md).
+
+Before interpreting prose scores across languages, run the independent diagnostic:
+
+```bash
+uv run bookmatch-ml audit-prose-language \
+  --data-dir <canonical-directory> --baseline-language en \
+  --output data/reports/prose-language-audit.json
+```
+
+It records declared-language mismatches, script counts, scope and baseline measurements without
+changing scores or inventing human labels. A language match is not validation; outputs always
+remain `not_evaluated`. See the [real Korean prose audit](docs/experiments/korean-prose-language-audit-2026-10-03.md).
 
 ## Evidence ablation
 
@@ -843,51 +892,18 @@ src/bookmatch_ml/
 Canonical and generated third-party data belongs in ignored `data/` subdirectories. Do not
 commit raw book text to this repository.
 
-## English analysis and original display text
+## English evidence integration boundary
 
-The canonical and `book-evidence-v1` loaders accept optional book/TOC `en_title`, book `en_subtitle`,
-and document/evidence `en_text`. Concept matching, prose features, and generation grounding use
-these English fields. Original English fixtures remain usable without duplicate fields; untranslated
-Korean text is excluded from analysis rather than matched through incidental English words.
-Concept IDs and topic IDs stay unchanged. Book names and provenance paths retain their original
-text for display and audit. Grounding still verifies the original document hash and requires the
-existing explicit reuse license; translation does not grant reuse rights.
+Canonical book/TOC/document English fields follow the current optional-field schema.
+The evidence handoff accepts English only through `book-evidence-v3`; v1/v2 remain frozen.
+Default concept mapping, prose difficulty, and question grounding use original text.
+Stored English is compared explicitly with `compare-english-evidence` and can be inspected
+with `--review-packet`; it does not silently replace the source passage or its hash.
 
-CLI defaults use `configs/features_english.yaml` and `configs/concept_matching_english.yaml`.
-Their weights and aliases match the frozen baseline, but English analysis has separate
-feature/config/model versions (`book-english-v1`, `features-english-v1`,
-`concept-matching-english-v1`). The old YAML files remain available for historical artifacts.
-
-After Data-Pipeline enrichment and evidence export:
-
-```bash
-uv run bookmatch-ml map-book-evidence-concepts \
-  --input ../Data-Pipeline/data/experiments/english-linear-algebra-pilot-20261002/book-evidence.jsonl \
-  --feature-config configs/features_english.yaml \
-  --matching-config configs/concept_matching_english.yaml \
-  --output data/output/english-linear-algebra-pilot-v1/concept-mapping.json
-uv run bookmatch-ml build-book-profiles \
-  --data-dir ../Data-Pipeline/data/experiments/english-linear-algebra-pilot-20261002/processed \
-  --config configs/features_english.yaml \
-  --output data/output/english-linear-algebra-pilot-v1/book-profiles.jsonl
-uv run bookmatch-ml build-matching-book-candidates \
-  --concept-mapping data/output/english-linear-algebra-pilot-v1/concept-mapping.json \
-  --book-profiles data/output/english-linear-algebra-pilot-v1/book-profiles.jsonl \
-  --output data/output/english-linear-algebra-pilot-v1/matching-candidates.jsonl \
-  --report data/output/english-linear-algebra-pilot-v1/adapter-report.json
-```
-
-On the same pinned 10 books, the archived September 29 mapping matched 4 books with 13 distinct
-book/concept pairs. English TOC enrichment matched all 10 with 131 pairs. Replaying the stored
-reader response produced five recommendations from ten personalizable candidates. This measures
-evidence coverage and executable integration, not reviewed recommendation accuracy. The pilot
-contains no translated prose, so prose difficulty remains unavailable and the assessment blueprint
-reports missing background/comprehension targets. See ignored local
-`data/output/english-linear-algebra-pilot-v1/verification.json` for the input hashes and ranking.
-
-The translated pilot has not replaced the active Backend projection or FE data. Catalog expansion
-must rebuild profiles/candidates under a new, pinned projection version before activating them.
-No separate Korean difficulty model is introduced; prose analysis uses the English representation.
+The earlier English-first pilot configuration and helper have been retired from this PR.
+CLI defaults remain `configs/features.yaml` and `configs/concept_matching_v2.yaml`.
+Historical pilot outputs are local snapshots, not active Backend projections. See the
+[PR #32 reconciliation](docs/account-concept-v3-integration.md) for compatibility checks.
 
 대량 수집 471권·목차439권과 LA83 후보의 실제 연동은 [대량 데이터 후속 연결](docs/linear-algebra-live-handoff.md#대량-데이터-후속-연결)을 참고한다. 고정 snapshot 준비는 `scripts/prepare_discovery_catalog_handoff.py`, 실제 HTTP 검증은 `scripts/verify_discovery_catalog_live.py`를 사용한다.
 

@@ -239,6 +239,8 @@ def _population(
     graph: LoadedConceptGraph,
     excluded_ids: set[str],
 ) -> list[HoldoutEvidenceRow]:
+    if any(record.contract_version != "book-evidence-v1" for record in records):
+        raise ValueError("frozen holdout requires book-evidence-v1; v2 review is not supported")
     rows: list[HoldoutEvidenceRow] = []
     for record in sorted(records, key=lambda item: item.book.book_id):
         topics = sorted(set(record.book.topics) & set(graph.graph.nodes))

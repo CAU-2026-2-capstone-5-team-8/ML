@@ -2,7 +2,6 @@
 
 from collections import defaultdict
 
-from bookmatch_ml.book.english import analysis_text
 from bookmatch_ml.book.text import contains_any_phrase, count_alias_mentions, sentences
 from bookmatch_ml.config import LoadedFeatureConfig, TopicLexicon
 from bookmatch_ml.data.evidence import PROSE_DOCUMENT_TYPES
@@ -27,7 +26,7 @@ def _concept_evidence(
 ) -> list[ConceptEvidenceRef]:
     references: list[ConceptEvidenceRef] = []
     for entry in evidence.toc:
-        mentions = count_alias_mentions(analysis_text(entry.title, entry.en_title), aliases)
+        mentions = count_alias_mentions(entry.title, aliases)
         if mentions:
             references.append(
                 ConceptEvidenceRef(
@@ -37,7 +36,7 @@ def _concept_evidence(
                 )
             )
     for document in evidence.documents:
-        mentions = count_alias_mentions(analysis_text(document.text, document.en_text), aliases)
+        mentions = count_alias_mentions(document.text, aliases)
         if mentions:
             references.append(
                 ConceptEvidenceRef(
@@ -117,7 +116,7 @@ def _prerequisite_concepts(
             explicit_counts: dict[tuple[str, str], int] = defaultdict(int)
             early_counts: dict[tuple[str, str], int] = defaultdict(int)
             for document in evidence.documents:
-                for sentence in sentences(analysis_text(document.text, document.en_text)):
+                for sentence in sentences(document.text):
                     if contains_any_phrase(sentence, config.cue_phrases):
                         mentions = count_alias_mentions(sentence, aliases)
                         if mentions:
@@ -125,9 +124,7 @@ def _prerequisite_concepts(
                                 mentions
                             )
                 if document.document_type in PROSE_DOCUMENT_TYPES:
-                    early_text = analysis_text(document.text, document.en_text)[
-                        : config.early_prose_characters
-                    ]
+                    early_text = document.text[: config.early_prose_characters]
                     mentions = count_alias_mentions(early_text, aliases)
                     if mentions:
                         early_counts[(document.document_type, document.document_id)] += mentions
