@@ -1,8 +1,8 @@
-# Data-Pipeline book evidence v1 input
+# Data-Pipeline book evidence v1/v2 input
 
 ## Scope
 
-ML can consume Data-Pipeline's additive `book-evidence-v1` JSONL artifact without depending on a
+ML can consume Data-Pipeline's `book-evidence-v1/v2` JSONL artifact without depending on a
 provider API, bulk dump, or Data-Pipeline internal database. This importer is intentionally
 separate from the existing canonical four-file loader and ranking v1.
 
@@ -16,6 +16,25 @@ The importer does not:
 It validates and retains the source category needed for later experiments.
 
 ## Preserved evidence
+
+Version 2 (`schema_version=2`, `contract_version=book-evidence-v2`) adds required, nullable
+`source_external_id`, `source_license`, `source_rights_note` and `text_extent`. The latter is
+`{scope: excerpt | complete_section, basis: nonblank string}` for documents with recorded scope;
+null means unknown. A complete section is the named preface/chapter, not the whole book.
+Scope cannot be inferred from provider, document type or text length. Non-document evidence
+cannot claim document extent.
+
+The loader validates these fields in provenance hashes and source-snapshot consistency.
+Both the concept-candidate adapter and concept-mapping supporting rows retain document identity,
+extent, source URL and rights. Mapping reports declare their actual input contract version.
+Missing v1 rights and extent stay unknown. Rights fields are provenance, not numeric weights or
+an automatic grant of reuse permission. Mixed-version artifacts are rejected.
+
+Old v1 files remain supported. Upgrade this reader before providing new extent-bearing canonical
+data or v2 exports to strict older ML installations. Frozen gold review and holdout sampling
+remain v1-only and explicitly reject v2 to avoid mislabeling new evidence IDs as old review input.
+The [98-book verification](experiments/text-extent-handoff-2026-10-03.md) documents the local
+boundary and how to reproduce import/profile checks.
 
 Every row keeps its `evidence_type`, provider, source type and URL, retrieval time, source content
 hash, edition relation, and deterministic provenance hash. When Data-Pipeline has a canonical

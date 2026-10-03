@@ -297,6 +297,8 @@ def build_evidence_concept_gold_review(
 ) -> EvidenceConceptGoldReview:
     """Build a deterministic source-stratified blank human-review template."""
 
+    if any(record.contract_version != "book-evidence-v1" for record in records):
+        raise ValueError("frozen gold review requires book-evidence-v1; v2 review is not supported")
     sample_sizes = dict(sample_size_by_evidence_type or DEFAULT_SAMPLE_SIZES)
     population: dict[str, list[EvidenceConceptReviewRow]] = defaultdict(list)
     for record in sorted(records, key=lambda item: item.book.book_id):

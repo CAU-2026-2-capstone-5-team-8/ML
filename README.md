@@ -44,7 +44,7 @@ logic.
 
 ## Inspect source-aware book evidence
 
-Data-Pipeline can also export an additive `book-evidence-v1` JSONL artifact for all benchmark
+Data-Pipeline can also export a `book-evidence-v1` or `book-evidence-v2` JSONL artifact for all benchmark
 books, including metadata fallbacks when TOC is unavailable. Validate it without changing the
 existing canonical loader, matcher, or ranking v1:
 
@@ -322,6 +322,12 @@ and prerequisite proxies. Configured normalization and weights produce four `[0,
 Documents are first analyzed independently and then combined with the recorded
 `token_weighted_mean_v1` aggregation rule. Books without sufficient prose retain `null` scores;
 short prose is recorded under `excluded_documents` with a reason.
+
+`text_scope_version=text-extent-v1` adds excerpt/complete-section/unknown coverage counts and
+per-document `text_extent`, including excluded documents. `analyzed_text_scope` identifies
+`excerpt_only`, `complete_sections_only`, `mixed_or_unknown`, or `unavailable`. A complete named
+section is not a complete book. Historical missing scope stays unknown; scores and ranking
+formulas are unchanged. See the [98-book handoff verification](docs/experiments/text-extent-handoff-2026-10-03.md).
 
 ## Evidence ablation
 
