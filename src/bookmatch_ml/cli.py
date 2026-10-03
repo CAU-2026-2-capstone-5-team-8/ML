@@ -103,6 +103,7 @@ from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import CanonicalDataError, load_canonical_dataset
 from bookmatch_ml.evaluation.ablation import build_evidence_ablation_report
 from bookmatch_ml.evaluation.difficulty import EvaluationDataError, load_difficulty_judgments
+from bookmatch_ml.evaluation.english_evidence import compare_english_evidence
 from bookmatch_ml.evaluation.prose_language import build_prose_language_audit
 from bookmatch_ml.evaluation.ranking_policies import evaluate_ranking_policies
 from bookmatch_ml.evaluation.report import build_evaluation_report
@@ -267,7 +268,7 @@ def inspect_book_evidence(
             dir_okay=False,
             readable=True,
             resolve_path=True,
-            help="Data-Pipeline book-evidence-v1/v2 JSONL artifact.",
+            help="Data-Pipeline book-evidence-v1/v2/v3 JSONL artifact.",
         ),
     ],
 ) -> None:
@@ -304,7 +305,7 @@ def map_book_evidence_concepts_command(
         Path, typer.Option("--matching-config", exists=True, dir_okay=False)
     ] = DEFAULT_CONCEPT_MATCHING_V2_CONFIG,
 ) -> None:
-    """Map book-evidence-v1/v2 rows to deduplicated production concept presence."""
+    """Map book-evidence-v1/v2/v3 rows to deduplicated production concept presence."""
 
     try:
         input_hash = _sha256_file(input_path)
@@ -1424,6 +1425,46 @@ def evaluate_evidence_concept_holdout_command(
             sort_keys=True,
         )
     )
+
+
+@app.command("compare-english-evidence")
+def compare_english_evidence_command(
+    input_path: Annotated[Path, typer.Option("--input", exists=True, dir_okay=False)],
+    output: Annotated[Path, typer.Option(dir_okay=False)],
+    feature_config: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_V2_CONFIG,
+) -> None:
+    """Compare paired original and stored-English TOCs without translation calls."""
+    try:
+        if output.exists():
+            raise ValueError("output must be a new file; existing files are preserved")
+        digest = _sha256_file(input_path)
+        records = load_book_evidence(input_path)
+        features = load_feature_config(feature_config)
+        report = compare_english_evidence(
+            records,
+            features,
+            load_concept_graph(graph_config, features),
+            load_concept_matching_config(matching_config),
+        )
+        if digest != _sha256_file(input_path):
+            raise ValueError("book evidence changed during comparison")
+        report["book_evidence_hash"] = digest
+        content = json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with output.open("x", encoding="utf-8") as stream:
+            stream.write(content)
+    except (BookEvidenceImportError, ConfigError, OSError, ValueError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps(report["summary"], sort_keys=True))
 
 
 @app.command("audit-prose-language")

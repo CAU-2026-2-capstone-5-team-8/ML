@@ -1,4 +1,4 @@
-"""Strict loader for the Data-Pipeline book-evidence-v1/v2 handoff."""
+"""Strict loader for the Data-Pipeline book-evidence-v1/v2/v3 handoff."""
 
 import hashlib
 import json
@@ -81,8 +81,7 @@ class ImportedEvidenceItem(StrictModel):
     @field_validator("text")
     @classmethod
     def text_must_not_be_blank(cls, value: str) -> str:
-        value = value.strip()
-        if not value:
+        if not value.strip():
             raise ValueError("evidence text must not be blank")
         return value
 
@@ -179,6 +178,14 @@ class ImportedBookEvidence(StrictModel):
     book_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
     evidence: list[ImportedEvidenceItem] = Field(min_length=1)
 
+    @model_validator(mode="after")
+    def english_book_requires_v3(self) -> "ImportedBookEvidence":
+        if self.schema_version < 3 and (
+            self.book.en_title is not None or self.book.en_subtitle is not None
+        ):
+            raise ValueError("English book fields require book-evidence-v3")
+        return self
+
 
 class ImportedEvidenceItemV2(ImportedEvidenceItem):
     source_external_id: str | None
@@ -199,6 +206,23 @@ class ImportedBookEvidenceV2(ImportedBookEvidence):
     evidence: list[ImportedEvidenceItemV2] = Field(min_length=1)
 
 
+class ImportedEvidenceItemV3(ImportedEvidenceItemV2):
+    en_text: str | None = Field(min_length=1)
+
+    @field_validator("en_text")
+    @classmethod
+    def english_text_not_blank(cls, value: str | None) -> str | None:
+        if value is not None and not value.strip():
+            raise ValueError("English analysis text must not be blank")
+        return value
+
+
+class ImportedBookEvidenceV3(ImportedBookEvidence):
+    schema_version: Literal[3]
+    contract_version: Literal["book-evidence-v3"]
+    evidence: list[ImportedEvidenceItemV3] = Field(min_length=1)
+
+
 class ConceptCandidateInput(StrictModel):
     """Unweighted text candidate for a later source-aware concept experiment."""
 
@@ -206,6 +230,7 @@ class ConceptCandidateInput(StrictModel):
     evidence_id: str = Field(min_length=1)
     evidence_type: EvidenceType
     text: str = Field(min_length=1)
+    en_text: str | None = None
     provider: str = Field(min_length=1)
     source_type: SourceType
     source_evidence_tier: EvidenceTier | None = None
@@ -312,7 +337,9 @@ def load_book_evidence(path: Path) -> list[ImportedBookEvidence]:
             try:
                 decoded = json.loads(line)
                 model = (
-                    ImportedBookEvidenceV2
+                    ImportedBookEvidenceV3
+                    if isinstance(decoded, dict) and decoded.get("schema_version") == 3
+                    else ImportedBookEvidenceV2
                     if isinstance(decoded, dict) and decoded.get("schema_version") == 2
                     else ImportedBookEvidence
                 )
@@ -344,6 +371,7 @@ def build_concept_candidate_inputs(
                     evidence_id=item.evidence_id,
                     evidence_type=item.evidence_type,
                     text=item.text,
+                    en_text=getattr(item, "en_text", None),
                     provider=item.provider,
                     source_type=item.source_type,
                     source_evidence_tier=item.source_evidence_tier,

@@ -1,8 +1,8 @@
-# Data-Pipeline book evidence v1/v2 input
+# Data-Pipeline book evidence v1/v2/v3 input
 
 ## Scope
 
-ML can consume Data-Pipeline's `book-evidence-v1/v2` JSONL artifact without depending on a
+ML can consume Data-Pipeline's `book-evidence-v1/v2/v3` JSONL artifact without depending on a
 provider API, bulk dump, or Data-Pipeline internal database. This importer is intentionally
 separate from the existing canonical four-file loader and ranking v1.
 
@@ -16,6 +16,21 @@ The importer does not:
 It validates and retains the source category needed for later experiments.
 
 ## Preserved evidence
+
+Version 3 adds required, nullable `en_text` to every v2 evidence row and optional English
+book fields to the embedded canonical book. Canonical Book/TOC/Document loaders also retain
+`en_title`, `en_subtitle`, `en_text`, omitting absent fields when serializing legacy records.
+Original document/evidence text and nonblank English fields retain exact whitespace.
+Provenance hashes include English text; original document hashes still describe the original.
+
+V1/v2 cannot carry English fields. Regenerate experimental English-bearing v1 artifacts as v3
+from their preserved canonical inputs. Existing original-only v1/v2 artifacts stay supported.
+The candidate adapter exposes English separately; regular concept mapping, prose difficulty,
+language auditing and ranking still use original text. The explicit `compare-english-evidence`
+command compares paired TOC rows under identical settings and skips missing English rows on
+both sides. See the [10-book offline comparison](experiments/english-evidence-comparison-2026-10-03.md).
+Stored English is not a claim of translator identity or translation quality; preserve its
+upstream run/cache provenance separately. No translation service is invoked here.
 
 Version 2 (`schema_version=2`, `contract_version=book-evidence-v2`) adds required, nullable
 `source_external_id`, `source_license`, `source_rights_note` and `text_extent`. The latter is

@@ -44,7 +44,7 @@ logic.
 
 ## Inspect source-aware book evidence
 
-Data-Pipeline can also export a `book-evidence-v1` or `book-evidence-v2` JSONL artifact for all benchmark
+Data-Pipeline can export `book-evidence-v1/v2/v3` JSONL artifacts for all benchmark
 books, including metadata fallbacks when TOC is unavailable. Validate it without changing the
 existing canonical loader, matcher, or ranking v1:
 
@@ -330,6 +330,18 @@ section is not a complete book. Historical missing scope stays unknown; scores a
 formulas are unchanged. See the [98-book handoff verification](docs/experiments/text-extent-handoff-2026-10-03.md).
 
 ## Prose language diagnostics
+
+For already stored English TOC fields, compare both texts with identical settings:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> --output data/reports/english-comparison.json
+```
+
+This opt-in comparison uses paired TOC rows only; absent English never falls back to the original.
+It preserves existing analysis/ranking behavior and makes no translation calls. The
+[real 10-book comparison](docs/experiments/english-evidence-comparison-2026-10-03.md) reproduces
+4→10 matched books and 13→131 book/concept pairs; translation accuracy remains unreviewed.
 
 Before interpreting prose scores across languages, run the independent diagnostic:
 
