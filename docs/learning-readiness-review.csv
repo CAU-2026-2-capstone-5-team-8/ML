@@ -1,0 +1,5 @@
+book_id,concept_id,source_url,edition_relation,toc_path,match_correct,prerequisite_valid,taught_sufficiently_in_book,diagnosis_coverage_adequate,next_action_appropriate,reviewer,review_date,notes
+isbn13:9780130319999,process,,,,,,,,,,,
+isbn13:9780130319999,thread,,,,,,,,,,,
+isbn13:9780131860612,matrix,,,,,,,,,,,
+isbn13:9780131860612,vector space,,,,,,,,,,,

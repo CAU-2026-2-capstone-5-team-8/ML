@@ -4,6 +4,7 @@ from typing import Literal
 
 from pydantic import Field, model_validator
 
+from bookmatch_ml.concept_v2.learning_evidence import LearningEvidence, normalize_evidence
 from bookmatch_ml.concept_v2.presentation import concept_graph
 from bookmatch_ml.config import LoadedRankingV2Config
 from bookmatch_ml.integration.schemas import ApiModel
@@ -29,9 +30,18 @@ class LearningBook(ApiModel):
     covered_concepts: list[str]
     source_artifact_version: str
     source_artifact_hash: str
+    concept_evidence: list[LearningEvidence] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def valid_evidence(self):
+        self.concept_evidence = normalize_evidence(
+            self.concept_evidence, set(self.covered_concepts)
+        )
+        return self
 
 
 class LearningFitRequest(ApiModel):
+    model_version: Literal["concept-learning-v1", "concept-learning-v2"] = "concept-learning-v1"
     topic_id: str
     ability: Ability = "application"
     observations: list[Observation]
@@ -80,7 +90,12 @@ def recommend_learning(request: LearningFitRequest, config: LoadedRankingV2Confi
         if not covered:
             unavailable += 1
             continue
-        prerequisite = set().union(*(ancestors(c) for c in covered)) - covered
+        all_prerequisites = set().union(*(ancestors(c) for c in covered))
+        prerequisite = (
+            all_prerequisites
+            if request.model_version == "concept-learning-v2"
+            else all_prerequisites - covered
+        )
         foundation = [{"conceptId": c, "state": state(c)} for c in sorted(prerequisite)]
         targets = [{"conceptId": c, "state": state(c)} for c in sorted(covered)]
         gaps = sum(row["state"] == "needs-practice" for row in foundation)
@@ -125,13 +140,26 @@ def recommend_learning(request: LearningFitRequest, config: LoadedRankingV2Confi
                 "sourceArtifactHash": book.source_artifact_hash,
             }
         )
-    # Explicit baseline: new learning before review, then foundation category.
+        if request.model_version == "concept-learning-v2":
+            from bookmatch_ml.concept_v2.reading_checklist import build_checklist
+
+            plans[-1].update(
+                internalPrerequisites=sorted(prerequisite & covered),
+                externalPrerequisites=sorted(prerequisite - covered),
+                readingChecklist=build_checklist(
+                    request, book, covered, prerequisite, parents, observations
+                ),
+            )
+    # v1: new learning before review; v2: observed foundation category first.
     # More TOC headings alone do not improve rank; ties use stable book identity.
     priority = {"ready-to-explore": 0, "check-first": 1, "foundation-gap": 2}
     plans.sort(
         key=lambda p: (
-            p["reviewOnly"],
-            priority[p["status"]],
+            *(
+                (priority[p["status"]], p["reviewOnly"])
+                if request.model_version == "concept-learning-v2"
+                else (p["reviewOnly"], priority[p["status"]])
+            ),
             p["foundationStatus"] == "not-established",
             p["practiceConceptCount"] == 0,
             p["bookId"],
@@ -143,7 +171,7 @@ def recommend_learning(request: LearningFitRequest, config: LoadedRankingV2Confi
     return {
         "topicId": request.topic_id,
         "ability": request.ability,
-        "modelVersion": "concept-learning-v1",
+        "modelVersion": request.model_version,
         "interpretation": "observed_answers_not_calibrated_mastery",
         "depthStatus": "unverified",
         "graphVersion": graph["version"],
