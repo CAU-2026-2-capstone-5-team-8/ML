@@ -914,6 +914,9 @@ Historical pilot outputs are local snapshots, not active Backend projections. Se
 
 ## 개념별 진단 설계서 v2
 
+개인별 세부 순위 실험은 [학습 순위 v3](docs/personalized-learning-order-v3.md)를 참고한다.
+`/ml/learning-fit`의 명시적 v3 요청만 적용되며 앱 기본 v2 추천은 유지한다.
+
 `build-concept-assessment`는 선형대수 6개 개념 × 뜻·성질/계산·적용/설명·추론 목표 18개를 생성합니다.
 목표·오개념·설계 난도는 `configs/concept_assessment_targets.json`에 있습니다. 기존 문항 유형 할당과 별개이며,
 실제 canonical 목차 연결이 없는 개념은 생성하지 않습니다. 입력 네 파일과 개념 그래프·매칭·특징 설정의 해시를 보존합니다.
