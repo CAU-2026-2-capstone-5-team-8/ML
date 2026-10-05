@@ -58,6 +58,20 @@ def test_comparison_uses_pinned_real_inputs_and_labels_all_responses_synthetic(t
     assert all(row["suitability_1_to_5"] == "" and row["reviewer"] == "" for row in rows)
     with pytest.raises(FileExistsError):
         tool.write_outputs(first, output)
+    # Display order alone must not create semantic preference between identical books.
+    books.append({**books[0], "book_id": "two"})
+    candidates.append({**candidates[0], "book_id": "two"})
+    for name, rows in [("books.jsonl", books), ("candidates.jsonl", candidates)]:
+        (tmp_path / name).write_text("\n".join(json.dumps(r) for r in rows), encoding="utf-8")
+    manifest["books_sha256"] = tool.digest((tmp_path / "books.jsonl").read_bytes())
+    manifest["candidates_sha256"] = tool.digest((tmp_path / "candidates.jsonl").read_bytes())
+    manifest["selected_book_ids"] = ["one", "two"]
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    tied = tool.compare(path, Path("configs/ranking_v2.yaml"))
+    for scenario in tied["scenarios"]:
+        for side in ("before", "after"):
+            assert [row["rank"] for row in scenario[side]] == [1, 2]
+            assert [row["rankGroup"] for row in scenario[side]] == [1, 1]
     (tmp_path / "candidates.jsonl").write_text("{}", encoding="utf-8")
     with pytest.raises(ValueError, match="hash mismatch"):
         tool.compare(path, Path("configs/ranking_v2.yaml"))
