@@ -54,11 +54,12 @@ def concept_graph(config: LoadedRankingV2Config, topic: str) -> dict[str, object
         "graphHash": policy.concept_graph_hash,
         "reviewHash": policy.graph_review_hash,
         "configHash": config.content_hash,
-        "nodes": [{"id": c, "label": LABELS.get(c, c)} for c in policy.nodes[topic]],
+        "nodes": [{"id": c, "label": getattr(policy, "labels", LABELS).get(c, c)} for c in policy.nodes[topic]],
         "edges": [
             {"source": e.prerequisite, "target": e.dependent}
             for e in policy.accepted_edges
             if e.topic == topic
         ],
         "relation": "reviewed_prerequisite_candidate",
+        "reviewerType": getattr(policy, "reviewer_type", "human"),
     }

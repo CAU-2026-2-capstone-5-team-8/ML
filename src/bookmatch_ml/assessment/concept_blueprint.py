@@ -18,9 +18,12 @@ from bookmatch_ml.concept_v2.profile import (
 from bookmatch_ml.config import load_feature_config
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import load_canonical_dataset
+from bookmatch_ml.concept_v2.toc_source_selection import select_toc_source, POLICY as TOC_SOURCE_POLICY
 
 
-def build_concept_blueprint(data_dir: Path, target_config: Path, config_dir: Path):
+def build_concept_blueprint(data_dir: Path, target_config: Path, config_dir: Path, *, toc_source_policy: str | None = None):
+    if toc_source_policy not in (None, TOC_SOURCE_POLICY):
+        raise ValueError("unknown TOC source policy")
     targets = json.loads(target_config.read_text())
     if set(targets) != {"config_version", "topic_id", "concepts"}:
         raise ValueError("invalid target configuration")
@@ -45,6 +48,8 @@ def build_concept_blueprint(data_dir: Path, target_config: Path, config_dir: Pat
     for book in assemble_book_evidence(dataset):
         if targets["topic_id"] not in book.metadata.topics:
             continue
+        if toc_source_policy is not None:
+            book, _ = select_toc_source(book)
         profile = build_book_concept_profile_v2(
             book, targets["topic_id"], features, graph, matching, hashes["toc.jsonl"]
         )

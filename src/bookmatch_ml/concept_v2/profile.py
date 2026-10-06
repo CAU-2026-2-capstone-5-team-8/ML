@@ -63,6 +63,7 @@ class ConceptMatchingConfig(_Strict):
         "normalized_alias_phrase_v1"
     )
     coverage_weight_rule: Literal["min_occurrences_over_three_v1"]
+    toc_text_policy: Literal["english_analysis", "original_and_english"] = "english_analysis"
     toc_mapping: TocMappingRules = Field(default_factory=TocMappingRules)
     policy: ConceptMatchingPolicy
 
@@ -221,15 +222,16 @@ def _map_entry(
     matcher_version: Literal[
         "normalized_alias_phrase_v1", "normalized_alias_span_v2"
     ] = "normalized_alias_phrase_v1",
+    toc_text_policy: Literal["english_analysis", "original_and_english"] = "english_analysis",
 ) -> tuple[list[TocConceptMapping], bool]:
+    # Separate opt-in preparation policy; existing English ranking stays unchanged.
+    text = analysis_text(visit.entry.title, visit.entry.en_title)
+    if toc_text_policy == "original_and_english":
+        text = visit.entry.title + " " + (visit.entry.en_title or "")
     if matcher_version == "normalized_alias_span_v2":
-        text_matches, ambiguous = _match_normalized_text_v2(
-            analysis_text(visit.entry.title, visit.entry.en_title), aliases, exclusions
-        )
+        text_matches, ambiguous = _match_normalized_text_v2(text, aliases, exclusions)
     else:
-        text_matches, ambiguous = _match_normalized_text(
-            analysis_text(visit.entry.title, visit.entry.en_title), aliases, exclusions
-        )
+        text_matches, ambiguous = _match_normalized_text(text, aliases, exclusions)
     mappings = [
         TocConceptMapping(
             toc_entry_id=visit.entry.toc_entry_id,
@@ -492,6 +494,7 @@ def build_book_concept_profile_v2(
             aliases,
             exclusions,
             matching.config.matcher_version,
+            matching.config.toc_text_policy,
         )
         mappings.extend(entry_mappings)
         if entry_mappings:
