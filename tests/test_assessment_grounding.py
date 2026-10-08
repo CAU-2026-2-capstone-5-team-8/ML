@@ -205,15 +205,14 @@ def test_grounding_is_deterministic_bounded_and_preserves_source_identity() -> N
     assert first.edition_relation == "unspecified"
 
 
-def test_translated_grounding_uses_english_and_verifies_original_hash() -> None:
-    dataset = _dataset("행렬 원문입니다.")
+def test_grounding_retains_original_passage_when_english_is_available() -> None:
+    dataset = _dataset()
     document = dataset.documents[0]
-    document.en_text = _text()
+    document.en_text = _text("translated concept")
     grounding = _build(dataset=dataset)
-    assert grounding.passage_text in document.en_text
-    assert grounding.passage_text not in document.text
+    assert grounding.passage_text in document.text
+    assert grounding.passage_text not in document.en_text
     assert grounding.document_content_hash == _hash_text(document.text)
-    assert document.text == "행렬 원문입니다."
     document.content_hash = _hash_text(document.en_text)
     with pytest.raises(GroundingError, match="content hash"):
         _build(dataset=dataset)

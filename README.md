@@ -1,5 +1,10 @@
 # BookMatch ML
 
+An experimental [concept difficulty and reader-fit rubric](docs/concept-difficulty-v1.md)
+extends the existing TOC/graph baseline with explicit concept levels, prerequisite gaps,
+learning burden, and a blind human-review export. Run it separately from the unchanged v1 API
+until independent recommendation-quality evaluation is complete.
+
 For concept-level response evidence grouped by question type and declared difficulty, use
 `POST /ml/reader-diagnostics` with the existing reader-profile request. It returns observed
 scores, question references, and the next assessment cell to review or probe, without changing
@@ -48,7 +53,7 @@ logic.
 
 ## Inspect source-aware book evidence
 
-Data-Pipeline can also export an additive `book-evidence-v1` JSONL artifact for all benchmark
+Data-Pipeline can export `book-evidence-v1/v2/v3` JSONL artifacts for all benchmark
 books, including metadata fallbacks when TOC is unavailable. Validate it without changing the
 existing canonical loader, matcher, or ranking v1:
 
@@ -327,6 +332,69 @@ Documents are first analyzed independently and then combined with the recorded
 `token_weighted_mean_v1` aggregation rule. Books without sufficient prose retain `null` scores;
 short prose is recorded under `excluded_documents` with a reason.
 
+`text_scope_version=text-extent-v1` adds excerpt/complete-section/unknown coverage counts and
+per-document `text_extent`, including excluded documents. `analyzed_text_scope` identifies
+`excerpt_only`, `complete_sections_only`, `mixed_or_unknown`, or `unavailable`. A complete named
+section is not a complete book. Historical missing scope stays unknown; scores and ranking
+formulas are unchanged. See the [98-book handoff verification](docs/experiments/text-extent-handoff-2026-10-03.md).
+
+## Prose language diagnostics
+
+For already stored English TOC fields, compare both texts with identical settings:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> --output data/reports/english-comparison.json
+```
+
+This opt-in comparison uses paired TOC rows only; absent English never falls back to the original.
+It preserves existing analysis/ranking behavior and makes no translation calls. The
+[real 10-book comparison](docs/experiments/english-evidence-comparison-2026-10-03.md) reproduces
+4→10 matched books and 13→131 book/concept pairs; translation accuracy remains unreviewed.
+
+For manual inspection, add `--review-packet` and choose a new local output file:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> --review-packet \
+  --output data/reviews/english-evidence-review.json
+```
+
+The packet contains **exact source texts** and provenance: keep it in ignored local storage.
+It includes all TOC rows (including unchanged/unmatched rows), row-level added/removed
+concepts, and which rows support book-level changes. Prose samples retain their extent and
+rights metadata in a separate list; missing English remains null and no prose score is
+calculated. Reviewer identity, translation judgments, match judgments, and notes start null.
+These fields are a manual worksheet, not automatically accepted evaluation labels.
+Default comparison output remains text-free. See the
+[review preparation and observed gaps](docs/experiments/english-evidence-review-2026-10-03.md).
+
+An opt-in dot-product alias candidate is available for this comparison:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> \
+  --matching-config configs/concept_matching_dot_product_v1.yaml \
+  --output data/reports/english-dot-product-comparison.json
+```
+
+It adds only `dot product` and `dot products` to the existing linear-algebra `inner product`
+concept. The production default remains the frozen overlap-only configuration. The
+[candidate comparison](docs/experiments/dot-product-alias-2026-10-03.md) records four recovered
+TOC matches, unchanged frozen-set predictions, and the remaining validation boundary.
+
+Before interpreting prose scores across languages, run the independent diagnostic:
+
+```bash
+uv run bookmatch-ml audit-prose-language \
+  --data-dir <canonical-directory> --baseline-language en \
+  --output data/reports/prose-language-audit.json
+```
+
+It records declared-language mismatches, script counts, scope and baseline measurements without
+changing scores or inventing human labels. A language match is not validation; outputs always
+remain `not_evaluated`. See the [real Korean prose audit](docs/experiments/korean-prose-language-audit-2026-10-03.md).
+
 ## Evidence ablation
 
 Compare the required evidence conditions for a rich-evidence book:
@@ -502,15 +570,20 @@ existing `question-spec-v1` schema. See the
 The cross-domain Linear Algebra queue is documented in the
 [Linear Algebra assessment concept review report](docs/experiments/linear-algebra-assessment-concept-review-v1.md).
 
-## Experimental concept matching v2
+## Experimental concept matching v3 and difficulty v2
 
-The existing `rank` CLI and default `/ml/rank` behavior remain `absolute_gap_v1`; v2 requires an
-explicit request selector. A separate batch command compares the v1 result with TOC-based book
-concept coverage and the existing
+The existing `rank` CLI and default `/ml/rank` behavior remain `absolute_gap_v1`; ranking v2 and
+the experimental difficulty strategy each require an explicit request selector. A separate batch
+command compares the v1 result with TOC-based book concept coverage and the existing
 `ReaderProfile.concept_readiness` values. It reports **prerequisite readiness** and **learning
 opportunity** separately, each with its own mastery-assessment coverage. Missing concept mastery
 is unknown, never zero. Prose difficulty remains in the report only as a v1 comparison and
 optional diagnostic.
+
+`configs/concept_difficulty.yaml` also defines an experimental intrinsic book score and a separate
+reader learning-burden interval. The exact formulas, bands, evidence rules, real-data snapshot,
+and review workflow are documented in
+[`docs/concept-difficulty-v1.md`](docs/concept-difficulty-v1.md).
 
 ```bash
 uv run bookmatch-ml build-book-profiles \
@@ -665,7 +738,9 @@ is running.
 The factory loads packaged defaults without reading repository-relative files at import time.
 Set `BOOKMATCH_ML_CONFIG_DIR` to a directory containing `reader.yaml` and `ranking.yaml` to select
 externally mounted, versioned configurations in deployment. Add `ranking_v2.yaml` when that
-deployment should accept explicit ranking-v2 requests; v1-only operation does not require it.
+deployment should accept explicit ranking-v2 requests, and `concept_difficulty.yaml` when it should
+accept the experimental concept-difficulty strategy; v1-only operation requires neither, and a
+strategy whose config is missing returns a validation error.
 
 `POST /ml/reader-profile` accepts the same assessment content as `examples/assessment.json`, with
 camelCase keys and an optional `userId` correlation value. It returns the three readiness
@@ -710,6 +785,15 @@ Set the optional top-level `bookId` to score one supplied candidate even when it
 the selected topic. Otherwise the endpoint returns the configured topic-filtered top K. Each item
 contains flat `topicFit`, `vocabularyFit`, `knowledgeFit`, and `comprehensionFit` fields plus the
 subcomponents, active weights, evidence diagnostics, deterministic reasons, and version hashes.
+
+The optional top-level `rankingStrategy=concept_difficulty_v2_experimental` selects the new
+concept-aware comparison. Every candidate must then include the batch-produced
+`conceptProfile`; the response adds `conceptDifficulty` containing the reader-independent book
+score/band, reader burden interval, TOC matches, prerequisite graph paths, and hashes. Omitting the
+strategy preserves the existing request and response behavior. The nested `conceptProfile` is
+the versioned ML batch artifact and therefore retains its canonical snake_case field names. New
+artifacts use `toc-concept-profile-v3`; v2 artifacts remain readable with empty exclusion-audit
+fields for compatibility.
 
 Spring remains responsible for loading persisted assessments and candidate profiles, calling
 these endpoints, and storing results. The API does not connect to PostgreSQL or upstream book
@@ -843,51 +927,18 @@ src/bookmatch_ml/
 Canonical and generated third-party data belongs in ignored `data/` subdirectories. Do not
 commit raw book text to this repository.
 
-## English analysis and original display text
+## English evidence integration boundary
 
-The canonical and `book-evidence-v1` loaders accept optional book/TOC `en_title`, book `en_subtitle`,
-and document/evidence `en_text`. Concept matching, prose features, and generation grounding use
-these English fields. Original English fixtures remain usable without duplicate fields; untranslated
-Korean text is excluded from analysis rather than matched through incidental English words.
-Concept IDs and topic IDs stay unchanged. Book names and provenance paths retain their original
-text for display and audit. Grounding still verifies the original document hash and requires the
-existing explicit reuse license; translation does not grant reuse rights.
+Canonical book/TOC/document English fields follow the current optional-field schema.
+The evidence handoff accepts English only through `book-evidence-v3`; v1/v2 remain frozen.
+Default concept mapping, prose difficulty, and question grounding use original text.
+Stored English is compared explicitly with `compare-english-evidence` and can be inspected
+with `--review-packet`; it does not silently replace the source passage or its hash.
 
-CLI defaults use `configs/features_english.yaml` and `configs/concept_matching_english.yaml`.
-Their weights and aliases match the frozen baseline, but English analysis has separate
-feature/config/model versions (`book-english-v1`, `features-english-v1`,
-`concept-matching-english-v1`). The old YAML files remain available for historical artifacts.
-
-After Data-Pipeline enrichment and evidence export:
-
-```bash
-uv run bookmatch-ml map-book-evidence-concepts \
-  --input ../Data-Pipeline/data/experiments/english-linear-algebra-pilot-20261002/book-evidence.jsonl \
-  --feature-config configs/features_english.yaml \
-  --matching-config configs/concept_matching_english.yaml \
-  --output data/output/english-linear-algebra-pilot-v1/concept-mapping.json
-uv run bookmatch-ml build-book-profiles \
-  --data-dir ../Data-Pipeline/data/experiments/english-linear-algebra-pilot-20261002/processed \
-  --config configs/features_english.yaml \
-  --output data/output/english-linear-algebra-pilot-v1/book-profiles.jsonl
-uv run bookmatch-ml build-matching-book-candidates \
-  --concept-mapping data/output/english-linear-algebra-pilot-v1/concept-mapping.json \
-  --book-profiles data/output/english-linear-algebra-pilot-v1/book-profiles.jsonl \
-  --output data/output/english-linear-algebra-pilot-v1/matching-candidates.jsonl \
-  --report data/output/english-linear-algebra-pilot-v1/adapter-report.json
-```
-
-On the same pinned 10 books, the archived September 29 mapping matched 4 books with 13 distinct
-book/concept pairs. English TOC enrichment matched all 10 with 131 pairs. Replaying the stored
-reader response produced five recommendations from ten personalizable candidates. This measures
-evidence coverage and executable integration, not reviewed recommendation accuracy. The pilot
-contains no translated prose, so prose difficulty remains unavailable and the assessment blueprint
-reports missing background/comprehension targets. See ignored local
-`data/output/english-linear-algebra-pilot-v1/verification.json` for the input hashes and ranking.
-
-The translated pilot has not replaced the active Backend projection or FE data. Catalog expansion
-must rebuild profiles/candidates under a new, pinned projection version before activating them.
-No separate Korean difficulty model is introduced; prose analysis uses the English representation.
+The earlier English-first pilot configuration and helper have been retired from this PR.
+CLI defaults remain `configs/features.yaml` and `configs/concept_matching_v2.yaml`.
+Historical pilot outputs are local snapshots, not active Backend projections. See the
+[PR #32 reconciliation](docs/account-concept-v3-integration.md) for compatibility checks.
 
 대량 수집 471권·목차439권과 LA83 후보의 실제 연동은 [대량 데이터 후속 연결](docs/linear-algebra-live-handoff.md#대량-데이터-후속-연결)을 참고한다. 고정 snapshot 준비는 `scripts/prepare_discovery_catalog_handoff.py`, 실제 HTTP 검증은 `scripts/verify_discovery_catalog_live.py`를 사용한다.
 
@@ -897,6 +948,9 @@ No separate Korean difficulty model is introduced; prose analysis uses the Engli
 
 
 ## 개념별 진단 설계서 v2
+
+개인별 세부 순위 실험은 [학습 순위 v3](docs/personalized-learning-order-v3.md)를 참고한다.
+`/ml/learning-fit`의 명시적 v3 요청만 적용되며 앱 기본 v2 추천은 유지한다.
 
 `build-concept-assessment`는 선형대수 6개 개념 × 뜻·성질/계산·적용/설명·추론 목표 18개를 생성합니다.
 목표·오개념·설계 난도는 `configs/concept_assessment_targets.json`에 있습니다. 기존 문항 유형 할당과 별개이며,
@@ -936,7 +990,7 @@ uv run bookmatch-ml prepare-topic-content \
 근거가 없는 개념은 보고서에서 명시적으로 남긴다.
 
 이 준비 단계만 `toc_text_policy: original_and_english`를 사용해 한국어 원문과 영어
-목차 별칭을 로컬에서 매칭한다. 기존 설정의 기본값은 `english_analysis`이며 기존
+목차 별칭을 로컬에서 매칭한다. 기존 설정의 기본값은 `original_text`이며 기존
 추천의 입력 정책·가중치·순위를 바꾸지 않는다. 원문을 번역문이나 본문으로 간주하지 않는다.
 
 기본 선택 정책은 두 권 이상에서 근거가 확인되는 개념을 최대 여섯 개 선택하고,
@@ -957,3 +1011,10 @@ uv run bookmatch-ml prepare-topic-content \
 선택한다. 원본 자료와 제외 이유는 남고, 개념 연결과 평가 설계에 동일한 선택을 적용한다.
 목차가 없거나 실제 연결이 없는 책은 탐색 목록에 남을 수 있지만 맞춤 매칭 후보에는
 포함되지 않는다. AI 내용 검토·ML 응답 확인·Backend 전체 은행 게시가 끝나야 진단이 열린다.
+
+
+### v2·v3 추천 순서의 사람 평가
+
+평가표 생성 → 독립 평가자 입력 → 파일 검증 및 동순위 보존 비교 명령은
+[사람 평가 안내](docs/learning-order-human-evaluation.md)를 참고하세요.
+점수 없는 평가표는 평가 대기로 처리하며, 앱의 기본 추천 모델은 변경하지 않습니다.

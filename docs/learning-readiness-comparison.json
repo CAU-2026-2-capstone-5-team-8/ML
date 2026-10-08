@@ -1,0 +1,2137 @@
+{
+  "snapshotVersion": "scale-50-ranking-v2-smoke-v1",
+  "snapshotHash": "sha256:9377e59de16d6c8b4f2c61e4e4db915bd9f623958d669d480884a8b8f89c02b2",
+  "bookCount": 50,
+  "readerEvidence": "synthetic_scenarios_not_real_assessments",
+  "accuracyMeasured": false,
+  "limitations": [
+    "Historical committed 50-book snapshot, not the current live catalog.",
+    "Stored fractional reader scores are deliberately NOT converted to answers.",
+    "Unknown graph concepts are explicitly excluded below; no source refs invented.",
+    "All-wrong and all-correct single-response scenarios test rules, not mastery."
+  ],
+  "topics": {
+    "linear-algebra": {
+      "graphHash": "sha256:a30a726f28b27215df5aa397bca62ecea7badd8dbbdb90e0a46a43ac05cb2245",
+      "graphReviewHash": "sha256:d13d39a8a1827039459f0b8f4d75ab5293e3e8a7ad0c600a5b38512a8b912af7",
+      "totalBooks": 25,
+      "mappedBooks": 10,
+      "unmappedBooks": 15,
+      "excludedConcepts": {},
+      "statusChanges": 0,
+      "books": [
+        {
+          "bookId": "book_09c91e7b456682eb19fb",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "determinant",
+              "diagonalization",
+              "eigenvalue",
+              "eigenvector",
+              "matrix",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "vector"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "determinant",
+              "diagonalization",
+              "eigenvalue",
+              "eigenvector",
+              "matrix",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "matrix",
+              "vector"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "diagonalization",
+            "eigenvector",
+            "matrix",
+            "vector",
+            "determinant",
+            "eigenvalue",
+            "vector space"
+          ],
+          "internalPrerequisites": [
+            "matrix"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "determinant",
+              "diagonalization",
+              "eigenvalue",
+              "eigenvector",
+              "matrix",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "matrix",
+              "vector"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780070380233",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "matrix",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "diagonalization",
+            "dimension",
+            "eigenvector",
+            "high school algebra",
+            "inner product",
+            "matrix",
+            "vector",
+            "determinant",
+            "eigenvalue",
+            "linear system",
+            "orthogonality",
+            "vector space",
+            "basis"
+          ],
+          "internalPrerequisites": [
+            "inner product",
+            "matrix",
+            "vector",
+            "vector space"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "matrix",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780131437401",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "inner product",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "systems of equations",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "inner product",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "systems of equations",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "diagonalization",
+            "dimension",
+            "eigenvector",
+            "high school algebra",
+            "inner product",
+            "linear independence",
+            "linear transformation",
+            "matrix",
+            "systems of equations",
+            "vector",
+            "determinant",
+            "eigenvalue",
+            "linear system",
+            "orthogonality",
+            "rank",
+            "vector space",
+            "basis",
+            "least squares"
+          ],
+          "internalPrerequisites": [
+            "inner product",
+            "matrix",
+            "orthogonality",
+            "vector",
+            "vector space"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "inner product",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "systems of equations",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780131860612",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "vector"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "matrix",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "diagonalization",
+            "dimension",
+            "eigenvector",
+            "high school algebra",
+            "linear transformation",
+            "matrix",
+            "vector",
+            "determinant",
+            "eigenvalue",
+            "linear system",
+            "vector space",
+            "basis"
+          ],
+          "internalPrerequisites": [
+            "matrix",
+            "vector space"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "matrix",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780135367971",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "inner product",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "vector"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "inner product",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "matrix",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "diagonalization",
+            "dimension",
+            "high school algebra",
+            "inner product",
+            "linear transformation",
+            "matrix",
+            "vector",
+            "determinant",
+            "linear system",
+            "vector space",
+            "basis"
+          ],
+          "internalPrerequisites": [
+            "matrix",
+            "vector space"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "inner product",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "matrix",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780205080106",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "inner product",
+              "linear system",
+              "matrix",
+              "rank",
+              "systems of equations",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "inner product",
+              "linear system",
+              "matrix",
+              "rank",
+              "systems of equations",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "linear system",
+              "matrix",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "diagonalization",
+            "eigenvector",
+            "high school algebra",
+            "inner product",
+            "matrix",
+            "systems of equations",
+            "vector",
+            "determinant",
+            "eigenvalue",
+            "linear system",
+            "rank",
+            "vector space",
+            "basis",
+            "gaussian elimination"
+          ],
+          "internalPrerequisites": [
+            "linear system",
+            "matrix",
+            "vector",
+            "vector space"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "inner product",
+              "linear system",
+              "matrix",
+              "rank",
+              "systems of equations",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "linear system",
+              "matrix",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780470458211",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "inner product",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "singular value decomposition",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "inner product",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "singular value decomposition",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "diagonalization",
+            "dimension",
+            "eigenvector",
+            "high school algebra",
+            "inner product",
+            "linear independence",
+            "linear transformation",
+            "matrix",
+            "singular value decomposition",
+            "vector",
+            "determinant",
+            "eigenvalue",
+            "linear system",
+            "orthogonality",
+            "rank",
+            "vector space",
+            "basis",
+            "gaussian elimination",
+            "least squares"
+          ],
+          "internalPrerequisites": [
+            "inner product",
+            "linear system",
+            "matrix",
+            "orthogonality",
+            "vector",
+            "vector space"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "inner product",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "singular value decomposition",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780618335671",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "inner product",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "inner product",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "diagonalization",
+            "dimension",
+            "eigenvector",
+            "high school algebra",
+            "inner product",
+            "linear independence",
+            "linear transformation",
+            "matrix",
+            "vector",
+            "determinant",
+            "eigenvalue",
+            "linear system",
+            "orthogonality",
+            "rank",
+            "vector space",
+            "basis",
+            "gaussian elimination",
+            "least squares"
+          ],
+          "internalPrerequisites": [
+            "inner product",
+            "linear system",
+            "matrix",
+            "orthogonality",
+            "vector",
+            "vector space"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "inner product",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780980232714",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "least squares",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "singular value decomposition",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "linear system"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "least squares",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "singular value decomposition",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "diagonalization",
+            "dimension",
+            "eigenvector",
+            "high school algebra",
+            "inner product",
+            "linear transformation",
+            "matrix",
+            "singular value decomposition",
+            "vector",
+            "determinant",
+            "eigenvalue",
+            "linear system",
+            "orthogonality",
+            "rank",
+            "vector space",
+            "basis",
+            "gaussian elimination",
+            "least squares"
+          ],
+          "internalPrerequisites": [
+            "matrix",
+            "orthogonality",
+            "vector",
+            "vector space"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "least squares",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "singular value decomposition",
+              "vector",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9781118909584",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "singular value decomposition",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "vector"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "singular value decomposition",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "diagonalization",
+            "dimension",
+            "eigenvector",
+            "high school algebra",
+            "inner product",
+            "linear independence",
+            "linear transformation",
+            "matrix",
+            "singular value decomposition",
+            "vector",
+            "determinant",
+            "eigenvalue",
+            "linear system",
+            "orthogonality",
+            "rank",
+            "vector space",
+            "basis",
+            "gaussian elimination",
+            "least squares"
+          ],
+          "internalPrerequisites": [
+            "linear system",
+            "matrix",
+            "orthogonality",
+            "vector space"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "basis",
+              "determinant",
+              "diagonalization",
+              "dimension",
+              "eigenvalue",
+              "eigenvector",
+              "gaussian elimination",
+              "least squares",
+              "linear independence",
+              "linear system",
+              "linear transformation",
+              "matrix",
+              "orthogonality",
+              "rank",
+              "singular value decomposition",
+              "vector space"
+            ],
+            "inferredPrerequisites": [
+              "high school algebra",
+              "inner product",
+              "linear system",
+              "matrix",
+              "orthogonality",
+              "vector",
+              "vector space"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        }
+      ]
+    },
+    "operating-systems": {
+      "graphHash": "sha256:a30a726f28b27215df5aa397bca62ecea7badd8dbbdb90e0a46a43ac05cb2245",
+      "graphReviewHash": "sha256:d13d39a8a1827039459f0b8f4d75ab5293e3e8a7ad0c600a5b38512a8b912af7",
+      "totalBooks": 25,
+      "mappedBooks": 12,
+      "unmappedBooks": 13,
+      "excludedConcepts": {},
+      "statusChanges": 1,
+      "books": [
+        {
+          "bookId": "isbn13:9780070575721",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization"
+            ],
+            "inferredPrerequisites": [
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization"
+            ],
+            "inferredPrerequisites": [
+              "concurrency",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "distributed systems",
+            "process",
+            "protection",
+            "security",
+            "storage",
+            "file system",
+            "scheduling",
+            "thread",
+            "concurrency",
+            "synchronization",
+            "deadlock"
+          ],
+          "internalPrerequisites": [
+            "concurrency",
+            "process",
+            "synchronization"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization"
+            ],
+            "inferredPrerequisites": [
+              "concurrency",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780074630839",
+          "v1Wrong": {
+            "status": "check-first",
+            "coveredConcepts": [
+              "programming"
+            ],
+            "inferredPrerequisites": [],
+            "foundationStatus": "not-established"
+          },
+          "v2Wrong": {
+            "status": "check-first",
+            "coveredConcepts": [
+              "programming"
+            ],
+            "inferredPrerequisites": [],
+            "foundationStatus": "not-established"
+          },
+          "checklistOrder": [
+            "programming"
+          ],
+          "internalPrerequisites": [],
+          "v2Correct": {
+            "status": "check-first",
+            "coveredConcepts": [
+              "programming"
+            ],
+            "inferredPrerequisites": [],
+            "foundationStatus": "not-established"
+          }
+        },
+        {
+          "bookId": "isbn13:9780130319999",
+          "v1Wrong": {
+            "status": "check-first",
+            "coveredConcepts": [
+              "computer architecture",
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [],
+            "foundationStatus": "not-established"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "computer architecture",
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "computer architecture",
+            "distributed systems",
+            "input/output",
+            "process",
+            "protection",
+            "security",
+            "storage",
+            "file system",
+            "memory management",
+            "scheduling",
+            "thread",
+            "concurrency",
+            "virtual memory",
+            "synchronization",
+            "deadlock"
+          ],
+          "internalPrerequisites": [
+            "computer architecture",
+            "concurrency",
+            "memory management",
+            "process",
+            "storage",
+            "synchronization",
+            "thread"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "computer architecture",
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780132017992",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "file system",
+              "memory management",
+              "process",
+              "scheduling",
+              "synchronization",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "file system",
+              "memory management",
+              "process",
+              "scheduling",
+              "synchronization",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "computer architecture",
+            "process",
+            "storage",
+            "file system",
+            "memory management",
+            "scheduling",
+            "thread",
+            "concurrency",
+            "virtual memory",
+            "synchronization"
+          ],
+          "internalPrerequisites": [
+            "memory management",
+            "process"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "file system",
+              "memory management",
+              "process",
+              "scheduling",
+              "synchronization",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780132199087",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "distributed systems",
+              "file system",
+              "process",
+              "synchronization"
+            ],
+            "inferredPrerequisites": [
+              "concurrency",
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "distributed systems",
+              "file system",
+              "process",
+              "synchronization"
+            ],
+            "inferredPrerequisites": [
+              "concurrency",
+              "process",
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "distributed systems",
+            "process",
+            "storage",
+            "file system",
+            "thread",
+            "concurrency",
+            "synchronization"
+          ],
+          "internalPrerequisites": [
+            "process"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "distributed systems",
+              "file system",
+              "process",
+              "synchronization"
+            ],
+            "inferredPrerequisites": [
+              "concurrency",
+              "process",
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780201498387",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "concurrency",
+              "distributed systems",
+              "file system",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization",
+              "thread"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "storage"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "concurrency",
+              "distributed systems",
+              "file system",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization",
+              "thread"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "process",
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "computer architecture",
+            "distributed systems",
+            "process",
+            "protection",
+            "security",
+            "storage",
+            "file system",
+            "memory management",
+            "scheduling",
+            "thread",
+            "concurrency",
+            "synchronization"
+          ],
+          "internalPrerequisites": [
+            "concurrency",
+            "process",
+            "thread"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "concurrency",
+              "distributed systems",
+              "file system",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization",
+              "thread"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "process",
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780201741964",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "storage"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "computer architecture",
+            "distributed systems",
+            "input/output",
+            "process",
+            "protection",
+            "security",
+            "storage",
+            "file system",
+            "memory management",
+            "scheduling",
+            "thread",
+            "concurrency",
+            "virtual memory",
+            "synchronization",
+            "deadlock"
+          ],
+          "internalPrerequisites": [
+            "concurrency",
+            "memory management",
+            "process",
+            "synchronization",
+            "thread"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780471694663",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "computer architecture",
+            "distributed systems",
+            "input/output",
+            "process",
+            "protection",
+            "security",
+            "storage",
+            "file system",
+            "memory management",
+            "scheduling",
+            "thread",
+            "concurrency",
+            "virtual memory",
+            "synchronization",
+            "deadlock"
+          ],
+          "internalPrerequisites": [
+            "process",
+            "storage",
+            "synchronization",
+            "thread"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9780471725954",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "computer architecture",
+            "distributed systems",
+            "input/output",
+            "process",
+            "protection",
+            "security",
+            "storage",
+            "file system",
+            "memory management",
+            "scheduling",
+            "thread",
+            "concurrency",
+            "virtual memory",
+            "synchronization",
+            "deadlock"
+          ],
+          "internalPrerequisites": [
+            "memory management",
+            "process",
+            "storage",
+            "synchronization"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9781118804926",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "computer architecture",
+            "input/output",
+            "process",
+            "protection",
+            "security",
+            "storage",
+            "file system",
+            "memory management",
+            "scheduling",
+            "thread",
+            "concurrency",
+            "virtual memory",
+            "synchronization"
+          ],
+          "internalPrerequisites": [
+            "memory management",
+            "process",
+            "storage",
+            "thread"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9781119800361",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory",
+              "virtualization"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory",
+              "virtualization"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "computer architecture",
+            "distributed systems",
+            "input/output",
+            "process",
+            "protection",
+            "security",
+            "storage",
+            "virtualization",
+            "file system",
+            "memory management",
+            "scheduling",
+            "thread",
+            "concurrency",
+            "virtual memory",
+            "synchronization",
+            "deadlock"
+          ],
+          "internalPrerequisites": [
+            "concurrency",
+            "memory management",
+            "process",
+            "storage",
+            "synchronization",
+            "thread"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "concurrency",
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "storage",
+              "synchronization",
+              "thread",
+              "virtual memory",
+              "virtualization"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        },
+        {
+          "bookId": "isbn13:9781292025773",
+          "v1Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization",
+              "thread",
+              "virtual memory",
+              "virtualization"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "storage"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "v2Wrong": {
+            "status": "foundation-gap",
+            "coveredConcepts": [
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization",
+              "thread",
+              "virtual memory",
+              "virtualization"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          },
+          "checklistOrder": [
+            "computer architecture",
+            "distributed systems",
+            "input/output",
+            "process",
+            "protection",
+            "security",
+            "storage",
+            "virtualization",
+            "file system",
+            "memory management",
+            "scheduling",
+            "thread",
+            "concurrency",
+            "virtual memory",
+            "synchronization",
+            "deadlock"
+          ],
+          "internalPrerequisites": [
+            "memory management",
+            "process",
+            "synchronization",
+            "thread"
+          ],
+          "v2Correct": {
+            "status": "ready-to-explore",
+            "coveredConcepts": [
+              "deadlock",
+              "distributed systems",
+              "file system",
+              "input/output",
+              "memory management",
+              "process",
+              "protection",
+              "scheduling",
+              "security",
+              "synchronization",
+              "thread",
+              "virtual memory",
+              "virtualization"
+            ],
+            "inferredPrerequisites": [
+              "computer architecture",
+              "concurrency",
+              "memory management",
+              "process",
+              "storage",
+              "synchronization",
+              "thread"
+            ],
+            "foundationStatus": "observed-graph-candidates"
+          }
+        }
+      ]
+    }
+  }
+}

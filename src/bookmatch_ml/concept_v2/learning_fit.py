@@ -41,7 +41,9 @@ class LearningBook(ApiModel):
 
 
 class LearningFitRequest(ApiModel):
-    model_version: Literal["concept-learning-v1", "concept-learning-v2"] = "concept-learning-v1"
+    model_version: Literal["concept-learning-v1", "concept-learning-v2", "concept-learning-v3"] = (
+        "concept-learning-v1"
+    )
     topic_id: str
     ability: Ability = "application"
     observations: list[Observation]
@@ -85,7 +87,10 @@ def recommend_learning(request: LearningFitRequest, config: LoadedRankingV2Confi
     unavailable = 0
     for book in request.candidate_books:
         covered = set(book.covered_concepts)
-        if len(covered) != len(book.covered_concepts) or covered - node_ids:
+        if (
+            request.model_version != "concept-learning-v3"
+            and len(covered) != len(book.covered_concepts)
+        ) or covered - node_ids:
             raise ValueError("unknown or duplicate covered concept")
         if not covered:
             unavailable += 1
@@ -93,7 +98,7 @@ def recommend_learning(request: LearningFitRequest, config: LoadedRankingV2Confi
         all_prerequisites = set().union(*(ancestors(c) for c in covered))
         prerequisite = (
             all_prerequisites
-            if request.model_version == "concept-learning-v2"
+            if request.model_version != "concept-learning-v1"
             else all_prerequisites - covered
         )
         foundation = [{"conceptId": c, "state": state(c)} for c in sorted(prerequisite)]
@@ -140,7 +145,7 @@ def recommend_learning(request: LearningFitRequest, config: LoadedRankingV2Confi
                 "sourceArtifactHash": book.source_artifact_hash,
             }
         )
-        if request.model_version == "concept-learning-v2":
+        if request.model_version != "concept-learning-v1":
             from bookmatch_ml.concept_v2.reading_checklist import build_checklist
 
             plans[-1].update(
@@ -165,10 +170,14 @@ def recommend_learning(request: LearningFitRequest, config: LoadedRankingV2Confi
             p["bookId"],
         )
     )
+    if request.model_version == "concept-learning-v3":
+        from bookmatch_ml.concept_v2.learning_order import personalize
+
+        plans = personalize(plans, observations, request.ability)
     chosen = plans[: request.limit]
     for rank, item in enumerate(chosen, 1):
         item["rank"] = rank
-    return {
+    result = {
         "topicId": request.topic_id,
         "ability": request.ability,
         "modelVersion": request.model_version,
@@ -184,3 +193,12 @@ def recommend_learning(request: LearningFitRequest, config: LoadedRankingV2Confi
         "unmappedCandidateCount": unavailable,
         "items": chosen,
     }
+    if request.model_version == "concept-learning-v3":
+        from bookmatch_ml.concept_v2.learning_order import CRITERIA, POLICY
+
+        result.update(
+            orderingPolicy=POLICY,
+            orderingCriteria=CRITERIA,
+            tiePolicy="equal-rankGroup-stable-bookId-for-display-only",
+        )
+    return result

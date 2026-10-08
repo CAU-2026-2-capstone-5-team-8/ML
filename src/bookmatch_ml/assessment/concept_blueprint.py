@@ -15,13 +15,16 @@ from bookmatch_ml.concept_v2.profile import (
     build_book_concept_profile_v2,
     load_concept_matching_config,
 )
+from bookmatch_ml.concept_v2.toc_source_selection import POLICY as TOC_SOURCE_POLICY
+from bookmatch_ml.concept_v2.toc_source_selection import select_toc_source
 from bookmatch_ml.config import load_feature_config
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import load_canonical_dataset
-from bookmatch_ml.concept_v2.toc_source_selection import select_toc_source, POLICY as TOC_SOURCE_POLICY
 
 
-def build_concept_blueprint(data_dir: Path, target_config: Path, config_dir: Path, *, toc_source_policy: str | None = None):
+def build_concept_blueprint(
+    data_dir: Path, target_config: Path, config_dir: Path, *, toc_source_policy: str | None = None
+):
     if toc_source_policy not in (None, TOC_SOURCE_POLICY):
         raise ValueError("unknown TOC source policy")
     targets = json.loads(target_config.read_text())

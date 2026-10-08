@@ -74,6 +74,10 @@ class StrictModel(BaseModel):
 
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False, strict=True)
 
+
+class EnglishFieldsModel(StrictModel):
+    """Optional analysis text; preserve originals and omit absent legacy fields."""
+
     @model_serializer(mode="wrap")
     def omit_absent_english_fields(self, handler: Any) -> dict[str, Any]:
         result = handler(self)
@@ -90,7 +94,7 @@ class StrictModel(BaseModel):
         return value
 
 
-class Book(StrictModel):
+class Book(EnglishFieldsModel):
     book_id: str = Field(pattern=r"^(isbn13:[0-9]{13}|isbn10:[0-9]{9}[0-9X]|book_[0-9a-f]{20})$")
     isbn_10: str | None = None
     isbn_13: str | None = None
@@ -171,7 +175,21 @@ class Book(StrictModel):
         return self
 
 
-class Document(StrictModel):
+class TextExtent(StrictModel):
+    """Collector-provided scope of a named document; absence means unknown."""
+
+    scope: Literal["excerpt", "complete_section"]
+    basis: str = Field(min_length=1)
+
+    @field_validator("basis")
+    @classmethod
+    def basis_must_not_be_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("text extent requires a nonblank collection basis")
+        return value
+
+
+class Document(EnglishFieldsModel):
     document_id: str = Field(min_length=1)
     book_id: str = Field(min_length=1)
     document_type: DocumentType
@@ -179,17 +197,25 @@ class Document(StrictModel):
     en_text: str | None = Field(default=None, min_length=1)
     source_id: str = Field(min_length=1)
     content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    text_extent: TextExtent | None = None
+
+    @model_serializer(mode="wrap")
+    def preserve_legacy_document_shape(self, handler: Any) -> dict[str, Any]:
+        result = handler(self)
+        for field in ("text_extent", "en_text"):
+            if getattr(self, field) is None:
+                result.pop(field, None)
+        return result
 
     @field_validator("text")
     @classmethod
     def text_must_not_be_blank(cls, value: str) -> str:
-        value = value.strip()
-        if not value:
+        if not value.strip():
             raise ValueError("document text must not be blank")
         return value
 
 
-class TocEntry(StrictModel):
+class TocEntry(EnglishFieldsModel):
     toc_entry_id: str = Field(min_length=1)
     book_id: str = Field(min_length=1)
     parent_entry_id: str | None = None
@@ -267,6 +293,21 @@ class EvidenceCoverage(StrictModel):
     document_count: int = Field(ge=0)
     prose_document_count: int = Field(ge=0)
     prose_character_count: int = Field(ge=0)
+    text_scope_version: Literal["text-extent-v1"] = "text-extent-v1"
+    excerpt_prose_document_count: int = Field(default=0, ge=0)
+    complete_section_prose_document_count: int = Field(default=0, ge=0)
+    unknown_extent_prose_document_count: int = Field(default=0, ge=0)
+
+    @model_validator(mode="after")
+    def extent_counts_partition_prose(self) -> "EvidenceCoverage":
+        known = self.excerpt_prose_document_count + self.complete_section_prose_document_count
+        if "unknown_extent_prose_document_count" not in self.model_fields_set:
+            self.unknown_extent_prose_document_count = self.prose_document_count - known
+        if known > self.prose_document_count or (
+            known + self.unknown_extent_prose_document_count != self.prose_document_count
+        ):
+            raise ValueError("text extent counts must partition prose documents")
+        return self
 
 
 class BookEvidence(StrictModel):
@@ -362,6 +403,7 @@ class DifficultyScores(StrictModel):
 class DocumentDifficulty(StrictModel):
     document_id: str
     document_type: DocumentType
+    text_extent: TextExtent | None = None
     character_count: int = Field(ge=0)
     token_count: int = Field(ge=1)
     sentence_count: int = Field(ge=1)
@@ -372,6 +414,7 @@ class DocumentDifficulty(StrictModel):
 class ExcludedProseDocument(StrictModel):
     document_id: str
     document_type: DocumentType
+    text_extent: TextExtent | None = None
     character_count: int = Field(ge=0)
     token_count: int = Field(ge=0)
     reason: Literal["below_minimum_tokens", "no_tokens"]
@@ -388,10 +431,33 @@ class DifficultyProfile(StrictModel):
     analyzed_token_count: int = Field(ge=0)
     documents: list[DocumentDifficulty]
     excluded_documents: list[ExcludedProseDocument]
+    text_scope_version: Literal["text-extent-v1"] = "text-extent-v1"
+    analyzed_text_scope: Literal[
+        "unavailable", "excerpt_only", "complete_sections_only", "mixed_or_unknown"
+    ] = "mixed_or_unknown"
     aggregation_rule: str
     feature_version: str
     config_version: str
     config_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def analyzed_scope_matches_documents(self) -> "DifficultyProfile":
+        scopes = {d.text_extent.scope if d.text_extent else "unknown" for d in self.documents}
+        expected = (
+            "unavailable"
+            if not self.analyzed_document_count
+            else "mixed_or_unknown"
+            if len(self.documents) != self.analyzed_document_count
+            else "excerpt_only"
+            if scopes == {"excerpt"}
+            else "complete_sections_only"
+            if scopes == {"complete_section"}
+            else "mixed_or_unknown"
+        )
+        if "analyzed_text_scope" in self.model_fields_set and self.analyzed_text_scope != expected:
+            raise ValueError("analyzed text scope does not match document coverage")
+        self.analyzed_text_scope = expected
+        return self
 
 
 class BookProfile(StrictModel):

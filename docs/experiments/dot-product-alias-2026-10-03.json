@@ -1,0 +1,191 @@
+{
+  "added_concept_ids": [
+    "inner product"
+  ],
+  "baseline": {
+    "book_count": 10,
+    "english_book_concept_pairs": 131,
+    "english_matched_books": 10,
+    "original_book_concept_pairs": 13,
+    "original_matched_books": 4,
+    "paired_rows": 666,
+    "stored_english_prose_documents": 0,
+    "toc_rows": 666
+  },
+  "candidate": {
+    "book_count": 10,
+    "english_book_concept_pairs": 132,
+    "english_matched_books": 10,
+    "original_book_concept_pairs": 13,
+    "original_matched_books": 4,
+    "paired_rows": 666,
+    "stored_english_prose_documents": 0,
+    "toc_rows": 666
+  },
+  "changed_rows": [
+    {
+      "book_id": "isbn13:9788952117441",
+      "changes": {
+        "english_matches": {
+          "after": [
+            {
+              "alias": "dot product",
+              "concept_id": "inner product",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            }
+          ],
+          "before": []
+        },
+        "original_matches": {
+          "after": [
+            {
+              "alias": "dot product",
+              "concept_id": "inner product",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            }
+          ],
+          "before": []
+        }
+      },
+      "english_text_hash": "sha256:dfbd21c10a9f6ea32bc940a18a164e327338752fb72703f74aab67eead3a7f90",
+      "evidence_id": "evidence_104464e1d6c1549c7143",
+      "original_text_hash": "sha256:945880c5ed33a605eea70841749df13ce6ed7b293e963aa1eb39b0cc140f2a6f"
+    },
+    {
+      "book_id": "isbn13:9788970505329",
+      "changes": {
+        "english_matches": {
+          "after": [
+            {
+              "alias": "dot products",
+              "concept_id": "inner product",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            },
+            {
+              "alias": "vector",
+              "concept_id": "vector",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            }
+          ],
+          "before": [
+            {
+              "alias": "vector",
+              "concept_id": "vector",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            }
+          ]
+        }
+      },
+      "english_text_hash": "sha256:e80a132d84ab06e31cfbeb204a0c5e0ae2716fdc7e5034342abc1fbe705973b4",
+      "evidence_id": "evidence_4e77b24a76bc24e5553e",
+      "original_text_hash": "sha256:5ba18af369201b74dcadf3ba018bf7e63ac790610906cc973996d0fa145012ea"
+    },
+    {
+      "book_id": "isbn13:9788970505329",
+      "changes": {
+        "english_matches": {
+          "after": [
+            {
+              "alias": "dot products",
+              "concept_id": "inner product",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            },
+            {
+              "alias": "vectors",
+              "concept_id": "vector",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            }
+          ],
+          "before": [
+            {
+              "alias": "vectors",
+              "concept_id": "vector",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            }
+          ]
+        }
+      },
+      "english_text_hash": "sha256:d5f56a4960f6ba01fb7769a61ee78ae0121dd8d939042101394249897f00e876",
+      "evidence_id": "evidence_bce79554896716c7b643",
+      "original_text_hash": "sha256:8c0b9f93d1572e4b0cba6aa0f6bc5a511ad9f6bcc427e92fd471d22158916d1a"
+    },
+    {
+      "book_id": "isbn13:9791156645009",
+      "changes": {
+        "english_matches": {
+          "after": [
+            {
+              "alias": "dot product",
+              "concept_id": "inner product",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            },
+            {
+              "alias": "vectors",
+              "concept_id": "vector",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            }
+          ],
+          "before": [
+            {
+              "alias": "vectors",
+              "concept_id": "vector",
+              "method": "normalized_alias_span_v2",
+              "topic": "linear-algebra"
+            }
+          ]
+        }
+      },
+      "english_text_hash": "sha256:6f64b329eb6b57b28f305c93fd6d54651f2d5f3d0c4fa67fe7202fbc9ba42ea1",
+      "evidence_id": "evidence_372534a918ad5ad56d6e",
+      "original_text_hash": "sha256:11f9180accdbdbeb0147e0552b096a8ab3b5b1fb603517a388a83ce684616303"
+    }
+  ],
+  "configs": {
+    "baseline": {
+      "output_hash": "64a272a7ea5fa2d4b1528340dc7034e478efc4b9232348e6ab8466deea350ba6",
+      "path": "configs/concept_matching_v2.yaml",
+      "sha256": "9f8f348f40fb4ffc7d7238c4b9ac5b79a8c8f1b2168bd0960b2b58db9a4e0638"
+    },
+    "candidate": {
+      "output_hash": "e6a687c60df60c3df2af602b80602d9c8ae3e3a2103b5ab754f788029313a5ac",
+      "path": "configs/concept_matching_dot_product_v1.yaml",
+      "sha256": "57b0312fe099771d6d158fa6eb38de3ef3592dc013d482126a85937ee4e57880"
+    }
+  },
+  "deterministic_replay": true,
+  "evaluation_status": "not_human_evaluated",
+  "existing_matches_preserved": true,
+  "frozen_regression_sets": [
+    {
+      "path": "reviews/evidence_concept_gold_review_v1.json",
+      "predictions_unchanged": true,
+      "rows": 94
+    },
+    {
+      "path": "reviews/evidence_concept_holdout_general_v1_manifest.json",
+      "predictions_unchanged": true,
+      "rows": 89
+    },
+    {
+      "path": "reviews/evidence_concept_holdout_challenge_v1_manifest.json",
+      "predictions_unchanged": true,
+      "rows": 40
+    }
+  ],
+  "input_hash": "sha256:db5675fe05ce6bd7c1da1dfbfe09007842fe32855e646c02d9207801b31e4ca9",
+  "input_unchanged": true,
+  "production_default_changed": false,
+  "report_version": "dot-product-alias-comparison-v1",
+  "translation_api_requests": 0,
+  "unchanged_toc_rows": 662
+}

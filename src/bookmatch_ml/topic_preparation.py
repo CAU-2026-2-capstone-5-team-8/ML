@@ -19,10 +19,11 @@ from bookmatch_ml.concept_v2.profile import (
     build_book_concept_profile_v2,
     load_concept_matching_config,
 )
+from bookmatch_ml.concept_v2.toc_source_selection import POLICY as TOC_SOURCE_POLICY
+from bookmatch_ml.concept_v2.toc_source_selection import select_toc_source
 from bookmatch_ml.config import load_feature_config
 from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import load_canonical_dataset
-from bookmatch_ml.concept_v2.toc_source_selection import select_toc_source, POLICY as TOC_SOURCE_POLICY
 
 VERSION = "topic-content-preparation-v1"
 FILES = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
@@ -213,7 +214,9 @@ def prepare_topic_content(
             "concepts": {c["id"]: by_id[c["id"]].abilities.model_dump() for c in selected},
         }
         write_json(output_dir / "targets.json", targets)
-        blueprint = build_concept_blueprint(data_dir, output_dir / "targets.json", configs, toc_source_policy=TOC_SOURCE_POLICY)
+        blueprint = build_concept_blueprint(
+            data_dir, output_dir / "targets.json", configs, toc_source_policy=TOC_SOURCE_POLICY
+        )
         write_json(output_dir / "blueprint.json", blueprint.model_dump())
         spec_count = len(blueprint.question_specs)
     elif (output_dir / "blueprint.json").exists():
