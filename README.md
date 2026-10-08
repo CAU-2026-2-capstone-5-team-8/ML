@@ -364,6 +364,20 @@ These fields are a manual worksheet, not automatically accepted evaluation label
 Default comparison output remains text-free. See the
 [review preparation and observed gaps](docs/experiments/english-evidence-review-2026-10-03.md).
 
+An opt-in dot-product alias candidate is available for this comparison:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> \
+  --matching-config configs/concept_matching_dot_product_v1.yaml \
+  --output data/reports/english-dot-product-comparison.json
+```
+
+It adds only `dot product` and `dot products` to the existing linear-algebra `inner product`
+concept. The production default remains the frozen overlap-only configuration. The
+[candidate comparison](docs/experiments/dot-product-alias-2026-10-03.md) records four recovered
+TOC matches, unchanged frozen-set predictions, and the remaining validation boundary.
+
 Before interpreting prose scores across languages, run the independent diagnostic:
 
 ```bash
