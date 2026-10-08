@@ -1,4 +1,4 @@
-"""Strict loader for the Data-Pipeline book-evidence-v1 handoff."""
+"""Strict loader for the Data-Pipeline book-evidence-v1/v2/v3 handoff."""
 
 import hashlib
 import json
@@ -16,6 +16,7 @@ from bookmatch_ml.schemas import (
     SourceEvidenceProvenance,
     SourceType,
     StrictModel,
+    TextExtent,
 )
 
 EvidenceType = Literal[
@@ -80,8 +81,7 @@ class ImportedEvidenceItem(StrictModel):
     @field_validator("text")
     @classmethod
     def text_must_not_be_blank(cls, value: str) -> str:
-        value = value.strip()
-        if not value:
+        if not value.strip():
             raise ValueError("evidence text must not be blank")
         return value
 
@@ -178,6 +178,50 @@ class ImportedBookEvidence(StrictModel):
     book_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
     evidence: list[ImportedEvidenceItem] = Field(min_length=1)
 
+    @model_validator(mode="after")
+    def english_book_requires_v3(self) -> "ImportedBookEvidence":
+        if self.schema_version < 3 and (
+            self.book.en_title is not None or self.book.en_subtitle is not None
+        ):
+            raise ValueError("English book fields require book-evidence-v3")
+        return self
+
+
+class ImportedEvidenceItemV2(ImportedEvidenceItem):
+    source_external_id: str | None
+    source_license: str | None
+    source_rights_note: str | None
+    text_extent: TextExtent | None
+
+    @model_validator(mode="after")
+    def extent_requires_document(self) -> "ImportedEvidenceItemV2":
+        if self.text_extent is not None and self.document_id is None:
+            raise ValueError("text extent requires document evidence")
+        return self
+
+
+class ImportedBookEvidenceV2(ImportedBookEvidence):
+    schema_version: Literal[2]
+    contract_version: Literal["book-evidence-v2"]
+    evidence: list[ImportedEvidenceItemV2] = Field(min_length=1)
+
+
+class ImportedEvidenceItemV3(ImportedEvidenceItemV2):
+    en_text: str | None = Field(min_length=1)
+
+    @field_validator("en_text")
+    @classmethod
+    def english_text_not_blank(cls, value: str | None) -> str | None:
+        if value is not None and not value.strip():
+            raise ValueError("English analysis text must not be blank")
+        return value
+
+
+class ImportedBookEvidenceV3(ImportedBookEvidence):
+    schema_version: Literal[3]
+    contract_version: Literal["book-evidence-v3"]
+    evidence: list[ImportedEvidenceItemV3] = Field(min_length=1)
+
 
 class ConceptCandidateInput(StrictModel):
     """Unweighted text candidate for a later source-aware concept experiment."""
@@ -186,11 +230,19 @@ class ConceptCandidateInput(StrictModel):
     evidence_id: str = Field(min_length=1)
     evidence_type: EvidenceType
     text: str = Field(min_length=1)
+    en_text: str | None = None
     provider: str = Field(min_length=1)
     source_type: SourceType
     source_evidence_tier: EvidenceTier | None = None
     edition_relation: EditionRelation
     toc_path: list[str] | None = None
+    document_id: str | None = None
+    document_type: DocumentType | None = None
+    text_extent: TextExtent | None = None
+    source_url: str | None = None
+    source_external_id: str | None = None
+    source_license: str | None = None
+    source_rights_note: str | None = None
 
 
 class BookConceptCandidateInputs(StrictModel):
@@ -214,6 +266,15 @@ def _provenance_hash(item: ImportedEvidenceItem) -> str:
 
 def _source_snapshot(item: ImportedEvidenceItem) -> dict[str, Any]:
     return {
+        **(
+            {
+                "source_external_id": item.source_external_id,
+                "source_license": item.source_license,
+                "source_rights_note": item.source_rights_note,
+            }
+            if isinstance(item, ImportedEvidenceItemV2)
+            else {}
+        ),
         "provider": item.provider,
         "source_type": item.source_type,
         "source_url": item.source_url,
@@ -230,6 +291,8 @@ def _source_snapshot(item: ImportedEvidenceItem) -> dict[str, Any]:
 
 def _validate_records(records: list[ImportedBookEvidence]) -> list[str]:
     errors: list[str] = []
+    if len({record.contract_version for record in records}) > 1:
+        errors.append("mixed book evidence contract versions")
     book_ids = [record.book.book_id for record in records]
     evidence_ids = [item.evidence_id for record in records for item in record.evidence]
     for kind, values in (("book", book_ids), ("evidence", evidence_ids)):
@@ -257,7 +320,7 @@ def _validate_records(records: list[ImportedBookEvidence]) -> list[str]:
 
 
 def load_book_evidence(path: Path) -> list[ImportedBookEvidence]:
-    """Load and validate a complete book-evidence-v1 JSONL artifact."""
+    """Load and validate a complete, single-version book evidence JSONL artifact."""
 
     path = path.expanduser()
     if not path.is_file():
@@ -272,7 +335,15 @@ def load_book_evidence(path: Path) -> list[ImportedBookEvidence]:
             if not line.strip():
                 continue
             try:
-                records.append(ImportedBookEvidence.model_validate_json(line))
+                decoded = json.loads(line)
+                model = (
+                    ImportedBookEvidenceV3
+                    if isinstance(decoded, dict) and decoded.get("schema_version") == 3
+                    else ImportedBookEvidenceV2
+                    if isinstance(decoded, dict) and decoded.get("schema_version") == 2
+                    else ImportedBookEvidence
+                )
+                records.append(model.model_validate_json(line))
             except (ValidationError, ValueError) as exc:
                 raise BookEvidenceImportError(
                     f"invalid book evidence line {line_number}: {exc}"
@@ -300,11 +371,19 @@ def build_concept_candidate_inputs(
                     evidence_id=item.evidence_id,
                     evidence_type=item.evidence_type,
                     text=item.text,
+                    en_text=getattr(item, "en_text", None),
                     provider=item.provider,
                     source_type=item.source_type,
                     source_evidence_tier=item.source_evidence_tier,
                     edition_relation=item.edition_relation,
                     toc_path=item.toc_path,
+                    document_id=item.document_id,
+                    document_type=item.document_type,
+                    source_url=item.source_url,
+                    text_extent=getattr(item, "text_extent", None),
+                    source_external_id=getattr(item, "source_external_id", None),
+                    source_license=getattr(item, "source_license", None),
+                    source_rights_note=getattr(item, "source_rights_note", None),
                 )
                 for item in record.evidence
             ],
@@ -323,7 +402,17 @@ def summarize_book_evidence(records: list[ImportedBookEvidence]) -> dict[str, An
         for item in record.evidence:
             referenced_sources[item.source_id] = item.provider
     return {
-        "contract_version": "book-evidence-v1",
+        "contract_version": records[0].contract_version if records else "book-evidence-v1",
+        "document_extent_rows": dict(
+            sorted(
+                Counter(
+                    item.text_extent.scope if getattr(item, "text_extent", None) else "unknown"
+                    for record in records
+                    for item in record.evidence
+                    if item.document_id is not None
+                ).items()
+            )
+        ),
         "total_books": len(records),
         "books_with_toc_evidence": sum(
             any(item.evidence_type in toc_types for item in record.evidence) for record in records

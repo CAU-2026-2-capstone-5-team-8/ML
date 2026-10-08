@@ -9,7 +9,21 @@ import typer
 from pydantic import ValidationError
 
 from bookmatch_ml.assessment.blueprint import build_assessment_blueprint
-from bookmatch_ml.assessment.pool import AssessmentBlueprintError
+from bookmatch_ml.assessment.grounding import (
+    DISPLAY_NORMALIZATION_POLICY,
+    GroundingError,
+    build_generation_grounding,
+    build_generation_grounding_v2,
+)
+from bookmatch_ml.assessment.pool import AssessmentBlueprintError, build_topic_concept_pool
+from bookmatch_ml.assessment.review import (
+    AssessmentConceptReviewError,
+    build_assessment_concept_review_packet,
+    load_assessment_concept_reviews,
+    reviewed_assessment_config,
+    validate_assessment_concept_reviews,
+)
+from bookmatch_ml.assessment.schemas import AssessmentBlueprint
 from bookmatch_ml.book.profile import build_book_profiles
 from bookmatch_ml.concept_v2.book_evidence_mapping import (
     build_book_evidence_concept_mapping_report,
@@ -89,6 +103,11 @@ from bookmatch_ml.data.evidence import assemble_book_evidence
 from bookmatch_ml.data.loader import CanonicalDataError, load_canonical_dataset
 from bookmatch_ml.evaluation.ablation import build_evidence_ablation_report
 from bookmatch_ml.evaluation.difficulty import EvaluationDataError, load_difficulty_judgments
+from bookmatch_ml.evaluation.english_evidence import (
+    compare_english_evidence,
+    prepare_english_evidence_review,
+)
+from bookmatch_ml.evaluation.prose_language import build_prose_language_audit
 from bookmatch_ml.evaluation.ranking_policies import evaluate_ranking_policies
 from bookmatch_ml.evaluation.report import build_evaluation_report
 from bookmatch_ml.io import write_json, write_jsonl
@@ -147,6 +166,8 @@ DEFAULT_RANKING_CONFIG = Path("configs/ranking.yaml")
 DEFAULT_EVALUATION_CONFIG = Path("configs/evaluation.yaml")
 DEFAULT_RANKING_POLICY_CONFIG = Path("configs/ranking_policies.yaml")
 DEFAULT_ASSESSMENT_CONFIG = Path("configs/assessment.yaml")
+DEFAULT_REVIEWED_ASSESSMENT_CONFIG = Path("configs/assessment_reviewed.yaml")
+DEFAULT_ASSESSMENT_CONCEPT_REVIEWS = Path("configs/assessment_concept_reviews.yaml")
 DEFAULT_CONCEPT_GRAPH_CONFIG = Path("configs/concept_graph.yaml")
 DEFAULT_CONCEPT_MATCHING_CONFIG = Path("configs/concept_matching.yaml")
 DEFAULT_CONCEPT_MATCHING_V2_CONFIG = Path("configs/concept_matching_v2.yaml")
@@ -164,6 +185,15 @@ DEFAULT_RANKING_V2_CONFIG = Path("configs/ranking_v2.yaml")
 
 def _sha256_file(path: Path) -> str:
     return f"sha256:{hashlib.sha256(path.read_bytes()).hexdigest()}"
+
+
+def _validate_grounding_output_path(output: Path, inputs: list[Path]) -> Path:
+    """Reject aliases that would overwrite a blueprint or canonical input file."""
+
+    resolved_output = output.resolve()
+    if resolved_output in {path.resolve() for path in inputs}:
+        raise GroundingError("grounding output must differ from every input artifact")
+    return resolved_output
 
 
 def _load_matching_book_profiles(path: Path) -> list[MatchingBookProfile]:
@@ -241,7 +271,7 @@ def inspect_book_evidence(
             dir_okay=False,
             readable=True,
             resolve_path=True,
-            help="Data-Pipeline book-evidence-v1 JSONL artifact.",
+            help="Data-Pipeline book-evidence-v1/v2/v3 JSONL artifact.",
         ),
     ],
 ) -> None:
@@ -278,7 +308,7 @@ def map_book_evidence_concepts_command(
         Path, typer.Option("--matching-config", exists=True, dir_okay=False)
     ] = DEFAULT_CONCEPT_MATCHING_V2_CONFIG,
 ) -> None:
-    """Map book-evidence-v1 rows to deduplicated production concept presence."""
+    """Map book-evidence-v1/v2/v3 rows to deduplicated production concept presence."""
 
     try:
         input_hash = _sha256_file(input_path)
@@ -1400,6 +1430,85 @@ def evaluate_evidence_concept_holdout_command(
     )
 
 
+@app.command("compare-english-evidence")
+def compare_english_evidence_command(
+    input_path: Annotated[Path, typer.Option("--input", exists=True, dir_okay=False)],
+    output: Annotated[Path, typer.Option(dir_okay=False)],
+    review_packet: Annotated[
+        bool, typer.Option(help="Include exact source texts and blank review fields; keep local.")
+    ] = False,
+    feature_config: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False)
+    ] = DEFAULT_FEATURE_CONFIG,
+    graph_config: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_GRAPH_CONFIG,
+    matching_config: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False)
+    ] = DEFAULT_CONCEPT_MATCHING_V2_CONFIG,
+) -> None:
+    """Compare paired original and stored-English TOCs without translation calls."""
+    try:
+        if output.exists():
+            raise ValueError("output must be a new file; existing files are preserved")
+        digest = _sha256_file(input_path)
+        records = load_book_evidence(input_path)
+        features = load_feature_config(feature_config)
+        builder = prepare_english_evidence_review if review_packet else compare_english_evidence
+        report = builder(
+            records,
+            features,
+            load_concept_graph(graph_config, features),
+            load_concept_matching_config(matching_config),
+        )
+        if digest != _sha256_file(input_path):
+            raise ValueError("book evidence changed during comparison")
+        report["book_evidence_hash"] = digest
+        content = json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with output.open("x", encoding="utf-8") as stream:
+            stream.write(content)
+    except (BookEvidenceImportError, ConfigError, OSError, ValueError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps(report["summary"], sort_keys=True))
+
+
+@app.command("audit-prose-language")
+def audit_prose_language_command(
+    data_dir: Annotated[Path, typer.Option(exists=True, file_okay=False, resolve_path=True)],
+    output: Annotated[Path, typer.Option(dir_okay=False, resolve_path=True)],
+    baseline_language: Annotated[
+        str, typer.Option(help="Declared target language of this baseline; not inferred.")
+    ],
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)] = DEFAULT_FEATURE_CONFIG,
+) -> None:
+    """Audit prose language and baseline measurements; leave human quality judgments blank."""
+    try:
+        if output.exists():
+            raise ValueError("output must be a new file; existing files are preserved")
+        paths = [
+            data_dir / name
+            for name in ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        ]
+        hashes = {path.name: _sha256_file(path) for path in paths}
+        dataset = load_canonical_dataset(data_dir)
+        report = build_prose_language_audit(dataset, load_feature_config(config), baseline_language)
+        if hashes != {path.name: _sha256_file(path) for path in paths}:
+            raise ValueError("canonical inputs changed during the audit")
+        report.canonical_hashes = hashes
+        content = report.model_dump_json(indent=2) + "\n"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with output.open("x", encoding="utf-8") as stream:
+            stream.write(content)
+    except (CanonicalDataError, ConfigError, OSError, ValueError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(
+        json.dumps(report.model_dump(exclude={"documents", "canonical_hashes"}), ensure_ascii=False)
+    )
+
+
 @app.command("build-book-profiles")
 def build_profiles(
     data_dir: Annotated[
@@ -1489,6 +1598,10 @@ def build_assessment_blueprint_command(
         Path,
         typer.Option("--assessment-config", exists=True, dir_okay=False, readable=True),
     ] = DEFAULT_ASSESSMENT_CONFIG,
+    concept_reviews: Annotated[
+        Path | None,
+        typer.Option("--concept-reviews", exists=True, dir_okay=False, readable=True),
+    ] = None,
 ) -> None:
     """Build an auditable concept pool and question targets from canonical evidence."""
 
@@ -1500,6 +1613,11 @@ def build_assessment_blueprint_command(
         profiles = load_book_profiles(books)
         features = load_feature_config(feature_config)
         assessment = load_assessment_config(assessment_config)
+        reviews = (
+            load_assessment_concept_reviews(concept_reviews)
+            if concept_reviews is not None
+            else None
+        )
         if canonical_hashes != {
             name: _sha256_file(data_dir / name) for name in canonical_files
         } or book_profiles_hash != _sha256_file(books):
@@ -1514,6 +1632,7 @@ def build_assessment_blueprint_command(
             assessment,
             canonical_file_hashes=canonical_hashes,
             book_profiles_hash=book_profiles_hash,
+            concept_reviews=reviews,
         )
         write_json(blueprint, output)
     except (
@@ -1521,6 +1640,7 @@ def build_assessment_blueprint_command(
         RankingInputError,
         ConfigError,
         AssessmentBlueprintError,
+        AssessmentConceptReviewError,
         OSError,
     ) as exc:
         typer.echo(f"Error: {exc}", err=True)
@@ -1543,6 +1663,335 @@ def build_assessment_blueprint_command(
             sort_keys=True,
         )
     )
+
+
+@app.command("build-generation-grounding")
+def build_generation_grounding_command(
+    data_dir: Annotated[
+        Path,
+        typer.Option("--data-dir", file_okay=False, resolve_path=True),
+    ],
+    blueprint_path: Annotated[
+        Path,
+        typer.Option(
+            "--blueprint",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+        ),
+    ],
+    question_id: Annotated[str, typer.Option("--question-id")],
+    output: Annotated[
+        Path,
+        typer.Option("--output", dir_okay=False, resolve_path=True),
+    ],
+) -> None:
+    """Bind one comprehension/apply QuestionSpec to exact canonical source prose."""
+
+    canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+    try:
+        canonical_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        blueprint_hash = _sha256_file(blueprint_path)
+        blueprint = AssessmentBlueprint.model_validate_json(
+            blueprint_path.read_text(encoding="utf-8")
+        )
+        matches = [item for item in blueprint.question_specs if item.question_id == question_id]
+        if len(matches) != 1:
+            raise GroundingError(
+                f"question_id {question_id!r} was not found exactly once in the blueprint"
+            )
+        if blueprint.canonical_file_hashes != canonical_hashes:
+            raise GroundingError("blueprint canonical hashes do not match the supplied dataset")
+        dataset = load_canonical_dataset(data_dir)
+        if canonical_hashes != {
+            name: _sha256_file(data_dir / name) for name in canonical_files
+        } or blueprint_hash != _sha256_file(blueprint_path):
+            raise GroundingError("blueprint or canonical dataset changed during grounding")
+        grounding = build_generation_grounding(
+            matches[0],
+            dataset,
+            canonical_file_hashes=canonical_hashes,
+            blueprint_hash=blueprint_hash,
+        )
+        resolved_output = _validate_grounding_output_path(
+            output,
+            [blueprint_path, *(data_dir / name for name in canonical_files)],
+        )
+        write_json(grounding, resolved_output)
+    except (CanonicalDataError, GroundingError, OSError, ValidationError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(
+        json.dumps(
+            {
+                "grounding_version": grounding.grounding_version,
+                "question_spec_id": grounding.question_spec_id,
+                "source_document_id": grounding.source_document_id,
+                "passage_characters": len(grounding.passage_text),
+                "passage_hash": grounding.passage_hash,
+                "output": str(output),
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("build-generation-grounding-v2")
+def build_generation_grounding_v2_command(
+    data_dir: Annotated[
+        Path,
+        typer.Option("--data-dir", file_okay=False, resolve_path=True),
+    ],
+    blueprint_path: Annotated[
+        Path,
+        typer.Option(
+            "--blueprint",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            resolve_path=True,
+        ),
+    ],
+    question_id: Annotated[str, typer.Option("--question-id")],
+    output: Annotated[
+        Path,
+        typer.Option("--output", dir_okay=False, resolve_path=True),
+    ],
+    display_normalization_policy: Annotated[
+        str,
+        typer.Option("--display-normalization-policy"),
+    ] = DISPLAY_NORMALIZATION_POLICY,
+) -> None:
+    """Bind exact source prose to a reviewed, deterministic display passage."""
+
+    canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+    try:
+        canonical_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        blueprint_hash = _sha256_file(blueprint_path)
+        blueprint = AssessmentBlueprint.model_validate_json(
+            blueprint_path.read_text(encoding="utf-8")
+        )
+        matches = [item for item in blueprint.question_specs if item.question_id == question_id]
+        if len(matches) != 1:
+            raise GroundingError(
+                f"question_id {question_id!r} was not found exactly once in the blueprint"
+            )
+        if blueprint.canonical_file_hashes != canonical_hashes:
+            raise GroundingError("blueprint canonical hashes do not match the supplied dataset")
+        dataset = load_canonical_dataset(data_dir)
+        if canonical_hashes != {
+            name: _sha256_file(data_dir / name) for name in canonical_files
+        } or blueprint_hash != _sha256_file(blueprint_path):
+            raise GroundingError("blueprint or canonical dataset changed during grounding")
+        grounding = build_generation_grounding_v2(
+            matches[0],
+            dataset,
+            canonical_file_hashes=canonical_hashes,
+            blueprint_hash=blueprint_hash,
+            display_normalization_policy=display_normalization_policy,
+        )
+        resolved_output = _validate_grounding_output_path(
+            output,
+            [blueprint_path, *(data_dir / name for name in canonical_files)],
+        )
+        write_json(grounding, resolved_output)
+    except (CanonicalDataError, GroundingError, OSError, ValidationError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(
+        json.dumps(
+            {
+                "grounding_version": grounding.grounding_version,
+                "question_spec_id": grounding.question_spec_id,
+                "source_document_id": grounding.source_document_id,
+                "source_passage_characters": len(grounding.source_passage_text),
+                "source_passage_hash": grounding.source_passage_hash,
+                "display_passage_characters": len(grounding.display_passage_text),
+                "display_passage_hash": grounding.display_passage_hash,
+                "display_normalization_policy": grounding.display_normalization_policy,
+                "output": str(output),
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+    )
+
+
+@app.command("prepare-assessment-concept-review")
+def prepare_assessment_concept_review_command(
+    data_dir: Annotated[
+        Path,
+        typer.Option("--data-dir", file_okay=False, resolve_path=True),
+    ],
+    books: Annotated[
+        Path,
+        typer.Option("--books", exists=True, dir_okay=False, readable=True, resolve_path=True),
+    ],
+    topic: Annotated[str, typer.Option("--topic", help="Canonical topic ID.")],
+    output: Annotated[
+        Path,
+        typer.Option("--output", dir_okay=False, resolve_path=True),
+    ],
+    feature_config: Annotated[
+        Path,
+        typer.Option("--feature-config", exists=True, dir_okay=False, readable=True),
+    ] = DEFAULT_FEATURE_CONFIG,
+    legacy_assessment_config: Annotated[
+        Path,
+        typer.Option(
+            "--legacy-assessment-config",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+        ),
+    ] = DEFAULT_ASSESSMENT_CONFIG,
+    reviewed_assessment_config_path: Annotated[
+        Path,
+        typer.Option(
+            "--reviewed-assessment-config",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+        ),
+    ] = DEFAULT_REVIEWED_ASSESSMENT_CONFIG,
+    concept_reviews: Annotated[
+        Path,
+        typer.Option("--concept-reviews", exists=True, dir_okay=False, readable=True),
+    ] = DEFAULT_ASSESSMENT_CONCEPT_REVIEWS,
+    covered_reserve: Annotated[
+        int | None,
+        typer.Option("--covered-reserve", min=0),
+    ] = None,
+    prerequisite_reserve: Annotated[
+        int | None,
+        typer.Option("--prerequisite-reserve", min=0),
+    ] = None,
+) -> None:
+    """Prepare a deterministic, evidence-rich queue for authoritative human review."""
+
+    try:
+        canonical_files = ("books.jsonl", "documents.jsonl", "toc.jsonl", "sources.jsonl")
+        canonical_hashes = {name: _sha256_file(data_dir / name) for name in canonical_files}
+        book_profiles_hash = _sha256_file(books)
+        dataset = load_canonical_dataset(data_dir)
+        profiles = load_book_profiles(books)
+        features = load_feature_config(feature_config)
+        legacy_config = load_assessment_config(legacy_assessment_config)
+        reviewed_base = load_assessment_config(reviewed_assessment_config_path)
+        reviews = load_assessment_concept_reviews(concept_reviews)
+        reviewed_config = reviewed_assessment_config(reviewed_base, reviews)
+        known_topics = set(features.config.concept.topics) & set(
+            features.config.prerequisite.topics
+        )
+        review_topics = {item.topic_id for item in reviews.artifact.reviews}
+        unknown_topics = sorted(review_topics - known_topics)
+        if unknown_topics:
+            raise AssessmentConceptReviewError(
+                "unknown review topics: " + ", ".join(unknown_topics)
+            )
+        represented_topics = {
+            profile_topic
+            for profile in profiles
+            for profile_topic, weight in profile.concept_profile.topic_distribution.items()
+            if weight > 0
+        }
+        pools = [
+            build_topic_concept_pool(
+                review_topic,
+                profiles,
+                features,
+                reviewed_config,
+            )
+            for review_topic in sorted({topic, *(review_topics & represented_topics)})
+        ]
+        validate_assessment_concept_reviews(
+            reviews,
+            pools,
+            reviewed_config,
+            supported_topics=known_topics,
+        )
+        pool = next(item for item in pools if item.topic_id == topic)
+        legacy_blueprint = build_assessment_blueprint(
+            topic,
+            dataset,
+            profiles,
+            features,
+            legacy_config,
+            canonical_file_hashes=canonical_hashes,
+            book_profiles_hash=book_profiles_hash,
+        )
+        if canonical_hashes != {
+            name: _sha256_file(data_dir / name) for name in canonical_files
+        } or book_profiles_hash != _sha256_file(books):
+            raise AssessmentBlueprintError(
+                "canonical input or book profiles changed during loading"
+            )
+        reserve = {
+            "covered": (
+                reviewed_config.config.review_reserve["covered"]
+                if covered_reserve is None
+                else covered_reserve
+            ),
+            "prerequisite": (
+                reviewed_config.config.review_reserve["prerequisite"]
+                if prerequisite_reserve is None
+                else prerequisite_reserve
+            ),
+        }
+        packet = build_assessment_concept_review_packet(
+            pool,
+            legacy_blueprint,
+            reviewed_config,
+            reviews,
+            reserve=reserve,
+        )
+        write_json(packet, output)
+    except (
+        CanonicalDataError,
+        RankingInputError,
+        ConfigError,
+        AssessmentBlueprintError,
+        AssessmentConceptReviewError,
+        OSError,
+    ) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(
+        json.dumps(
+            {
+                "topic_id": packet.topic_id,
+                "candidate_count": packet.candidate_count,
+                "covered_candidates": packet.covered_candidate_count,
+                "prerequisite_candidates": packet.prerequisite_candidate_count,
+                "review_version": packet.review_version,
+                "review_artifact_hash": packet.review_artifact_hash,
+                "assessment_config_version": packet.assessment_config_version,
+                "assessment_config_hash": packet.assessment_config_hash,
+                "output": str(output),
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    for item in packet.candidates:
+        coverage = f"{item.book_coverage_count}/{pool.topic_book_count}"
+        evidence = ",".join(item.evidence_types)
+        methods = ",".join(item.prerequisite_methods) or "-"
+        target = "yes" if item.current_question_spec_target else "no"
+        typer.echo(
+            f"{item.concept_role}\t#{item.priority_rank_within_role}\t{item.concept_id}"
+            f"\tpriority={item.assessment_priority:.6f}\tcoverage={coverage}"
+            f"\tevidence={evidence}\tprerequisite_method={methods}"
+            f"\tcurrent_question_target={target}\tstatus={item.status}"
+        )
 
 
 @app.command("ablate-book-profile")
@@ -2337,6 +2786,22 @@ def evaluate(
             sort_keys=True,
         )
     )
+
+
+@app.command("build-concept-assessment")
+def build_concept_assessment_command(
+    data_dir: Annotated[Path, typer.Option(exists=True, file_okay=False)],
+    output: Annotated[Path, typer.Option()],
+    targets: Annotated[Path, typer.Option()] = Path("configs/concept_assessment_targets.json"),
+    config_dir: Annotated[Path, typer.Option()] = Path("configs"),
+) -> None:
+    """Build concept × ability specifications from canonical TOC evidence."""
+    from bookmatch_ml.assessment.concept_blueprint import build_concept_blueprint
+
+    blueprint = build_concept_blueprint(data_dir, targets, config_dir)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(blueprint.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    typer.echo(f"{len(blueprint.question_specs)} concept assessment targets written")
 
 
 if __name__ == "__main__":

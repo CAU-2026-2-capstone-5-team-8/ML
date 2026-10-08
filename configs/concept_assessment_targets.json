@@ -1,0 +1,162 @@
+{
+  "config_version": "concept-assessment-targets-v1",
+  "topic_id": "linear-algebra",
+  "concepts": {
+    "matrix": {
+      "meaning": {
+        "objective": "Identify row/column order and valid matrix dimensions without a supplied definition.",
+        "misconceptions": [
+          "reversing rows and columns",
+          "confusing the number of entries with matrix dimensions"
+        ],
+        "difficulty": 1
+      },
+      "application": {
+        "objective": "Compute one entry of a product of two small compatible matrices, using nontrivial integers.",
+        "misconceptions": [
+          "multiplying entries element by element",
+          "using a row from each factor instead of a row and column"
+        ],
+        "difficulty": 2
+      },
+      "reasoning": {
+        "objective": "Select a valid reason or explicit counterexample showing that matrix multiplication need not commute.",
+        "misconceptions": [
+          "assuming scalar commutativity transfers to matrices",
+          "assuming equal dimensions force equal products"
+        ],
+        "difficulty": 2
+      }
+    },
+    "vector": {
+      "meaning": {
+        "objective": "Identify vector equality from ordered components and distinguish position from magnitude.",
+        "misconceptions": [
+          "same magnitude implies equal vectors",
+          "component order is irrelevant"
+        ],
+        "difficulty": 1
+      },
+      "application": {
+        "objective": "Compute a small linear combination of two vectors with signed scalar coefficients.",
+        "misconceptions": [
+          "forgetting a negative coefficient",
+          "adding the scalar to each component"
+        ],
+        "difficulty": 2
+      },
+      "reasoning": {
+        "objective": "Judge whether a proposed vector lies in the span of two specified vectors and choose a valid justification.",
+        "misconceptions": [
+          "any vector in the ambient space lies in the span",
+          "matching only one component proves membership"
+        ],
+        "difficulty": 2
+      }
+    },
+    "linear system": {
+      "meaning": {
+        "objective": "Distinguish no solution, one solution, and infinitely many solutions of a linear system.",
+        "misconceptions": [
+          "a free variable means no solution",
+          "every square system has exactly one solution"
+        ],
+        "difficulty": 1
+      },
+      "application": {
+        "objective": "Find the solution of a concrete two-variable linear system with a unique solution.",
+        "misconceptions": [
+          "sign error during elimination",
+          "substituting into only one original equation"
+        ],
+        "difficulty": 2
+      },
+      "reasoning": {
+        "objective": "Infer consistency from an augmented row-echelon matrix and select the valid reason.",
+        "misconceptions": [
+          "ignoring a contradictory augmented row",
+          "confusing a free variable with inconsistency"
+        ],
+        "difficulty": 2
+      }
+    },
+    "linear independence": {
+      "meaning": {
+        "objective": "Recognize the condition that defines linear independence using the zero linear combination.",
+        "misconceptions": [
+          "no vector is zero implies independence",
+          "distinct vectors are always independent"
+        ],
+        "difficulty": 1
+      },
+      "application": {
+        "objective": "Determine dependence of a small explicit vector set by finding a nontrivial linear combination.",
+        "misconceptions": [
+          "checking only vector inequality",
+          "treating the zero coefficient solution as evidence of dependence"
+        ],
+        "difficulty": 2
+      },
+      "reasoning": {
+        "objective": "Judge a dependence claim for more than two vectors and identify a valid argument or counterexample.",
+        "misconceptions": [
+          "pairwise nonparallel implies joint independence",
+          "independence of a subset guarantees independence of the full set"
+        ],
+        "difficulty": 2
+      }
+    },
+    "basis": {
+      "meaning": {
+        "objective": "Identify both spanning and linear independence as necessary conditions for a basis of a specified space.",
+        "misconceptions": [
+          "spanning alone is sufficient",
+          "linear independence alone is sufficient regardless of size"
+        ],
+        "difficulty": 1
+      },
+      "application": {
+        "objective": "Find coordinates of a vector relative to a specified nonstandard basis in R^2.",
+        "misconceptions": [
+          "using standard coordinates as basis coordinates",
+          "swapping the order of the basis vectors"
+        ],
+        "difficulty": 2
+      },
+      "reasoning": {
+        "objective": "Infer how replacing or adding a vector affects whether a set is a basis, with a justified concrete claim.",
+        "misconceptions": [
+          "adding a vector always improves a basis",
+          "any replacement preserves spanning and independence"
+        ],
+        "difficulty": 2
+      }
+    },
+    "orthogonality": {
+      "meaning": {
+        "objective": "Recognize orthogonality from a zero inner product and distinguish it from linear independence.",
+        "misconceptions": [
+          "orthogonal means normalized",
+          "independent vectors are always orthogonal"
+        ],
+        "difficulty": 1
+      },
+      "application": {
+        "objective": "Calculate a dot product or a scalar parameter that makes two nonzero concrete vectors orthogonal.",
+        "misconceptions": [
+          "equating components instead of the dot product",
+          "ignoring signs in the dot product"
+        ],
+        "difficulty": 2
+      },
+      "reasoning": {
+        "objective": "Identify a valid argument that nonzero mutually orthogonal vectors are linearly independent, including the role of nonzero norms.",
+        "misconceptions": [
+          "the zero vector may be included without affecting independence",
+          "orthogonality means all coefficients in every combination are zero"
+        ],
+        "difficulty": 2
+      }
+    }
+  }
+}

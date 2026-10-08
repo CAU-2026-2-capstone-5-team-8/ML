@@ -1,0 +1,70 @@
+config_version: assessment-config-v2-reviewed
+pool_version: topic-concept-pool-v1
+blueprint_version: assessment-blueprint-v1
+self_assessment_version: concept-self-assessment-v1
+question_spec_version: question-spec-v1
+difficulty_version: question-difficulty-v1
+selection_mode: reviewed
+review_schema_version: assessment-concept-review-v1
+review_reserve:
+  covered: 3
+  prerequisite: 3
+
+# Occurrence helps order the human-review queue. It never decides eligibility or difficulty.
+priority:
+  mean_book_weight: 0.7
+  book_coverage_rate: 0.3
+self_assessment_limits:
+  covered: 8
+  prerequisite: 4
+question_quotas:
+  vocabulary:
+    recognize: 4
+    compare: 2
+  background_knowledge:
+    recall: 3
+  comprehension:
+    apply: 3
+    integrate: 2
+
+operation_levels:
+  recognize: 1
+  recall: 1
+  compare: 2
+  relate: 2
+  apply: 2
+  integrate: 3
+  infer: 3
+minimum_related_concepts:
+  recognize: 0
+  recall: 0
+  compare: 1
+  relate: 1
+  apply: 0
+  integrate: 1
+  infer: 0
+relationship_operations: [compare, relate, integrate, infer]
+multi_step_operations: [integrate, infer]
+
+relation_pairs:
+  operating-systems:
+    - [process, thread]
+    - [synchronization, concurrency]
+    - [virtual memory, memory management]
+    - [file system, storage]
+    - [scheduling, process]
+  linear-algebra:
+    - [eigenvalue, eigenvector]
+    - [basis, vector space]
+    - [matrix, linear transformation]
+    - [orthogonality, inner product]
+    - [linear system, gaussian elimination]
+    - [determinant, matrix]
+
+prose_document_preference:
+  - sample_chapter
+  - introduction
+  - preview
+  - preface
+  - other
+max_evidence_refs_per_spec: 6

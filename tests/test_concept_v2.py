@@ -193,6 +193,8 @@ def test_concept_cli_accepts_reordered_valid_v1_profiles(tmp_path: Path):
         app,
         [
             "evaluate-concept-matching",
+            "--feature-config",
+            str(ROOT / "configs/features.yaml"),
             "--data-dir",
             str(fixture_dir),
             "--reader",
@@ -319,11 +321,13 @@ def test_v2_profile_artifact_defaults_new_exclusion_fields_for_compatibility():
     payload = profile([entry("p", "Processes", None, 1, 0)], REAL_GRAPH).model_dump()
     payload["profile_version"] = "toc-concept-profile-v2"
     payload.pop("excluded_alias_matches")
+    payload.pop("matcher_version")
     payload["diagnostics"].pop("excluded_toc_entries")
 
     restored = BookConceptProfileV2.model_validate(payload)
 
     assert restored.profile_version == "toc-concept-profile-v2"
+    assert restored.matcher_version == "normalized_alias_phrase_v1"
     assert restored.excluded_alias_matches == []
     assert restored.diagnostics.excluded_toc_entries == 0
 

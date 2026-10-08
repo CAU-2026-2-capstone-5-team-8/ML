@@ -9,6 +9,7 @@ from bookmatch_ml.concept_v2.profile import BookConceptProfileV2
 from bookmatch_ml.ranking.prerequisite_first_v2 import (
     RankingV2Response as InternalRankingV2Response,
 )
+from bookmatch_ml.reader.diagnostics import ReaderDiagnostics
 from bookmatch_ml.schemas import (
     Assessment,
     AssessmentResponse,
@@ -42,6 +43,11 @@ class AssessmentResponseDto(ApiModel):
     concept_id: str | None = None
     concept_tags: list[str] = Field(default_factory=list)
     question_type: QuestionType
+    cognitive_operation: (
+        Literal["recognize", "recall", "compare", "relate", "apply", "integrate", "infer"] | None
+    ) = None
+    answer_mode: Literal["MULTIPLE_CHOICE", "SELF_REPORT"] | None = None
+    measurement_context: Literal["prior-knowledge", "provided-information"] | None = None
     difficulty: str = Field(min_length=1)
     correct: bool | None = None
     score: float | None = Field(default=None, ge=0, le=1)
@@ -62,6 +68,48 @@ class ReaderProfileRequest(ApiModel):
             topic_id=self.topic_id,
             responses=[response.to_internal() for response in self.responses],
         )
+
+
+class DepthEvidenceDto(ApiModel):
+    question_type: QuestionType
+    difficulty: Literal["easy", "medium", "hard"]
+    response_count: int = Field(ge=0)
+    score: float | None = Field(default=None, ge=0, le=1)
+    full_credit_count: int = Field(ge=0)
+    question_ids: list[str]
+
+
+class NextDepthCheckDto(ApiModel):
+    question_type: QuestionType
+    difficulty: Literal["easy", "medium", "hard"]
+    reason: Literal["review_observed_gap", "unassessed"]
+
+
+class ConceptDepthDiagnosticDto(ApiModel):
+    concept_id: str
+    observed_score: float = Field(ge=0, le=1)
+    response_count: int = Field(ge=1)
+    evidence: list[DepthEvidenceDto]
+    fully_observed: bool
+    next_check: NextDepthCheckDto | None
+
+
+class ReaderDiagnosticsResponse(ApiModel):
+    user_id: int | None = Field(default=None, ge=1)
+    assessment_id: str
+    topic_id: str
+    response_count: int = Field(ge=1)
+    untagged_response_count: int = Field(ge=0)
+    concepts: list[ConceptDepthDiagnosticDto]
+    diagnostic_version: Literal["reader-depth-evidence-v1"]
+    profile_version: str
+    config_version: str
+    config_hash: str
+    limitations: list[str]
+
+    @classmethod
+    def from_internal(cls, result: ReaderDiagnostics, *, user_id: int | None) -> Self:
+        return cls(user_id=user_id, **result.model_dump())
 
 
 class ReaderDimensionDetailDto(ApiModel):
@@ -93,6 +141,7 @@ class ReaderProfileResponse(ApiModel):
     profile_version: str
     config_version: str
     config_hash: str
+    concept_profile: dict[str, object] | None = None
 
     @classmethod
     def from_internal(cls, profile: ReaderProfile, *, user_id: int | None) -> Self:

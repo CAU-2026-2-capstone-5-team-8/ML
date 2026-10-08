@@ -5,6 +5,15 @@ extends the existing TOC/graph baseline with explicit concept levels, prerequisi
 learning burden, and a blind human-review export. Run it separately from the unchanged v1 API
 until independent recommendation-quality evaluation is complete.
 
+For concept-level response evidence grouped by question type and declared difficulty, use
+`POST /ml/reader-diagnostics` with the existing reader-profile request. It returns observed
+scores, question references, and the next assessment cell to review or probe, without changing
+the current profile scores or ranking. See [reader depth diagnostics](docs/reader-depth-diagnostics-v1.md).
+
+선형대수 실도서 3권의 실제 프로필·추천 HTTP 연결은
+[live handoff](docs/linear-algebra-live-handoff.md)와
+[REST Client 예제](examples/linear-algebra-live.http)를 참고하세요.
+
 For a reproducible canonical-data → local HTTP verification workflow and the 25-book
 integration findings, see [Canonical HTTP verification](docs/canonical-http-verification-v1.md).
 The check verifies API consistency, not recommendation accuracy.
@@ -44,7 +53,7 @@ logic.
 
 ## Inspect source-aware book evidence
 
-Data-Pipeline can also export an additive `book-evidence-v1` JSONL artifact for all benchmark
+Data-Pipeline can export `book-evidence-v1/v2/v3` JSONL artifacts for all benchmark
 books, including metadata fallbacks when TOC is unavailable. Validate it without changing the
 existing canonical loader, matcher, or ranking v1:
 
@@ -323,6 +332,69 @@ Documents are first analyzed independently and then combined with the recorded
 `token_weighted_mean_v1` aggregation rule. Books without sufficient prose retain `null` scores;
 short prose is recorded under `excluded_documents` with a reason.
 
+`text_scope_version=text-extent-v1` adds excerpt/complete-section/unknown coverage counts and
+per-document `text_extent`, including excluded documents. `analyzed_text_scope` identifies
+`excerpt_only`, `complete_sections_only`, `mixed_or_unknown`, or `unavailable`. A complete named
+section is not a complete book. Historical missing scope stays unknown; scores and ranking
+formulas are unchanged. See the [98-book handoff verification](docs/experiments/text-extent-handoff-2026-10-03.md).
+
+## Prose language diagnostics
+
+For already stored English TOC fields, compare both texts with identical settings:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> --output data/reports/english-comparison.json
+```
+
+This opt-in comparison uses paired TOC rows only; absent English never falls back to the original.
+It preserves existing analysis/ranking behavior and makes no translation calls. The
+[real 10-book comparison](docs/experiments/english-evidence-comparison-2026-10-03.md) reproduces
+4→10 matched books and 13→131 book/concept pairs; translation accuracy remains unreviewed.
+
+For manual inspection, add `--review-packet` and choose a new local output file:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> --review-packet \
+  --output data/reviews/english-evidence-review.json
+```
+
+The packet contains **exact source texts** and provenance: keep it in ignored local storage.
+It includes all TOC rows (including unchanged/unmatched rows), row-level added/removed
+concepts, and which rows support book-level changes. Prose samples retain their extent and
+rights metadata in a separate list; missing English remains null and no prose score is
+calculated. Reviewer identity, translation judgments, match judgments, and notes start null.
+These fields are a manual worksheet, not automatically accepted evaluation labels.
+Default comparison output remains text-free. See the
+[review preparation and observed gaps](docs/experiments/english-evidence-review-2026-10-03.md).
+
+An opt-in dot-product alias candidate is available for this comparison:
+
+```bash
+uv run bookmatch-ml compare-english-evidence \
+  --input <book-evidence-v3.jsonl> \
+  --matching-config configs/concept_matching_dot_product_v1.yaml \
+  --output data/reports/english-dot-product-comparison.json
+```
+
+It adds only `dot product` and `dot products` to the existing linear-algebra `inner product`
+concept. The production default remains the frozen overlap-only configuration. The
+[candidate comparison](docs/experiments/dot-product-alias-2026-10-03.md) records four recovered
+TOC matches, unchanged frozen-set predictions, and the remaining validation boundary.
+
+Before interpreting prose scores across languages, run the independent diagnostic:
+
+```bash
+uv run bookmatch-ml audit-prose-language \
+  --data-dir <canonical-directory> --baseline-language en \
+  --output data/reports/prose-language-audit.json
+```
+
+It records declared-language mismatches, script counts, scope and baseline measurements without
+changing scores or inventing human labels. A language match is not validation; outputs always
+remain `not_evaluated`. See the [real Korean prose audit](docs/experiments/korean-prose-language-audit-2026-10-03.md).
+
 ## Evidence ablation
 
 Compare the required evidence conditions for a rich-evidence book:
@@ -407,6 +479,96 @@ This blueprint prepares Stage 1 concept self-report and Stage 2 quiz verificatio
 change the existing reader-profile scoring or ranking API. See
 [Question Difficulty v1](docs/assessment-difficulty-v1.md) for rules, real-data findings, and
 limitations.
+
+### Build one generation grounding artifact
+
+QuestionSpec provenance identifies analyzed prose but intentionally does not copy book text. For
+the narrow `comprehension / apply / Level 2` slice, bind one selected source document to an exact,
+bounded passage before sending anything to a question provider:
+
+```bash
+uv run bookmatch-ml build-generation-grounding \
+  --data-dir ../Data-Pipeline/data/processed \
+  --blueprint data/output/linear_algebra_assessment_blueprint_reviewed.json \
+  --question-id q_375e5b6bef551015f67c \
+  --output data/output/linear_algebra_matrix_grounding.json
+```
+
+`generation-grounding-v1` verifies the blueprint's four canonical file hashes, exact
+QuestionSpec, document/book/source joins, document content hash, prose type, and an approved
+explicit reuse license. It then selects the first sentence containing the primary concept and
+enough immediately following source sentences to reach 600 characters, with a hard 1,800-character
+ceiling. The passage remains an exact contiguous substring of `Document.text`; no model or network
+call is used.
+The artifact records the passage hash, source and document hashes, license and rights provenance,
+and contains no export timestamp, so identical inputs produce byte-identical output. `integrate`,
+Level 3, multiple-source, unapproved-license, missing, altered, or irrelevant inputs fail closed.
+
+Actual Linear Algebra availability and the architecture choice are documented in the
+[comprehension grounding report](docs/experiments/comprehension-grounding-v1.md). Generated
+grounding artifacts contain third-party text and therefore remain under ignored `data/output/`.
+
+For user-facing presentation, build the additive v2 artifact without changing the v1 raw-passage
+meaning:
+
+```bash
+uv run bookmatch-ml build-generation-grounding-v2 \
+  --data-dir ../Data-Pipeline/data/processed \
+  --blueprint data/output/linear_algebra_assessment_blueprint_reviewed.json \
+  --question-id q_375e5b6bef551015f67c \
+  --output data/output/linear_algebra_matrix_grounding_v2.json
+```
+
+`generation-grounding-v2` preserves the exact canonical substring as `source_passage_text` and
+adds a separately hashed `display_passage_text`. `pdf-display-normalization-v1` is a reviewed,
+source-hash-bound replacement policy rather than a broad spacing heuristic; unknown or changed
+passages fail closed. The Data-Pipeline canonical files and their hashes are not modified. See the
+[display grounding report](docs/experiments/comprehension-grounding-display-v2.md) for the PDF
+extraction comparison, exact rules, hash chain, and limitations.
+
+### Review assessment-worthy concepts
+
+Concept evidence, prerequisite inference, and assessment eligibility are separate decisions. In
+particular, `prerequisite` does not automatically mean that a concept is worth asking as a
+diagnostic question. Prepare a bounded, evidence-rich human-review queue without changing the
+legacy `assessment-config-v1` blueprint:
+
+```bash
+uv run bookmatch-ml prepare-assessment-concept-review \
+  --data-dir ../Data-Pipeline/data/processed \
+  --books data/output/book_profiles.jsonl \
+  --topic operating-systems \
+  --output data/reviews/assessment_concept_review_operating_systems_v1.json
+
+uv run bookmatch-ml prepare-assessment-concept-review \
+  --data-dir ../Data-Pipeline/data/processed \
+  --books data/output/book_profiles.jsonl \
+  --topic linear-algebra \
+  --output data/reviews/assessment_concept_review_linear_algebra_v1.json
+```
+
+Human decisions live in the source-controlled
+`configs/assessment_concept_reviews.yaml`; generated packets under `data/reviews/` stay ignored.
+The review key is `topic_id + concept_id + concept_role`, so the same concept can be eligible as a
+covered target and ineligible as a prerequisite target. To build the fail-closed reviewed mode:
+
+```bash
+uv run bookmatch-ml build-assessment-blueprint \
+  --data-dir ../Data-Pipeline/data/processed \
+  --books data/output/book_profiles.jsonl \
+  --topic operating-systems \
+  --assessment-config configs/assessment_reviewed.yaml \
+  --concept-reviews configs/assessment_concept_reviews.yaml \
+  --output data/output/operating_systems_assessment_blueprint_reviewed.json
+```
+
+Only explicit `eligible` rows may become assessment targets. `ineligible`, explicit `unreviewed`,
+and missing decisions are excluded; quota gaps remain visible shortages and are never silently
+backfilled. The reviewed config hash binds the exact review artifact bytes while preserving the
+existing `question-spec-v1` schema. See the
+[assessment concept review report](docs/experiments/assessment-concept-review-v1.md).
+The cross-domain Linear Algebra queue is documented in the
+[Linear Algebra assessment concept review report](docs/experiments/linear-algebra-assessment-concept-review-v1.md).
 
 ## Experimental concept matching v3 and difficulty v2
 
@@ -764,3 +926,54 @@ src/bookmatch_ml/
 
 Canonical and generated third-party data belongs in ignored `data/` subdirectories. Do not
 commit raw book text to this repository.
+
+## English evidence integration boundary
+
+Canonical book/TOC/document English fields follow the current optional-field schema.
+The evidence handoff accepts English only through `book-evidence-v3`; v1/v2 remain frozen.
+Default concept mapping, prose difficulty, and question grounding use original text.
+Stored English is compared explicitly with `compare-english-evidence` and can be inspected
+with `--review-packet`; it does not silently replace the source passage or its hash.
+
+The earlier English-first pilot configuration and helper have been retired from this PR.
+CLI defaults remain `configs/features.yaml` and `configs/concept_matching_v2.yaml`.
+Historical pilot outputs are local snapshots, not active Backend projections. See the
+[PR #32 reconciliation](docs/account-concept-v3-integration.md) for compatibility checks.
+
+대량 수집 471권·목차439권과 LA83 후보의 실제 연동은 [대량 데이터 후속 연결](docs/linear-algebra-live-handoff.md#대량-데이터-후속-연결)을 참고한다. 고정 snapshot 준비는 `scripts/prepare_discovery_catalog_handoff.py`, 실제 HTTP 검증은 `scripts/verify_discovery_catalog_live.py`를 사용한다.
+
+## 개념·수행 능력 추천과 공통 지도 (2026-10-03)
+
+`/ml/reader-profile`에 전달된 `answerMode`와 `cognitiveOperation`으로 objective 개념·능력 관찰을 만들고 자기평가를 분리한 `conceptProfile`을 반환합니다. `/ml/concepts/{topicId}`는 검토 승인된 공통 개념 그래프를 제공하고, `/ml/learning-fit`은 선택 능력의 objective 관찰·책 내용·선수관계 후보를 비교하는 `concept-learning-v1` 기준선입니다. 기존 `/ml/rank` 계약과 알고리즘은 변경하지 않습니다. 새 추천은 미평가를 0으로 채우거나 자기평가를 verified 능력으로 합치지 않으며, 선수관계가 비어 있는 경우에도 준비도 판단을 보류합니다. 상세 계약·제약·실제 앱 연결은 [Backend 설계 기록](../Backend/docs/concept-learning-v1.md)을 참고하세요.
+
+
+## 개념별 진단 설계서 v2
+
+개인별 세부 순위 실험은 [학습 순위 v3](docs/personalized-learning-order-v3.md)를 참고한다.
+`/ml/learning-fit`의 명시적 v3 요청만 적용되며 앱 기본 v2 추천은 유지한다.
+
+`build-concept-assessment`는 선형대수 6개 개념 × 뜻·성질/계산·적용/설명·추론 목표 18개를 생성합니다.
+목표·오개념·설계 난도는 `configs/concept_assessment_targets.json`에 있습니다. 기존 문항 유형 할당과 별개이며,
+실제 canonical 목차 연결이 없는 개념은 생성하지 않습니다. 입력 네 파일과 개념 그래프·매칭·특징 설정의 해시를 보존합니다.
+목차는 평가 대상 선정 근거입니다. 정답, 학년, 책 본문 난이도의 근거로 쓰지 않습니다.
+
+```sh
+uv run bookmatch-ml build-concept-assessment --data-dir ../Data-Pipeline/data/processed --output data/output/concept-assessment-v2/blueprint.json
+```
+
+버전은 `concept-assessment-blueprint-v2` / `concept-question-spec-v2`이며 QG가 독립 계약 사본을 읽습니다.
+QG의 생성·검토·Backend 등록 흐름은 [개편 계획](../Question-Generation/docs/concept-assessment-plan.md)에 있습니다.
+생성은 이 저장소의 책임이 아니고, 실제 사용자 응답이나 외부 생성 API를 기본 테스트에서 호출하지 않습니다.
+
+`concept-abilities-v2`는 `measurementContext=prior-knowledge`의 객관식 응답만 `abilities`로 집계합니다.
+`provided-information`은 `providedInformationAbilities`, 조건이 없는 예전 객관식은 `legacyContextAbilities`에
+분리합니다. 자기평가는 `selfReports`입니다. 뜻/적용/추론의 정답 수는 관찰이며 보정된 숙련도 확률이 아닙니다.
+기존 종합 점수는 저장 호환용으로 유지되지만 새 추천에서 사용하지 않습니다.
+개념 문항의 `generated-question-v5` 계약은 생성 프롬프트 v1과 Markdown·LaTeX 규칙을 추가한 v2를 모두 읽습니다.
+본문 표시 형식은 개념·능력·측정 조건·목차 근거를 바꾸지 않으며, 본문 변경은 새 content ID로 검증합니다.
+
+### v2·v3 추천 순서의 사람 평가
+
+평가표 생성 → 독립 평가자 입력 → 파일 검증 및 동순위 보존 비교 명령은
+[사람 평가 안내](docs/learning-order-human-evaluation.md)를 참고하세요.
+점수 없는 평가표는 평가 대기로 처리하며, 앱의 기본 추천 모델은 변경하지 않습니다.

@@ -57,6 +57,14 @@ def calculate_evidence_coverage(
         document_count=len(documents),
         prose_document_count=len(prose_documents),
         prose_character_count=sum(len(document.text) for document in prose_documents),
+        excerpt_prose_document_count=sum(
+            d.text_extent is not None and d.text_extent.scope == "excerpt" for d in prose_documents
+        ),
+        complete_section_prose_document_count=sum(
+            d.text_extent is not None and d.text_extent.scope == "complete_section"
+            for d in prose_documents
+        ),
+        unknown_extent_prose_document_count=sum(d.text_extent is None for d in prose_documents),
     )
 
 

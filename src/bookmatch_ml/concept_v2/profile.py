@@ -178,7 +178,9 @@ class BookConceptProfileV2(_Strict):
     feature_config_hash: str
     matching_config_version: str
     matching_config_hash: str
-    matcher_version: Literal["normalized_alias_phrase_v1", "normalized_alias_span_v2"]
+    matcher_version: Literal["normalized_alias_phrase_v1", "normalized_alias_span_v2"] = (
+        "normalized_alias_phrase_v1"
+    )
     toc_file_hash: str
     excluded_alias_matches: list[ExcludedAliasMatch] = Field(default_factory=list)
 

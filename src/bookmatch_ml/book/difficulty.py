@@ -133,6 +133,7 @@ def _analyze_document(
     return DocumentDifficulty(
         document_id=document.document_id,
         document_type=document.document_type,
+        text_extent=document.text_extent,
         character_count=len(document.text),
         token_count=token_count,
         sentence_count=sentence_count,
@@ -159,6 +160,7 @@ def build_difficulty_profile(
                 ExcludedProseDocument(
                     document_id=document.document_id,
                     document_type=document.document_type,
+                    text_extent=document.text_extent,
                     character_count=len(document.text),
                     token_count=token_count,
                     reason="no_tokens" if token_count == 0 else "below_minimum_tokens",
@@ -178,6 +180,16 @@ def build_difficulty_profile(
         )
 
     config = loaded_config.config
+    scopes = {d.text_extent.scope if d.text_extent else "unknown" for d in analyzed}
+    analyzed_scope = (
+        "unavailable"
+        if not analyzed
+        else "excerpt_only"
+        if scopes == {"excerpt"}
+        else "complete_sections_only"
+        if scopes == {"complete_section"}
+        else "mixed_or_unknown"
+    )
     return DifficultyProfile(
         book_id=evidence.book_id,
         lexical_difficulty=aggregate("lexical_difficulty"),
@@ -189,6 +201,7 @@ def build_difficulty_profile(
         analyzed_token_count=analyzed_token_count,
         documents=analyzed,
         excluded_documents=excluded,
+        analyzed_text_scope=analyzed_scope,
         aggregation_rule=config.difficulty.aggregation_rule,
         feature_version=config.difficulty_profile_version,
         config_version=config.config_version,

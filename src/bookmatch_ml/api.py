@@ -7,6 +7,8 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 
 from bookmatch_ml.concept_v2.difficulty import load_difficulty_policy
+from bookmatch_ml.concept_v2.learning_fit import LearningFitRequest, recommend_learning
+from bookmatch_ml.concept_v2.presentation import concept_graph
 from bookmatch_ml.config import (
     LoadedRankingConfig,
     LoadedRankingV2Config,
@@ -19,6 +21,7 @@ from bookmatch_ml.integration.schemas import (
     RankRequest,
     RankResponse,
     RankV2Response,
+    ReaderDiagnosticsResponse,
     ReaderProfileRequest,
     ReaderProfileResponse,
 )
@@ -70,8 +73,9 @@ def _load_ranking_v2_config(path: Path | None) -> LoadedRankingV2Config | None:
 def create_app(
     reader_config_path: Path | None = None,
     ranking_config_path: Path | None = None,
-    concept_difficulty_config_path: Path | None = None,
     ranking_v2_config_path: Path | None = None,
+    *,
+    concept_difficulty_config_path: Path | None = None,
 ) -> FastAPI:
     """Create an offline calculation API with versioned local configuration."""
 
@@ -92,8 +96,8 @@ def create_app(
     service = IntegrationService(
         reader_config,
         ranking_config,
-        difficulty_policy,
         ranking_v2_config,
+        difficulty_policy=difficulty_policy,
     )
     application = FastAPI(
         title="BookMatch ML Integration API",
@@ -108,11 +112,36 @@ def create_app(
         except (AssessmentError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
+    @application.post("/ml/reader-diagnostics", response_model=ReaderDiagnosticsResponse)
+    def reader_diagnostics(request: ReaderProfileRequest) -> ReaderDiagnosticsResponse:
+        try:
+            return service.reader_diagnostics(request)
+        except (AssessmentError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @application.get("/ml/concepts/{topic_id}")
+    def concepts(topic_id: str) -> dict[str, object]:
+        if ranking_v2_config is None:
+            raise HTTPException(status_code=503, detail="concept graph is not configured")
+        try:
+            return concept_graph(ranking_v2_config, topic_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
     @application.post("/ml/rank", response_model=RankResponse | RankV2Response)
     def rank(request: RankRequest) -> RankResponse | RankV2Response:
         try:
             return service.rank(request)
         except (RankingError, RankingV2Error, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @application.post("/ml/learning-fit")
+    def learning_fit(request: LearningFitRequest) -> dict:
+        if ranking_v2_config is None:
+            raise HTTPException(status_code=503, detail="concept graph is not configured")
+        try:
+            return recommend_learning(request, ranking_v2_config)
+        except ValueError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return application

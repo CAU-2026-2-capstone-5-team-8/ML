@@ -122,6 +122,34 @@ def test_reader_profile_endpoint_uses_camel_case_and_echoes_correlation_id() -> 
     assert payload["configHash"].startswith("sha256:")
 
 
+def test_reader_diagnostics_endpoint_preserves_profile_and_provides_depth_evidence() -> None:
+    request = _reader_request()
+    before = _post("/ml/reader-profile", request).json()
+    response = _post("/ml/reader-diagnostics", request)
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["userId"] == 42
+    assert payload["diagnosticVersion"] == "reader-depth-evidence-v1"
+    assert payload["configHash"] == before["configHash"]
+    assert payload["concepts"]
+    assert all(len(c["evidence"]) == 9 for c in payload["concepts"])
+    scores = {c["conceptId"]: c["score"] for c in before["conceptReadiness"]}
+    for concept in payload["concepts"]:
+        assert concept["observedScore"] == scores[concept["conceptId"]]
+        assert all("questionType" in cell for cell in concept["evidence"])
+    assert _post("/ml/reader-profile", request).json() == before
+    assert _post("/ml/reader-diagnostics", request).json() == payload
+
+
+def test_reader_diagnostics_rejects_duplicate_questions_and_invalid_difficulty() -> None:
+    duplicate = _reader_request()
+    duplicate["responses"].append(duplicate["responses"][0])
+    assert _post("/ml/reader-diagnostics", duplicate).status_code == 422
+    invalid = _reader_request()
+    invalid["responses"][0]["difficulty"] = "unreviewed"
+    assert _post("/ml/reader-diagnostics", invalid).status_code == 422
+
+
 def test_rank_endpoint_returns_flat_components_and_evidence_diagnostics() -> None:
     request = {
         "readerProfile": _matching_reader_payload(),
@@ -213,9 +241,8 @@ def test_baseline_app_starts_with_legacy_external_config_directory(monkeypatch, 
 
     application = create_app()
 
-    assert {route.path for route in application.routes if route.path.startswith("/ml/")} == {
-        "/ml/reader-profile",
-        "/ml/rank",
+    assert {"/ml/reader-profile", "/ml/rank"} <= {
+        route.path for route in application.routes if route.path.startswith("/ml/")
     }
 
 
@@ -360,10 +387,16 @@ def test_api_rejects_duplicate_candidates_and_unknown_specific_book() -> None:
     assert unknown.status_code == 422
 
 
-def test_openapi_contract_exposes_only_the_two_calculation_routes() -> None:
+def test_openapi_contract_exposes_calculation_and_reviewed_graph_routes() -> None:
     schema = _get("/openapi.json").json()
 
-    assert set(schema["paths"]) == {"/ml/reader-profile", "/ml/rank"}
+    assert set(schema["paths"]) == {
+        "/ml/reader-profile",
+        "/ml/reader-diagnostics",
+        "/ml/rank",
+        "/ml/concepts/{topic_id}",
+        "/ml/learning-fit",
+    }
     reader_properties = schema["components"]["schemas"]["ReaderProfileRequest"]["properties"]
     rank_properties = schema["components"]["schemas"]["RankRequest"]["properties"]
     assert "assessmentId" in reader_properties
@@ -381,7 +414,10 @@ def test_app_factory_uses_packaged_configs_outside_repository_working_directory(
 
     assert {route.path for route in application.routes if route.path.startswith("/ml/")} == {
         "/ml/reader-profile",
+        "/ml/reader-diagnostics",
         "/ml/rank",
+        "/ml/concepts/{topic_id}",
+        "/ml/learning-fit",
     }
 
 
