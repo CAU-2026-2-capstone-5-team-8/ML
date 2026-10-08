@@ -122,10 +122,10 @@ class IntegrationService:
                 raise ValueError(
                     "experimental concept difficulty requires reader and book topics to match"
                 )
-            baseline = score_matching_book_fit(reader, book, self._ranking_config)
             result = score_difficulty(reader, profile, self._difficulty_policy)
             if result["recommendation_score"] is None:
                 continue
+            baseline = score_matching_book_fit(reader, book, self._ranking_config)
             reasons = [
                 *baseline.reasons,
                 (

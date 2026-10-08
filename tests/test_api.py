@@ -464,3 +464,17 @@ def test_packaged_api_configs_match_versioned_project_defaults() -> None:
 
     for name in ("reader.yaml", "ranking.yaml", "ranking_v2.yaml", "concept_difficulty.yaml"):
         assert packaged.joinpath(name).read_bytes() == (ROOT / "configs" / name).read_bytes()
+
+
+def test_unscorable_experimental_candidate_is_skipped_before_baseline(monkeypatch):
+    import bookmatch_ml.integration.service as service
+
+    monkeypatch.setattr(service, "score_difficulty", lambda *args: {"recommendation_score": None})
+
+    def cannot_score(*args):
+        raise AssertionError("ineligible candidate must never reach baseline scoring")
+
+    monkeypatch.setattr(service, "score_matching_book_fit", cannot_score)
+    response = _post("/ml/rank", _experimental_request(0.5))
+    assert response.status_code == 422
+    assert "no candidate has sufficient concept evidence" in response.json()["detail"]
