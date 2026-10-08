@@ -1004,8 +1004,16 @@ uv run bookmatch-ml prepare-topic-content \
 
 `BOOKMATCH_ML_TOPIC_REGISTRY`를 Backend 작업 디렉터리의 `runtime-topics` 경로로
 설정하면 검토된 새 분야를 개념 지도와 `concept-learning-v2`에서 읽는다. 포인터·불변
-그래프 파일의 해시·분야 ID·개념 namespace·선수관계 DAG를 검사한다. 기존 고정 분야의
-운영 설정은 이 레지스트리로 덮어쓰지 않는다. 모델이나 외부 API를 요청마다 호출하지 않는다.
+그래프 파일의 해시·분야 ID·개념 namespace·선수관계 DAG를 검사한다. 기본값에서는 기존
+고정 분야의 설정을 우선한다. 모델이나 외부 API를 요청마다 호출하지 않는다.
+
+기존 분야를 Backend의 검토된 자동 준비 경로로 이전할 때만
+`BOOKMATCH_ML_RUNTIME_OVERRIDE_TOPICS=operating-systems,probability-statistics`처럼
+쉼표로 구분한 분야 ID를 명시한다. 레지스트리에 검토된 포인터가 있으면 해당 분야의
+`/ml/concepts/{topic}`와 `/ml/learning-fit`이 그 그래프·해시를 사용한다. 포인터가 없으면
+기존 설정을 유지하고, 포인터가 있는데 변조됐으면 실패한다. 허용 목록을 바꾼 뒤에는
+ML 서버를 재시작한다. 선형대수처럼 지정하지 않은 분야와 `/ml/rank`의 고정 v2 설정은
+유지된다. 활성 문항이 있는 분야의 교체는 별도 이관 검토 없이 이 설정만으로 진행하지 않는다.
 
 새 분야 준비는 `single-source-complete-toc-v1` 정책으로 책마다 유효한 출처별 목차 하나를
 선택한다. 원본 자료와 제외 이유는 남고, 개념 연결과 평가 설계에 동일한 선택을 적용한다.
