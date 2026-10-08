@@ -80,6 +80,34 @@ def test_new_topics_resolve_without_server_restart_and_preserve_production_graph
     )
 
 
+def test_existing_topic_requires_explicit_override_and_keeps_fixed_config(registered):
+    registry, original_topic, base, graph, payload = registered
+    topic = "operating-systems"
+    payload = json.loads(json.dumps(payload).replace(original_topic, topic))
+    graph.write_text(json.dumps(payload))
+    pointer = registry / (topic + ".json")
+    pointer.write_text(
+        json.dumps(
+            {
+                "topicId": topic,
+                "graphPath": str(graph),
+                "graphHash": "sha256:" + hashlib.sha256(graph.read_bytes()).hexdigest(),
+            }
+        )
+    )
+    original_hash = base.content_hash
+    assert resolve_runtime_topic(registry, topic, base) is base
+    dynamic = resolve_runtime_topic(registry, topic, base, frozenset({topic}))
+    assert concept_graph(dynamic, topic)["configHash"] != original_hash
+    assert base.content_hash == original_hash
+    assert resolve_runtime_topic(registry, "linear-algebra", base, frozenset({topic})) is base
+    graph.write_text("{}")
+    with pytest.raises(ValueError, match="hash differs"):
+        resolve_runtime_topic(registry, topic, base, frozenset({topic}))
+    pointer.unlink()
+    assert resolve_runtime_topic(registry, topic, base, frozenset({topic})) is base
+
+
 @pytest.mark.parametrize("failure", ["tampered", "escape", "wrong-topic", "cycle"])
 def test_invalid_registry_fails_closed(registered, failure, tmp_path):
     registry, topic, base, graph, payload = registered

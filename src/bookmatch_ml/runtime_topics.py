@@ -53,8 +53,11 @@ class LoadedRuntimeGraph(BaseModel):
     content_hash: str
 
 
-def resolve_runtime_topic(registry: Path | None, topic: str, baseline):
-    if baseline is not None and topic in baseline.config.nodes:
+def resolve_runtime_topic(
+    registry: Path | None, topic: str, baseline, override_topics: frozenset[str] = frozenset()
+):
+    """Prefer the fixed graph unless an operator explicitly opts this topic into the registry."""
+    if baseline is not None and topic in baseline.config.nodes and topic not in override_topics:
         return baseline
     if registry is None:
         return baseline

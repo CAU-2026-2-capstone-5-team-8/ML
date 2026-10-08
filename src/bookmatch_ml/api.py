@@ -95,10 +95,18 @@ def create_app(
             difficulty_policy = load_difficulty_policy(packaged_path)
     ranking_v2_config = _load_ranking_v2_config(ranking_v2_config_path)
     runtime_registry = os.environ.get("BOOKMATCH_ML_TOPIC_REGISTRY")
+    runtime_overrides = frozenset(
+        topic.strip()
+        for topic in os.environ.get("BOOKMATCH_ML_RUNTIME_OVERRIDE_TOPICS", "").split(",")
+        if topic.strip()
+    )
 
     def graph_config(topic):
         return resolve_runtime_topic(
-            Path(runtime_registry) if runtime_registry else None, topic, ranking_v2_config
+            Path(runtime_registry) if runtime_registry else None,
+            topic,
+            ranking_v2_config,
+            runtime_overrides,
         )
 
     service = IntegrationService(
