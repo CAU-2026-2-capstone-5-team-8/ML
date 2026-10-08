@@ -23,6 +23,11 @@ from bookmatch_ml.schemas import ConceptReadiness
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def spreadsheet_text(value: str) -> str:
+    """Keep imported titles literal when the human review CSV is opened."""
+    return "'" + value if value.lstrip().startswith(("=", "+", "-", "@")) else value
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, required=True)
@@ -87,7 +92,7 @@ def main():
         review.append(
             {
                 "book_id": book.book_id,
-                "title": book.metadata.title,
+                "title": spreadsheet_text(book.metadata.title),
                 "topic": reader.topic_id,
                 "work_group": "",
                 "split": "unassigned",

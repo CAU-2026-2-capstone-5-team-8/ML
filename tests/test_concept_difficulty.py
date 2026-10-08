@@ -161,3 +161,14 @@ def test_unsupported_policy_topic_is_a_domain_error():
 
     with pytest.raises(ValueError, match="difficulty policy has no topic"):
         score_difficulty(unknown_reader, unknown_book, load_difficulty_policy(POLICY_PATH))
+
+
+def test_human_review_titles_are_literal_spreadsheet_text():
+    import runpy
+
+    safe = runpy.run_path(str(Path(__file__).parents[1] / "scripts/compare_concept_difficulty.py"))[
+        "spreadsheet_text"
+    ]
+    for title in ("=1+1", "+1", "-1", "@SUM(A1)", "\t=1", "  =1"):
+        assert safe(title) == "'" + title
+    assert safe("Linear Algebra") == "Linear Algebra"
