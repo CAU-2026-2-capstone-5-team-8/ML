@@ -971,6 +971,47 @@ QG의 생성·검토·Backend 등록 흐름은 [개편 계획](../Question-Gener
 기존 종합 점수는 저장 호환용으로 유지되지만 새 추천에서 사용하지 않습니다.
 개념 문항의 `generated-question-v5` 계약은 생성 프롬프트 v1과 Markdown·LaTeX 규칙을 추가한 v2를 모두 읽습니다.
 본문 표시 형식은 개념·능력·측정 조건·목차 근거를 바꾸지 않으며, 본문 변경은 새 content ID로 검증합니다.
+## 새 분야의 목차 기반 문제 설계
+
+`prepare-topic-content`는 수집된 canonical JSONL 네 파일과 개념 초안을 받아 책별
+개념 연결 결과와 `concept-assessment-blueprint-v2`를 만든다. 모델 호출이나 DB 변경은
+Backend 작업 어댑터가 담당하며, ML의 이 명령 자체는 오프라인으로 재현할 수 있다.
+
+```sh
+uv run bookmatch-ml prepare-topic-content \
+  --data-dir /absolute/path/to/canonical \
+  --outline /absolute/path/to/outline.json \
+  --output-dir /absolute/path/to/new-content-output
+```
+
+초안은 `bookmatch_ml.topic_preparation.TopicOutline` 스키마에 맞춘다. 수동 초안은
+`proposed_seed`, 서버의 Gemini 초안은 `ai_proposed`로 보존하며 모두 사람 검토 전 상태다.
+별칭 충돌·알 수 없는 개념·순환 선수관계는 거부한다. 목차가 없는 책도 목록에는 남고
+근거가 없는 개념은 보고서에서 명시적으로 남긴다.
+
+이 준비 단계만 `toc_text_policy: original_and_english`를 사용해 한국어 원문과 영어
+목차 별칭을 로컬에서 매칭한다. 기존 설정의 기본값은 `original_text`이며 기존
+추천의 입력 정책·가중치·순위를 바꾸지 않는다. 원문을 번역문이나 본문으로 간주하지 않는다.
+
+기본 선택 정책은 두 권 이상에서 근거가 확인되는 개념을 최대 여섯 개 선택하고,
+세 개 이상 확보됐을 때 각 개념의 meaning/application/reasoning 설계를 만든다.
+출력에는 실제 목차 ID·책 ID, 네 입력 파일 해시, 설정 해시와 AI 선수관계 후보가 남는다.
+`CONCEPTS_READY`는 문제 설계 준비 상태이며 실제 문항 생성·내용 검토·진단 활성화를 뜻하지 않는다.
+새 분야를 라이브 추천에 추가하는 설정은 별도 작업이다.
+
+
+## 검토된 확장 분야의 런타임 지원
+
+`BOOKMATCH_ML_TOPIC_REGISTRY`를 Backend 작업 디렉터리의 `runtime-topics` 경로로
+설정하면 검토된 새 분야를 개념 지도와 `concept-learning-v2`에서 읽는다. 포인터·불변
+그래프 파일의 해시·분야 ID·개념 namespace·선수관계 DAG를 검사한다. 기존 고정 분야의
+운영 설정은 이 레지스트리로 덮어쓰지 않는다. 모델이나 외부 API를 요청마다 호출하지 않는다.
+
+새 분야 준비는 `single-source-complete-toc-v1` 정책으로 책마다 유효한 출처별 목차 하나를
+선택한다. 원본 자료와 제외 이유는 남고, 개념 연결과 평가 설계에 동일한 선택을 적용한다.
+목차가 없거나 실제 연결이 없는 책은 탐색 목록에 남을 수 있지만 맞춤 매칭 후보에는
+포함되지 않는다. AI 내용 검토·ML 응답 확인·Backend 전체 은행 게시가 끝나야 진단이 열린다.
+
 
 ### v2·v3 추천 순서의 사람 평가
 

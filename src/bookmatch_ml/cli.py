@@ -2804,5 +2804,21 @@ def build_concept_assessment_command(
     typer.echo(f"{len(blueprint.question_specs)} concept assessment targets written")
 
 
+@app.command("prepare-topic-content")
+def prepare_topic_content_command(
+    data_dir: Annotated[Path, typer.Option(exists=True, file_okay=False)],
+    outline: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+    output_dir: Annotated[Path, typer.Option()],
+    config_dir: Annotated[Path, typer.Option()] = Path("configs"),
+) -> None:
+    """Ground a manually supplied or AI-proposed outline in canonical TOCs, offline."""
+    from bookmatch_ml.topic_preparation import TopicOutline, prepare_topic_content
+
+    result = prepare_topic_content(
+        data_dir, TopicOutline.model_validate_json(outline.read_text()), output_dir, config_dir
+    )
+    typer.echo(json.dumps(result, ensure_ascii=False, sort_keys=True))
+
+
 if __name__ == "__main__":
     app()

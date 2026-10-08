@@ -29,6 +29,7 @@ from bookmatch_ml.integration.service import IntegrationService
 from bookmatch_ml.ranking.matching import RankingError
 from bookmatch_ml.ranking.prerequisite_first_v2 import RankingV2Error
 from bookmatch_ml.reader.profile import AssessmentError
+from bookmatch_ml.runtime_topics import resolve_runtime_topic
 
 CONFIG_DIR_ENV = "BOOKMATCH_ML_CONFIG_DIR"
 
@@ -93,6 +94,13 @@ def create_app(
         with as_file(resource) as packaged_path:
             difficulty_policy = load_difficulty_policy(packaged_path)
     ranking_v2_config = _load_ranking_v2_config(ranking_v2_config_path)
+    runtime_registry = os.environ.get("BOOKMATCH_ML_TOPIC_REGISTRY")
+
+    def graph_config(topic):
+        return resolve_runtime_topic(
+            Path(runtime_registry) if runtime_registry else None, topic, ranking_v2_config
+        )
+
     service = IntegrationService(
         reader_config,
         ranking_config,
@@ -124,7 +132,7 @@ def create_app(
         if ranking_v2_config is None:
             raise HTTPException(status_code=503, detail="concept graph is not configured")
         try:
-            return concept_graph(ranking_v2_config, topic_id)
+            return concept_graph(graph_config(topic_id), topic_id)
         except ValueError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
@@ -140,7 +148,7 @@ def create_app(
         if ranking_v2_config is None:
             raise HTTPException(status_code=503, detail="concept graph is not configured")
         try:
-            return recommend_learning(request, ranking_v2_config)
+            return recommend_learning(request, graph_config(request.topic_id))
         except ValueError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 

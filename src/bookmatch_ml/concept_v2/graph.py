@@ -22,7 +22,7 @@ class GraphEdge(_Strict):
     prerequisite: str = Field(min_length=1)
     dependent: str = Field(min_length=1)
     relation_type: Literal["prerequisite_candidate"] = "prerequisite_candidate"
-    source_type: Literal["proposed_seed", "human_reviewed_seed"]
+    source_type: Literal["proposed_seed", "human_reviewed_seed", "ai_proposed"]
     version: str = Field(min_length=1)
 
 

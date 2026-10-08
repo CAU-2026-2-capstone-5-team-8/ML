@@ -127,9 +127,13 @@ class ConceptGeneratedQuestion(ConceptProviderQuestion):
     generation_model: str
     output_language: str = Field(pattern=r"^en(?:-[A-Za-z]{2,8})?$")
     prompt_version: Literal[
-        "concept-question-generation-prompt-v1", "concept-question-generation-prompt-v2"
+        "concept-question-generation-prompt-v1",
+        "concept-question-generation-prompt-v2",
+        "concept-question-generation-prompt-v3",
     ]
-    generation_config_version: Literal["concept-question-generation-config-v1"]
+    generation_config_version: Literal[
+        "concept-question-generation-config-v1", "concept-question-generation-config-v2"
+    ]
     usage: dict[str, int | None]
 
     @model_validator(mode="after")
