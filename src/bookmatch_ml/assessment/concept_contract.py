@@ -132,7 +132,9 @@ class ConceptGeneratedQuestion(ConceptProviderQuestion):
         "concept-question-generation-prompt-v3",
     ]
     generation_config_version: Literal[
-        "concept-question-generation-config-v1", "concept-question-generation-config-v2"
+        "concept-question-generation-config-v1",
+        "concept-question-generation-config-v2",
+        "concept-question-generation-config-v3",
     ]
     usage: dict[str, int | None]
 
