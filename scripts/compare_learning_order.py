@@ -102,6 +102,19 @@ def compare(manifest_path, config_path):
                 }
             )
             response = recommend_learning(request, config)
+            # Preserve semantic ties before the bookId display-order tiebreaker.
+            # v2 sorts on these four fields; v3 already returns rankGroup.
+            groups = {}
+            for item in response["items"]:
+                if key == "before":
+                    group_key = (
+                        item["status"],
+                        item["reviewOnly"],
+                        item["foundationStatus"] == "not-established",
+                        item["practiceConceptCount"] == 0,
+                    )
+                    groups.setdefault(group_key, len(groups) + 1)
+                    item["rankGroup"] = groups[group_key]
             outputs[key] = [
                 {
                     **{
@@ -135,7 +148,7 @@ def compare(manifest_path, config_path):
             }
         )
     return {
-        "version": "learning-order-comparison-v1",
+        "version": "learning-order-comparison-v2",
         "orderingPolicy": POLICY,
         "orderingCriteria": CRITERIA,
         "snapshotId": manifest["snapshot_id"],
@@ -161,7 +174,9 @@ def write_outputs(report, directory):
     with (directory / "comparison.json").open("x", encoding="utf-8") as stream:
         json.dump(report, stream, ensure_ascii=False, indent=2)
         stream.write("\n")
+    comparison_hash = digest((directory / "comparison.json").read_bytes())
     fields = [
+        "comparison_hash",
         "snapshot_id",
         "candidates_hash",
         "scenario",
@@ -182,6 +197,7 @@ def write_outputs(report, directory):
             for identity, row in sorted(union.items()):
                 writer.writerow(
                     {
+                        "comparison_hash": comparison_hash,
                         "snapshot_id": report["snapshotId"],
                         "candidates_hash": report["candidatesHash"],
                         "scenario": scenario["name"],
